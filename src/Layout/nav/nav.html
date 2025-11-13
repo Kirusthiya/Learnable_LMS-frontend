@@ -1,0 +1,26 @@
+<header appKeyboardNav>
+  <nav>
+    <a routerLink="/home" class="brand aurora-text" appSpeak="Learnable Home">Learnable</a>
+    <ul class="nav-links">
+      <li><a routerLink="/home" routerLinkActive="active" appSpeak="Home">Home</a></li>
+      <li><a routerLink="/about" routerLinkActive="active" appSpeak="About">About</a></li>
+      <li><a routerLink="/features" routerLinkActive="active" appSpeak="Features">Features</a></li>
+      <li><a routerLink="/testimonials" routerLinkActive="active" appSpeak="Testimonials">Testimonials</a></li>
+      <li><a routerLink="/contact" routerLinkActive="active" appSpeak="Contact">Contact</a></li>
+    </ul>
+    <button id="mobile-menu-toggle" aria-label="Toggle mobile menu" appSpeak="Toggle Mobile Menu">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+          d="M4 6h16M4 12h16M4 18h16" />
+      </svg>
+    </button>
+  </nav>
+
+  <div id="mobile-menu">
+    <a routerLink="/home" appSpeak="Home">Home</a>
+    <a routerLink="/about" appSpeak="About">About</a>
+    <a routerLink="/features" appSpeak="Features">Features</a>
+    <a routerLink="/testimonials" appSpeak="Testimonials">Testimonials</a>
+    <a routerLink="/contact" appSpeak="Contact">Contact</a>
+  </div>
+</header>

@@ -1,0 +1,89 @@
+ /* -------------------- Hero Section -------------------- */
+    section#home {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+    }
+
+    section#home video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -2;
+    }
+
+    section#home::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.85));
+      z-index: -1;
+    }
+
+    .hero-content {
+      max-width: 700px;
+      padding: 0 20px;
+      z-index: 10;
+    }
+
+    .hero-content h1 {
+      font-size: 2.8rem;
+      margin-bottom: 20px;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    .aurora-text {
+      background: linear-gradient(
+        90deg,
+        hsl(184, 99%, 55%),
+        hsl(184, 99%, 35%),
+        hsl(184, 99%, 55%)
+      );
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: aurora 3s ease-in-out infinite;
+    }
+
+    @keyframes aurora {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    .hero-content p {
+      font-size: 1.1rem;
+      color: #d9d9d9;
+      margin-bottom: 30px;
+      line-height: 1.6;
+    }
+
+    .hero-content a {
+      display: inline-block;
+      background-color: hsl(184, 99%, 45%);
+      color: white;
+      text-decoration: none;
+      padding: 12px 30px;
+      border-radius: 6px;
+      font-size: 1rem;
+      transition: background 0.3s ease;
+    }
+
+    .hero-content a:hover {
+      background-color: hsl(184, 99%, 35%);
+    }

@@ -1,0 +1,106 @@
+/* ===== Buttons Section ===== */
+.button-container {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  padding-top: 40px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+/* Button color styles */
+.btn-neutral {
+  background-color: #555;
+}
+.btn-neutral:hover {
+  background-color: #333;
+}
+
+.btn-accent {
+  background-color: #9b59b6;
+}
+.btn-accent:hover {
+  background-color: #7d3c98;
+}
+
+.btn-secondary {
+  background-color: #17a2b8;
+}
+.btn-secondary:hover {
+  background-color: #117a8b;
+}
+
+.btn-success {
+  background-color: #28a745;
+}
+.btn-success:hover {
+  background-color: #1e7e34;
+}
+
+.btn-info {
+  background-color: #007bff;
+}
+.btn-info:hover {
+  background-color: #0056b3;
+}
+
+/* ===== Validation Card Section ===== */
+.validation-container {
+  display: flex;
+  justify-content: center;
+  padding-top: 40px;
+}
+
+.validation-card {
+  background-color: #ffffff;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  width: 50%;
+  padding: 25px 30px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.validation-title {
+  color: #e63946;
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.validation-list {
+  list-style: disc;
+  padding-left: 20px;
+  color: #444;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .validation-card {
+    width: 90%;
+  }
+
+  .button-container {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .btn {
+    width: 80%;
+  }
+}

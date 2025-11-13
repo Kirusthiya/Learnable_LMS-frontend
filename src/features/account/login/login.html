@@ -1,0 +1,43 @@
+<section class="login-container" appKeyboardNav>
+
+  <button (click)="onBack()" class="back-btn" tabindex="0" appSpeak="Go Back">
+    ← Back
+  </button>
+
+  <h2 tabindex="0" appSpeak="Login to Continue">Login to Continue</h2>
+
+  <form (ngSubmit)="onLogin()">
+    <input
+      type="email"
+      placeholder="Email"
+      [(ngModel)]="creds.email"
+      name="email"
+      required
+      tabindex="0"
+      appSpeak="Enter your email"
+    />
+    <input
+      type="password"
+      placeholder="Password"
+      [(ngModel)]="creds.password"
+      name="password"
+      required
+      tabindex="0"
+      appSpeak="Enter your password"
+    />
+    <button type="submit" class="primary-btn" tabindex="0" appSpeak="Login">
+      Login
+    </button>
+  </form>
+
+  <button class="google-btn" (click)="onGoogleLogin()" tabindex="0" appSpeak="Login with Google">
+    <i class="fa-brands fa-google"></i> Login with Google
+  </button>
+
+  <div class="login-footer" tabindex="0" appSpeak="Footer Links">
+    <a href="#" (click)="onForgotPassword()" tabindex="0" appSpeak="Forgot Password?">Forgot Password?</a>
+    <span> | </span>
+    <a routerLink="/register" tabindex="0" appSpeak="Create Account">Create Account</a>
+  </div>
+
+</section>

@@ -1,0 +1,61 @@
+.about-section {
+  padding: 120px 20px;
+  background-color: hsl(220, 12%, 15%);
+  color: #e0e0e0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+  align-items: center;
+}
+
+@media (min-width: 768px) {
+  .about-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.about-title {
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .about-title {
+    font-size: 3rem;
+  }
+}
+
+.about-text {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  margin-bottom: 20px;
+}
+
+.about-image {
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  display: block;
+}
+
+/* Fade-up Animation */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.fade-up.visible {
+  opacity: 1;
+  transform: translateY(0);
+}

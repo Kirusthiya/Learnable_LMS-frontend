@@ -1,1 +1,42 @@
-/* You can add global styles to this file, and also import other style files */
+/* :root {
+  --color-dark: #212730;
+  --color-light: #e6e6e6;
+  --color-accent: #01acb4;
+}
+body {
+  background: var(--color-light);
+  color: var(--color-dark);
+  font-family: 'Segoe UI', sans-serif;
+} */
+
+  @import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap");
+
+    body {
+      font-family: "DM Sans", sans-serif;
+      margin: 0;
+      padding: 0;
+      color: #fff;
+      background-color: hsl(220, 12%, 12%);
+      overflow-x: hidden;
+    }
+
+        .skip-link {
+      position: absolute;
+      left: -999px;
+      top: auto;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .skip-link:focus {
+      position: fixed;
+      left: 20px;
+      top: 20px;
+      z-index: 100;
+      background-color: hsl(184, 99%, 45%);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 6px;
+      font-weight: 600;
+    }
