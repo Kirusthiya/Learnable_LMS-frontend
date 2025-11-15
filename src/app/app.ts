@@ -4,8 +4,8 @@ import { Contact } from "../features/contact/contact";
 import { About } from "../features/about/about";
 import { Login } from "../features/account/login/login";
 import { Nav } from "../Layout/nav/nav";
-import { RouterOutlet } from "@angular/router";
 import { KeyboardNav } from '../core/directives/accessibility/keyboard-nav';
+import { Speak } from '../core/directives/accessibility/speak';
 
 
 @Component({

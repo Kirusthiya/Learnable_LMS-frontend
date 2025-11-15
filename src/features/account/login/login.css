@@ -1,5 +1,4 @@
-/* Container */
-.login-container {
+/* .login-container {
   max-width: 400px;
   margin: 80px auto;
   padding: 2rem;
@@ -11,7 +10,7 @@
   font-family: 'Segoe UI', sans-serif;
 }
 
-/* Back button */
+
 .back-btn {
   background: transparent;
   color: #00c3ff;
@@ -25,13 +24,12 @@
   color: #80e1ff;
 }
 
-/* Headings */
 .login-container h2 {
   margin-bottom: 1.5rem;
   font-size: 1.5rem;
 }
 
-/* Form inputs */
+
 form input {
   width: 100%;
   margin: 0.5rem 0;
@@ -49,7 +47,7 @@ form input:focus {
   box-shadow: 0 0 5px #00c3ff;
 }
 
-/* Submit button */
+
 form button {
   width: 100%;
   margin-top: 1rem;
@@ -71,7 +69,6 @@ form button:disabled {
   cursor: not-allowed;
 }
 
-/* Google login button */
 .google-btn {
   display: flex;
   align-items: center;
@@ -93,7 +90,7 @@ form button:disabled {
 
 .google-btn i {
   font-size: 18px;
-  color: #DB4437; /* Google red */
+  color: #DB4437; 
 }
 
 .google-btn:hover {
@@ -102,7 +99,7 @@ form button:disabled {
 }
 
 
-/* Footer links */
+
 .login-footer {
   margin-top: 1rem;
   font-size: 0.9rem;
@@ -117,10 +114,9 @@ form button:disabled {
   color: #80e1ff;
 }
 
-/* Responsive */
 @media (max-width: 480px) {
   .login-container {
     margin: 50px 1rem;
     padding: 1.5rem;
   }
-}
+} */
