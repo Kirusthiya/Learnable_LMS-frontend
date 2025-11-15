@@ -10,9 +10,9 @@ import { KeyboardNav } from '../core/directives/accessibility/keyboard-nav';
 
 @Component({
   selector: 'app-root',
+  imports: [Home, Contact, About, Login, Nav,KeyboardNav],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
-  imports: [Home, Contact, About, Login, Nav,KeyboardNav],
 })
 export class App  {
   
