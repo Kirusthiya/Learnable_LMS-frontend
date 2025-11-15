@@ -6,11 +6,12 @@ import { Login } from "../features/account/login/login";
 import { Nav } from "../Layout/nav/nav";
 import { KeyboardNav } from '../core/directives/accessibility/keyboard-nav';
 import { Speak } from '../core/directives/accessibility/speak';
+import { Router, RouterOutlet } from '@angular/router';
 
 
 @Component({
   selector: 'app-root',
-  imports: [Home, Contact, About, Login, Nav,KeyboardNav],
+  imports: [Home, Contact, About, Login, Nav,KeyboardNav,RouterOutlet],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })
