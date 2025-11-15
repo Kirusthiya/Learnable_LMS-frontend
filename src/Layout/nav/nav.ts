@@ -1,12 +1,12 @@
 import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
 import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
 import { Speak } from '../../core/directives/accessibility/speak';
-import { Router } from '@angular/router';
+import {  Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 
 @Component({
   selector: 'app-nav',
-  imports: [Speak, KeyboardNav],
+  imports: [Speak, KeyboardNav,RouterLink, RouterLinkActive ],
   templateUrl: './nav.html',
   styleUrl: './nav.css',
 })
