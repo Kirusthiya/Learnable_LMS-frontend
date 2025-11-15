@@ -10,7 +10,7 @@ import { Contact } from '../features/contact/contact';
 import { Login } from '../features/account/login/login';
 
 export const routes: Routes = [
-{ path: '', redirectTo: '/home', pathMatch: 'full' }, // default redirect
+{ path: '', redirectTo: '/home', pathMatch: 'full' }, 
   { path: 'home', component: Home },
   { path: 'about', component: About },
   { path: 'features', component: Feature },
@@ -19,23 +19,10 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'errors', component: TestErrors },
   { path: 'server-error', component: ServerError },
-  { path: '**', component: NotFound } // fallback route
+  { path: '**', component: NotFound } 
 ];
 
 
- // { path: '', component: Home },
-    // { path: 'login', component: Login },
-    //    {
-    //      path: '',
-    //             runGuardsAndResolvers: 'always',
-    //             // canActivate: [authGuard],
-    //             children: [
-    //                 { path: 'About', component: About },
-    //                 { path: 'Feature', component: Feature },
-    //                 { path: 'Testimonials', component: Testimonials },
-    //                 { path: 'Contact', component: Contact },
-    //             ],
-    //     },
 
 // ng g c features/About/
 // ng g c features/Feature/

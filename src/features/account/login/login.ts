@@ -1,25 +1,32 @@
-import { Component, EventEmitter, inject, Output } from '@angular/core';
-import { AccountService } from '../../../core/services/accountservices';
-import { Router } from '@angular/router';
-import { ToastService } from '../../../core/services/toast-service';
-import { FormsModule } from '@angular/forms';
-import { Speak } from '../../../core/directives/accessibility/speak';
-import { KeyboardNav } from '../../../core/directives/accessibility/keyboard-nav';
+import { Component, EventEmitter, inject, Output } from "@angular/core";
+import { FormsModule } from "@angular/forms";
+import { KeyboardNav } from "../../../core/directives/accessibility/keyboard-nav";
+import { Speak } from "../../../core/directives/accessibility/speak";
+import { InputSpeakDirective } from "../../../core/directives/app-input-speak";
+import { AccountService } from "../../../core/services/accountservices";
+import { Router } from "@angular/router";
+import { SpeechService } from "../../../core/services/speech-service";
+import { ToastService } from "../../../core/services/toast-service";
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule,Speak,KeyboardNav],
+  standalone: true,
+  imports: [FormsModule, Speak, KeyboardNav, InputSpeakDirective],
   templateUrl: './login.html',
-  styleUrl: './login.css',
+  styleUrls: ['./login.css'],
 })
 export class Login {
-  
+
   private accountService = inject(AccountService);
   private router = inject(Router);
-  private toast = inject(ToastService); // <-- Inject toast service
+  private toast = inject(ToastService);
+  private speech = inject(SpeechService);
 
   @Output() closeLoginEvent = new EventEmitter<void>();
   creds = { email: '', password: '' };
+
+  // 🔹 Add this property
+  micActive: boolean = false;  // <-- FIX
 
   // Back button
   onBack() {
@@ -31,11 +38,13 @@ export class Login {
     this.accountService.login(this.creds).subscribe({
       next: (user) => {
         this.toast.success('Login successful!');
+        this.speech.speak('Login successful!');
         this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error(err);
         this.toast.error('Login failed. Check credentials.');
+        this.speech.speak('Login failed. Check credentials.');
       }
     });
   }
@@ -46,11 +55,13 @@ export class Login {
     this.accountService.loginWithGoogle(token).subscribe({
       next: (user) => {
         this.toast.success('Google login successful!');
+        this.speech.speak('Google login successful!');
         this.router.navigate(['/home']);
       },
       error: (err) => {
         console.error(err);
         this.toast.error('Google login failed.');
+        this.speech.speak('Google login failed.');
       }
     });
   }
@@ -58,6 +69,16 @@ export class Login {
   // Forgot password
   onForgotPassword() {
     this.toast.info('Redirect to Forgot Password page.');
+    this.speech.speak('Redirect to Forgot Password page.');
   }
 
+  // Mic toggle
+  toggleMic() {
+    this.micActive = !this.micActive; // <-- now exists
+    if(this.micActive){
+      this.speech.speak('Mic turned on. Press Alt+M to stop listening.');
+    } else {
+      this.speech.speak('Mic turned off.');
+    }
+  }
 }
