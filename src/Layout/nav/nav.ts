@@ -1,18 +1,18 @@
 import { AfterViewInit, Component, inject, OnDestroy } from '@angular/core';
 import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
 import { Speak } from '../../core/directives/accessibility/speak';
-import {  Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 
 @Component({
   selector: 'app-nav',
-  imports: [Speak, KeyboardNav,RouterLink, RouterLinkActive ],
+  imports: [Speak, KeyboardNav, RouterLink, RouterLinkActive  ],
   templateUrl: './nav.html',
   styleUrl: './nav.css',
 })
 export class Nav implements AfterViewInit, OnDestroy {
-  private router = inject(Router);
   private scrollHandler: any;
+    private router = inject(Router);
 
   ngAfterViewInit(): void {
     const header = document.querySelector('header');
