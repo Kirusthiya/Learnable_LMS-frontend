@@ -8,19 +8,34 @@ import { Feature } from '../features/feature/feature';
 import { Testimonials } from '../features/testimonials/testimonials';
 import { Contact } from '../features/contact/contact';
 import { Login } from '../features/account/login/login';
+import { authguardGuard } from '../core/guards/authguard-guard';
+import { Register } from '../features/account/register/register';
 
 export const routes: Routes = [
-{ path: '', redirectTo: '/home', pathMatch: 'full' }, 
   { path: 'home', component: Home },
   { path: 'about', component: About },
   { path: 'features', component: Feature },
   { path: 'testimonials', component: Testimonials },
   { path: 'contact', component: Contact },
   { path: 'login', component: Login },
+  { path: 'register', component: Register },
   { path: 'errors', component: TestErrors },
   { path: 'server-error', component: ServerError },
-  { path: '**', component: NotFound } 
+  { path: '**', component: NotFound },
+
+  // Protected routes
+  {
+    path: '',
+    runGuardsAndResolvers: 'always',
+    canActivate: [authguardGuard],
+    children: [
+        { path: 'home', component: Home },
+      // { path: 'dashboard', component: DashboardComponent },
+      // { path: 'profile', component: ProfileComponent },
+    ],
+  },
 ];
+
 
 
 

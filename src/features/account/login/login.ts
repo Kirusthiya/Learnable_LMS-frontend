@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output } from "@angular/core";
+import { Component, EventEmitter, inject, Output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { KeyboardNav } from "../../../core/directives/accessibility/keyboard-nav";
 import { Speak } from "../../../core/directives/accessibility/speak";
@@ -7,11 +7,13 @@ import { AccountService } from "../../../core/services/accountservices";
 import { Router } from "@angular/router";
 import { SpeechService } from "../../../core/services/speech-service";
 import { ToastService } from "../../../core/services/toast-service";
+import { Register } from "../register/register";
+import { LoginCreds } from "../../../types/user";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, Speak, KeyboardNav, InputSpeakDirective],
+  imports: [FormsModule, Speak, KeyboardNav, InputSpeakDirective, Register],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
@@ -21,9 +23,15 @@ export class Login {
   private router = inject(Router);
   private toast = inject(ToastService);
   private speech = inject(SpeechService);
+  protected registerMode = signal(false);
+
+  showRegister(value: boolean) {
+    this.registerMode.set(value);
+  }
+
 
   @Output() closeLoginEvent = new EventEmitter<void>();
-  creds = { email: '', password: '' };
+  protected creds = {} as LoginCreds;
 
   // 🔹 Add this property
   micActive: boolean = false;  // <-- FIX
@@ -74,7 +82,7 @@ export class Login {
 
   // Mic toggle
   toggleMic() {
-    this.micActive = !this.micActive; // <-- now exists
+    this.micActive = !this.micActive; 
     if(this.micActive){
       this.speech.speak('Mic turned on. Press Alt+M to stop listening.');
     } else {

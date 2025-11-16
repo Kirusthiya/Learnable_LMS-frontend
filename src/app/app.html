@@ -1,19 +1,9 @@
-<div class ="pt-20">
-<app-nav/>
-<router-outlet/>
-<div>
-@if (!showLogin) {
- 
-  <div appKeyboardNav>
-     <app-home (openLoginEvent)="openLogin()"/>
-    <app-about/>
-    <app-contact/>
-  
-  </div>
- 
-} @else {
-  <app-login (closeLoginEvent)="closeLogin()"/>
-}
 
 
+
+
+<div KeyboardNav>
+<app-nav KeyboardNav />
+  <router-outlet />
+</div>
 

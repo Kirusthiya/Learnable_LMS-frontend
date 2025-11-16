@@ -54,60 +54,95 @@
 // }
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { RegisterCreds, User } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { RegisterCreds,LoginCreds,SendOtpDto, User } from '../../types/user';
 
+// -----------------------------
+// Service
+// -----------------------------
 @Injectable({
   providedIn: 'root',
 })
 export class AccountService {
   private http = inject(HttpClient);
+  private baseUrl = environment.apiUrl; // e.g., 'http://localhost:5071/api/'
   currentUser = signal<User | null>(null);
-  private baseUrl = environment.apiUrl;
 
-  // REGISTER METHOD
-  register(creds: RegisterCreds) {
-    return this.http.post<User>(this.baseUrl + 'account/register', creds).pipe(
-      tap((user) => {
-        if (user) {
-          this.setCurrentUser(user);
-        }
-      })
-    );
-  }
-
-  // NORMAL LOGIN
-  login(creds: any) {
-    return this.http.post<User>(this.baseUrl + 'account/login', creds).pipe(
-      tap((user) => {
-        if (user) {
-          this.setCurrentUser(user);
-        }
-      })
-    );
-  }
-
-  // GOOGLE LOGIN
-  loginWithGoogle(token: string) {
+ 
+  sendOtp(request: SendOtpDto) {
     return this.http
-      .post<User>(this.baseUrl + 'account/google-login', { token })
+      .post<{ message: string; success: boolean }>(
+        this.baseUrl + 'account/send-otp',
+        request
+      )
       .pipe(
-        tap((user) => {
-          if (user) {
-            this.setCurrentUser(user);
-          }
+        tap((res) => {
+          console.log(res.message);
         })
       );
   }
 
+  // -----------------------------
+  // Register User
+  // -----------------------------
+  register(creds: RegisterCreds) {
+    return this.http
+      .post<User>(this.baseUrl + 'account/register', {
+        user: {
+          fullName: creds.fullName,
+          email: creds.email,
+          password: creds.password,
+        },
+        otp: creds.otp,
+      })
+      .pipe(
+        tap((user) => {
+          if (user) this.setCurrentUser(user);
+        })
+      );
+  }
+
+  // -----------------------------
+  // Normal Login
+  // -----------------------------
+  login(creds: LoginCreds) {
+    return this.http
+      .post<User>(this.baseUrl + 'account/login', creds)
+      .pipe(
+        tap((user) => {
+          if (user) this.setCurrentUser(user);
+        })
+      );
+  }
+
+  // -----------------------------
+  // Google Login
+  // -----------------------------
+  loginWithGoogle(idToken: string) {
+    return this.http
+      .post<User>(this.baseUrl + 'account/google-login', { idToken })
+      .pipe(
+        tap((user) => {
+          if (user) this.setCurrentUser(user);
+        })
+      );
+  }
+
+  // -----------------------------
+  // Set current user in localStorage + signal
+  // -----------------------------
   setCurrentUser(user: User) {
     localStorage.setItem('user', JSON.stringify(user));
     this.currentUser.set(user);
   }
 
+  // -----------------------------
+  // Logout
+  // -----------------------------
   logout() {
     localStorage.removeItem('user');
     this.currentUser.set(null);
   }
 }
+

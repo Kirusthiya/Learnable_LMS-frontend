@@ -1,5 +1,5 @@
 <section class="login-container min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6" appKeyboardNav>
-
+ @if (!registerMode()) {
   <!-- Back button -->
   <button (click)="onBack()" class="back-btn mb-4 text-cyan-300 hover:text-cyan-400 px-3 py-2 rounded" tabindex="0" appSpeak="Go Back">
     ← Back
@@ -47,14 +47,26 @@
   </button>
 
   <!-- Footer -->
-  <div class="login-footer mt-6 text-center space-x-2" tabindex="0" appSpeak="Footer Links">
-    <a href="#" (click)="onForgotPassword()" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Forgot Password?">Forgot Password?</a>
+  <!-- <div class="login-footer mt-6 text-center space-x-2" tabindex="0" appSpeak="Footer Links">
+    <a href="#" (click)="onForgotPassword()" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Forgot Password?">Forgot Password</a>
     <span>|</span>
     <a routerLink="/register" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Create Account">Create Account</a>
-  </div>
+  </div> -->
+
+  <div class="login-footer mt-6 text-center space-x-2" tabindex="0" appSpeak="Footer Links">
+          <button (click)="showRegister(true)" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Create Account">Create Account</button>
+          <button (click)="onForgotPassword()" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Forgot Password">Forgot Password</button>
+        </div>
 
   <!-- Mic shortcut info -->
   <p class="mt-6 text-cyan-300 text-sm" tabindex="0" appSpeak="Press Alt+M to toggle microphone for voice input">
     🎤 Press Alt+M to toggle microphone for voice input
   </p>
+}
+
+@else {
+        <div class="w-full text-2xl text-center flex justify-center">
+            <app-register class="w-full" (cancelRegister)="showRegister($event)" />
+        </div>
+   }
 </section>

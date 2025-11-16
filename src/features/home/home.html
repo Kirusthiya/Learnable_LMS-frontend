@@ -1,5 +1,5 @@
 <main  id="main-content" role="main" aria-label="Learnable Platform Introduction" appKeyboardNav>
-
+ @if (!LoginMode()) {
   <section id="home" class="hero-container">
 
     <video
@@ -29,18 +29,24 @@
         appSpeak="The Future of Learning, Unified. Delivering AI-powered, scalable solutions for comprehensive, universally accessible education.">
         The Future of Learning, Unified. Delivering AI-powered, scalable solutions for comprehensive, universally accessible education.
       </p>
-
-      <a
-        class="cta-button primary-cta"
-        tabindex="0"
-        appSpeak="Get Started Button"
-        (click)="onGetStartedClick()"
-        aria-label="Get Started">
-        Get Started
-      </a>
+       <div >
+                <a (click)="onGetStartedClick(true)" class="cta-button primary-cta" tabindex="0" appSpeak="Get Started Button">  Get Started</a>
+               
+            </div>
+    
 
     </div>
 
+  
   </section>
+  <app-about/>
+  <app-feature/>
+  <app-contact/>
+ }
+ @else {
+   <div class="w-full text-2xl text-center flex justify-center">
+            <app-login class="w-full" (cancelRegister)="onGetStartedClick(true)" />
+        </div>
 
+ }
 </main>
