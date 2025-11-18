@@ -4,7 +4,7 @@ export type User = {
   fullName: string;         // displayName → backend uses fullName
   email: string;
   token?: string;           // JWT token (optional, after login/register)
-  imageUrl?: string;        // optional for Google profile
+      
 };
 
 // Normal login creds
@@ -15,13 +15,10 @@ export type LoginCreds = {
 
 // Register creds
 export type RegisterCreds = {
-  fullName: string;          // displayName → fullName
+  username: string;          // displayName → fullName
   email: string;
   password: string;
   otp?: string;              // OTP required for registration
 };
 
 
-export type SendOtpDto = {
-  email: string;
-};

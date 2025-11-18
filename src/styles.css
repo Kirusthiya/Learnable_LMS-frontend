@@ -4,6 +4,12 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --color-dark: #212730;
+  --color-light: #e6e6e6;
+  --color-accent: #01acb4;
+}
+
 body {
   font-family: "DM Sans", sans-serif;
   margin: 0;

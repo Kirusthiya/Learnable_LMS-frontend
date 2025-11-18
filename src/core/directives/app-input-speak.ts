@@ -7,77 +7,79 @@ import { SpeechService } from '../services/speech-service';
 export class InputSpeakDirective {
 
   recognition: any;
-  listening: boolean = false;
+  listening = false;
 
-  constructor(private el: ElementRef<HTMLInputElement>, private speech: SpeechService) {}
+  constructor(
+    private el: ElementRef<HTMLInputElement>,
+    private speech: SpeechService
+  ) {}
 
-  // Typing → letter by letter read
+  // LETTER BY LETTER
   @HostListener('input')
   onInput() {
-    const value = this.el.nativeElement.value;
-    const lastChar = value[value.length - 1];
-    if(lastChar){
-      this.speech.speak(lastChar);
-    }
+    const val = this.el.nativeElement.value;
+    const last = val[val.length - 1];
+    if (last) this.speech.speak(last);
   }
 
-  // Ctrl → full input read
+  // KEYBOARD SHORTCUTS
   @HostListener('document:keydown', ['$event'])
-  handleKeys(event: KeyboardEvent){
-    const activeEl = document.activeElement as HTMLInputElement;
-    if(activeEl !== this.el.nativeElement) return;
+  handleKeys(event: KeyboardEvent) {
+    const active = document.activeElement as HTMLInputElement;
+    if (active !== this.el.nativeElement) return;
 
-    // Ctrl → full input read
-    if(event.key === 'Control'){
-      const value = this.el.nativeElement.value;
-      this.speech.speak(value);
+    // Ctrl → full read
+    if (event.key === 'Control') {
+      this.speech.speak(this.el.nativeElement.value);
     }
 
-    // Alt+M → toggle mic
-    if(event.altKey && event.key.toLowerCase() === 'm'){
+    // Alt+M → Mic toggle
+    if (event.altKey && event.key.toLowerCase() === 'm') {
       this.toggleMic();
     }
 
-    // Enter → start mic
-    if(event.key === 'Enter'){
+    // Enter → Mic toggle
+    if (event.key === 'Enter') {
       this.toggleMic();
-      event.preventDefault(); // avoid form submit if needed
+      event.preventDefault();
     }
   }
 
-  toggleMic(){
-    if(this.listening){
+  // MIC CONTROL
+  toggleMic() {
+    if (this.listening) {
       this.recognition.stop();
       this.listening = false;
-      this.speech.speak('Mic stopped');
-    } else {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-      if(!SpeechRecognition){
-        this.speech.speak('Speech recognition not supported');
-        return;
-      }
-
-      this.recognition = new SpeechRecognition();
-      this.recognition.lang = 'en-US';
-      this.recognition.interimResults = true;
-      this.recognition.maxAlternatives = 1;
-
-      this.recognition.onresult = (event: any) => {
-        let transcript = '';
-        for (let i = 0; i < event.results.length; i++) {
-          transcript += event.results[i][0].transcript;
-        }
-
-        // Update input field live
-        this.el.nativeElement.value = transcript;
-
-        // Speak back
-        this.speech.speak(transcript);
-      };
-
-      this.recognition.start();
-      this.listening = true;
-      this.speech.speak('Mic started. Speak now.');
+      this.speech.speak("Mic stopped");
+      return;
     }
+
+    const SR =
+      (window as any).webkitSpeechRecognition ||
+      (window as any).SpeechRecognition;
+
+    if (!SR) {
+      this.speech.speak("Speech recognition not supported");
+      return;
+    }
+
+    this.recognition = new SR();
+    this.recognition.lang = "en-US";
+    this.recognition.interimResults = false;
+
+    this.recognition.onresult = (event: any) => {
+      const text = event.results[0][0].transcript;
+
+      this.el.nativeElement.value = text;
+      this.speech.speak(text);
+    };
+
+    this.recognition.onend = () => {
+      this.listening = false;
+    };
+
+    this.recognition.start();
+    this.listening = true;
+    this.speech.speak("Mic started. Speak now");
   }
 }

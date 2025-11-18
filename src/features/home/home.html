@@ -45,7 +45,7 @@
  }
  @else {
    <div class="w-full text-2xl text-center flex justify-center">
-            <app-login class="w-full" (cancelRegister)="onGetStartedClick(true)" />
+            <app-login class="w-full" (closeLogin)="onGetStartedClick($event)" />
         </div>
 
  }

@@ -4,26 +4,26 @@ import { Injectable } from '@angular/core';
   providedIn: 'root',
 })
 export class SpeechService {
-  private speech = window.speechSynthesis;
+  private synth = window.speechSynthesis;
   private currentUtterance: SpeechSynthesisUtterance | null = null;
 
   constructor() {}
 
   speak(text: string) {
-    if (!text) return;
+    if (!text || !text.trim()) return;
 
-    this.speech.cancel();
+    this.synth.cancel();
 
     this.currentUtterance = new SpeechSynthesisUtterance(text);
     this.currentUtterance.rate = 1;
     this.currentUtterance.pitch = 1;
     this.currentUtterance.volume = 1;
+    this.currentUtterance.lang = "en-US";
 
-    this.speech.speak(this.currentUtterance);
+    this.synth.speak(this.currentUtterance);
   }
 
   stop() {
-    this.speech.cancel();
+    this.synth.cancel();
   }
-  
 }
