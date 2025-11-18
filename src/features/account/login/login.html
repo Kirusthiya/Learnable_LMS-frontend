@@ -1,72 +1,79 @@
 <section class="login-container min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6" appKeyboardNav>
- @if (!registerMode()) {
-  <!-- Back button -->
-  <button (click)="onBack()" class="back-btn mb-4 text-cyan-300 hover:text-cyan-400 px-3 py-2 rounded" tabindex="0" appSpeak="Go Back">
-    ← Back
-  </button>
+  @if (!registerMode()) {
 
-  <!-- Heading -->
-  <h2 class="text-3xl font-bold mb-6" tabindex="0" appSpeak="Login to Continue">Login to Continue</h2>
+    <h2 class="text-3xl font-bold mb-6" tabindex="0" appSpeak="Login to Continue">Login to Continue</h2>
 
-  <!-- Login form -->
-  <form (ngSubmit)="onLogin()" class="w-full max-w-sm bg-gray-800 p-6 rounded-xl shadow-lg space-y-4">
+    <form (ngSubmit)="login()" class="w-full max-w-sm bg-gray-800 p-6 rounded-xl shadow-lg space-y-4">
 
-    <input
-      type="email"
-      placeholder="Email"
-      [(ngModel)]="creds.email"
-      name="email"
-      required
-      tabindex="0"
-      appSpeak="Enter your email"
-      appInputSpeak
-      class="w-full p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
-    />
+      <!-- EMAIL -->
+      <div class="flex gap-2 items-center">
+        <input
+          type="email"
+          [(ngModel)]="creds.email"
+          name="email"
+          placeholder="Enter Email"
+          required
+          tabindex="0"
+          appSpeak="Enter your email"
+          appInputSpeak
+          #emailInput
+          class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+        />
+        <button
+          type="button"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+          [appVoiceInput]="emailInput"
+          tabindex="0"
+          appSpeak="Start voice input for email"
+        >
+          🎤
+        </button>
+      </div>
 
-    <input
-      type="password"
-      placeholder="Password"
-      [(ngModel)]="creds.password"
-      name="password"
-      required
-      tabindex="0"
-      appSpeak="Enter your password"
-      appInputSpeak
-      class="w-full p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
-    />
+      <!-- PASSWORD -->
+      <div class="flex gap-2 items-center">
+        <input
+          type="password"
+          [(ngModel)]="creds.password"
+          name="password"
+          placeholder="Enter Password"
+          required
+          tabindex="0"
+          appSpeak="Enter your password"
+          appInputSpeak
+          #passwordInput
+          class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+        />
+        <button
+          type="button"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+          [appVoiceInput]="passwordInput"
+          tabindex="0"
+          appSpeak="Start voice input for password"
+        >
+          🎤
+        </button>
+      </div>
 
-    <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-semibold py-3 rounded-lg transition" tabindex="0" appSpeak="Login">
-      Login
-    </button>
-  </form>
+      <!-- LOGIN BUTTON -->
+      <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-semibold py-3 rounded-lg transition" tabindex="0" appSpeak="Login">
+        Login
+      </button>
+    </form>
 
-  <!-- Google Login -->
-  <button class="google-btn w-full max-w-sm mt-4 flex items-center justify-center gap-2 bg-white text-black font-semibold py-3 rounded-lg shadow hover:bg-gray-200 transition"
-          (click)="onGoogleLogin()" tabindex="0" appSpeak="Login with Google">
-    <i class="fa-brands fa-google"></i> Login with Google
-  </button>
+    <div class="login-footer mt-6 text-center space-x-2" tabindex="0" appSpeak="Footer Links">
+      <button (click)="showRegister(true)" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Create Account">Create Account</button>
+      <button (click)="onBack()" class="text-cyan-400 hover:underline px-3 py-2" tabindex="0" appSpeak="Go Back">Cancel</button>
+    </div>
 
-  <!-- Footer -->
-  <!-- <div class="login-footer mt-6 text-center space-x-2" tabindex="0" appSpeak="Footer Links">
-    <a href="#" (click)="onForgotPassword()" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Forgot Password?">Forgot Password</a>
-    <span>|</span>
-    <a routerLink="/register" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Create Account">Create Account</a>
-  </div> -->
+    <p class="mt-6 text-cyan-300 text-sm" tabindex="0" appSpeak="Press Alt+M to toggle microphone for voice input">
+      🎤 Press Alt+M to toggle microphone for voice input
+    </p>
 
-  <div class="login-footer mt-6 text-center space-x-2" tabindex="0" appSpeak="Footer Links">
-          <button (click)="showRegister(true)" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Create Account">Create Account</button>
-          <button (click)="onForgotPassword()" class="text-cyan-400 hover:underline" tabindex="0" appSpeak="Forgot Password">Forgot Password</button>
-        </div>
-
-  <!-- Mic shortcut info -->
-  <p class="mt-6 text-cyan-300 text-sm" tabindex="0" appSpeak="Press Alt+M to toggle microphone for voice input">
-    🎤 Press Alt+M to toggle microphone for voice input
-  </p>
-}
-
-@else {
-        <div class="w-full text-2xl text-center flex justify-center">
-            <app-register class="w-full" (cancelRegister)="showRegister($event)" />
-        </div>
-   }
+  }
+  @else {
+    <div class="w-full text-2xl text-center flex justify-center">
+      <app-register (cancelRegister)="showRegister($event)" />
+    </div>
+  }
 </section>
