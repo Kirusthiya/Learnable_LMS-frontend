@@ -1,1 +1,153 @@
-<p>register works!</p>
+<section
+  class="register-container min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6"
+  appKeyboardNav
+>
+
+  <!-- BACK BUTTON -->
+ 
+
+  <!-- HEADING -->
+  <h2 class="text-3xl font-bold mb-6" tabindex="0" appSpeak="Create Account">
+    Create Account
+  </h2>
+
+  <form class="w-full max-w-sm bg-gray-800 p-6 rounded-xl shadow-lg space-y-5">
+
+    <!-- USERNAME -->
+    <div class="flex gap-2 items-center">
+      <input
+        type="text"
+        [(ngModel)]="creds.username"
+        name="username"
+        placeholder= "Enter username"
+        required
+        tabindex="0"
+        appSpeak="Enter username"
+        appInputSpeak
+        #usernameInput
+        class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+      />
+      <button
+        type="button"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+        [appVoiceInput]="usernameInput"
+        tabindex="0"
+        appSpeak="Start voice input"
+      >
+        🎤
+      </button>
+    </div>
+
+    <!-- EMAIL -->
+    <div class="flex gap-2 items-center">
+      <input
+        type="email"
+        [(ngModel)]="creds.email"
+        placeholder="Enter email"
+        name="email"
+        required
+        tabindex="0"
+        appSpeak="Enter email"
+        appInputSpeak
+        #emailInput
+        class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+      />
+      <button
+        type="button"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+        [appVoiceInput]="emailInput"
+        tabindex="0"
+        appSpeak="Start voice input"
+      >
+        🎤
+      </button>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="flex gap-2 items-center">
+      <input
+        type="password"
+        [(ngModel)]="creds.password"
+        placeholder="Enter Password"
+        name="password"
+        required
+        tabindex="0"
+        appSpeak="Enter password"
+        appInputSpeak
+        #passwordInput
+        class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+      />
+      <button
+        type="button"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+        [appVoiceInput]="passwordInput"
+        tabindex="0"
+        appSpeak="Start voice input"
+      >
+        🎤
+      </button>
+    </div>
+
+    <!-- SEND OTP BUTTON -->
+    <button
+      type="button"
+      (click)="sendOtp()"
+      [disabled]="sendingOtp"
+      class="w-full bg-cyan-500 disabled:bg-gray-600 disabled:text-gray-400 hover:bg-cyan-600 text-black font-semibold py-3 rounded-lg transition"
+      tabindex="0"
+      appSpeak="Send One Time Password"
+      placeholder="Enter OTP"
+    >
+      {{ sendingOtp ? 'Sending OTP...' : 'Send OTP' }}
+    </button>
+
+    <!-- OTP INPUT → only show after clicking Send OTP -->
+    <div *ngIf="otpSent" class="flex gap-2 items-center">
+      <input
+        type="text"
+        [(ngModel)]="creds.otp"
+        name="otp"
+        required
+        tabindex="0"
+        appSpeak="Enter OTP"
+        appInputSpeak
+        #otpInput
+        class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+      />
+      <button
+        type="button"
+        class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+        [appVoiceInput]="otpInput"
+        tabindex="0"
+        appSpeak="Start voice input"
+      >
+        🎤
+      </button>
+    </div>
+
+    <!-- REGISTER BUTTON -->
+    <button
+      type="button"
+      (click)="register()"
+      [disabled]="registering"
+      class="w-full bg-green-500 disabled:bg-gray-600 disabled:text-gray-400 hover:bg-green-600 text-black font-semibold py-3 rounded-lg transition"
+      tabindex="0"
+      appSpeak="Register"
+    >
+      {{ registering ? 'Registering...' : 'Register' }}
+    </button>
+
+
+      <button
+      type="button"
+      (click)="cancel()"
+     
+      class="w-full bg-green-500 disabled:bg-gray-600 disabled:text-gray-400 hover:bg-green-600 text-black font-semibold py-3 rounded-lg transition"
+      tabindex="0"
+      appSpeak="cancel"
+    >cancel
+    </button>
+  </form>
+
+ 
+</section>

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, inject, Output, signal } from "@angular/core";
+import { Component, EventEmitter, inject, output, Output, signal } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { KeyboardNav } from "../../../core/directives/accessibility/keyboard-nav";
 import { Speak } from "../../../core/directives/accessibility/speak";
@@ -9,11 +9,12 @@ import { SpeechService } from "../../../core/services/speech-service";
 import { ToastService } from "../../../core/services/toast-service";
 import { Register } from "../register/register";
 import { LoginCreds } from "../../../types/user";
+import { VoiceInputDirective } from "../../../core/directives/voice-input";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, Speak, KeyboardNav, InputSpeakDirective, Register],
+  imports: [FormsModule, Speak, KeyboardNav, InputSpeakDirective, Register,VoiceInputDirective],
   templateUrl: './login.html',
   styleUrls: ['./login.css'],
 })
@@ -24,60 +25,48 @@ export class Login {
   private toast = inject(ToastService);
   private speech = inject(SpeechService);
   protected registerMode = signal(false);
+   protected creds: any = {};
+  
 
-  showRegister(value: boolean) {
-    this.registerMode.set(value);
-  }
+  closeLogin = output<boolean>();
 
-
-  @Output() closeLoginEvent = new EventEmitter<void>();
-  protected creds = {} as LoginCreds;
 
   // 🔹 Add this property
   micActive: boolean = false;  // <-- FIX
 
   // Back button
   onBack() {
-    this.closeLoginEvent.emit();
+     this.closeLogin.emit(false);
   }
 
-  // Normal login
-  onLogin() {
+ showRegister(value: boolean) {
+    this.registerMode.set(value);
+  }
+
+  login(){
+    // console.log(this.creds);
     this.accountService.login(this.creds).subscribe({
-      next: (user) => {
-        this.toast.success('Login successful!');
-        this.speech.speak('Login successful!');
-        this.router.navigate(['/home']);
+      next: result => {
+        // console.log(result);
+        this.router.navigateByUrl('/about');
+        this.toast.success("Login successfully");
+        this.speech.speak('Login successfully')
+
+        this.creds = {};
       },
-      error: (err) => {
-        console.error(err);
-        this.toast.error('Login failed. Check credentials.');
-        this.speech.speak('Login failed. Check credentials.');
+      error: error => {
+        this.toast.error(error.error);
+        console.log(error.message);
       }
-    });
+    })
   }
 
-  // Google login
-  onGoogleLogin() {
-    const token = 'GOOGLE_TOKEN';
-    this.accountService.loginWithGoogle(token).subscribe({
-      next: (user) => {
-        this.toast.success('Google login successful!');
-        this.speech.speak('Google login successful!');
-        this.router.navigate(['/home']);
-      },
-      error: (err) => {
-        console.error(err);
-        this.toast.error('Google login failed.');
-        this.speech.speak('Google login failed.');
-      }
-    });
-  }
-
-  // Forgot password
-  onForgotPassword() {
-    this.toast.info('Redirect to Forgot Password page.');
-    this.speech.speak('Redirect to Forgot Password page.');
+  logout(){
+    // this.loggedIn.set(false);
+    this.accountService.logout();
+    this.router.navigateByUrl('/'); 
+    this.toast.info('Logout successfully');
+    this.speech.speak('Logout successfully')
   }
 
   // Mic toggle
