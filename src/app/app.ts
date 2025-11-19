@@ -9,7 +9,7 @@ import { Router, RouterOutlet } from '@angular/router';
 
 @Component({
   selector: 'app-root',
-  imports: [ Nav,RouterOutlet],
+  imports: [Nav, RouterOutlet],
   templateUrl: './app.html',
   styleUrls: ['./app.css'],
 })

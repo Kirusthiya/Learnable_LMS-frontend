@@ -48,7 +48,7 @@ export class Login {
     this.accountService.login(this.creds).subscribe({
       next: result => {
         // console.log(result);
-        this.router.navigateByUrl('/about');
+        this.router.navigateByUrl('/dashboad');
         this.toast.success("Login successfully");
         this.speech.speak('Login successfully')
 
