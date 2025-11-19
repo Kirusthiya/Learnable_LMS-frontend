@@ -49,6 +49,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
           default:
             toast.error('Something unexpected went wrong');
             speech.speak('Something unexpected went wrong');
+            console.log(error)
             break;
         }
       }

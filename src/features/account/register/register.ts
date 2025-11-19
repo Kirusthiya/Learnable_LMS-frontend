@@ -41,6 +41,7 @@ export class Register {
     }
 
     this.sendingOtp = true;
+    this.creds.otp = ''; // reset OTP every time we send new one
 
     this.accountService.sendOtp(this.creds.email).subscribe({
       next: () => {
@@ -49,9 +50,10 @@ export class Register {
         this.otpSent = true;
         this.sendingOtp = false;
       },
-      error: () => {
-        this.toast.error('Failed to send OTP.');
-        this.speech.speak('Failed to send OTP.');
+      error: (err) => {
+        const msg = err?.error?.message || 'Failed to send OTP.';
+        this.toast.error(msg);
+        this.speech.speak(msg);
         this.sendingOtp = false;
       }
     });
@@ -80,8 +82,16 @@ export class Register {
         this.cancelRegister.emit(false);
       },
       error: (err) => {
-        this.toast.error('Registration failed.');
-        this.speech.speak('Registration failed!');
+        const msg = err?.error?.message || 'Registration failed.';
+        this.toast.error(msg);
+        this.speech.speak(msg);
+
+        // If backend sends "new OTP generated"
+        if (msg.includes('New OTP')) {
+          this.creds.otp = '';
+          this.otpSent = true;
+        }
+
         this.registering = false;
         console.error(err);
       }
