@@ -12,7 +12,7 @@ import { InputSpeakDirective } from '../../../core/directives/app-input-speak';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, CommonModule, Speak, KeyboardNav, VoiceInputDirective, InputSpeakDirective],
+  imports: [FormsModule, CommonModule, Speak, VoiceInputDirective, InputSpeakDirective,KeyboardNav],
   templateUrl: './register.html',
   styleUrls: ['./register.css'],
 })
@@ -86,14 +86,7 @@ export class Register {
         this.toast.error(msg);
         this.speech.speak(msg);
 
-        // If backend sends "new OTP generated"
-        if (msg.includes('New OTP')) {
-          this.creds.otp = '';
-          this.otpSent = true;
-        }
-
-        this.registering = false;
-        console.error(err);
+     
       }
     });
   }

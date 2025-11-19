@@ -3,6 +3,7 @@ import { TestErrors } from '../shared/error/test-errors/test-errors';
 import { ServerError } from '../shared/error/server-error/server-error';
 import { NotFound } from '../shared/error/not-found/not-found';
 import { Home } from '../features/home/home';
+import { Dashboad } from '../features/dashboad/dashboad';
 import { About } from '../features/about/about';
 import { Feature } from '../features/feature/feature';
 import { Testimonials } from '../features/testimonials/testimonials';
@@ -12,7 +13,7 @@ import { authguardGuard } from '../core/guards/authguard-guard';
 import { Register } from '../features/account/register/register';
 
 export const routes: Routes = [
-  { path: 'home', component: Home },
+  { path: '', component: Home },
   { path: 'about', component: About },
   { path: 'features', component: Feature },
   { path: 'testimonials', component: Testimonials },
@@ -21,6 +22,7 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'errors', component: TestErrors },
   { path: 'server-error', component: ServerError },
+  { path: 'dashboad', component: Dashboad },
   { path: '**', component: NotFound },
 
   // Protected routes
@@ -29,9 +31,8 @@ export const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [authguardGuard],
     children: [
-        { path: 'home', component: Home },
-      // { path: 'dashboard', component: DashboardComponent },
-      // { path: 'profile', component: ProfileComponent },
+        { path: 'dashboad', component: Dashboad },
+      // { path: 'profile', component: ProfileC },
     ],
   },
 ];

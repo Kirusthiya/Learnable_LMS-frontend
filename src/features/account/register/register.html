@@ -1,12 +1,8 @@
-<div
-  class="min-h-screen bg-[#212730] flex items-center justify-center p-4"
-  appKeyboardNav
-  tabindex="0"
->
+<main  id="main-content" role="main" aria-label="register" appKeyboardNav>
+<section class="login-container min-h-screen flex flex-col items-center justify-center bg-gray-900 text-white p-6" >
 
-  <div
-    class="w-full max-w-5xl bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl
-           grid grid-cols-1 lg:grid-cols-2 overflow-hidden border border-white/10">
+  <div class="w-full max-w-5xl bg-white/10 backdrop-blur-xl rounded-2xl shadow-2xl
+              grid grid-cols-1 lg:grid-cols-2 overflow-hidden border border-white/10">
 
     <!-- LEFT IMAGE -->
     <div class="hidden lg:flex items-center justify-center bg-[#e6e6e6]/5 p-10">
@@ -21,54 +17,78 @@
     <!-- RIGHT FORM -->
     <div class="p-10 flex flex-col justify-center gap-6 text-[#e6e6e6]">
 
-      <h2 class="text-3xl font-bold text-[#01acb4] mb-4"
-          appSpeak="Create your account">
+      <h2 class="text-3xl font-bold text-[#01acb4] mb-4" appSpeak="Create your account">
         Create Account
       </h2>
 
       <!-- USERNAME -->
-      <div>
-        <label class="text-sm text-[#e6e6e6]/70">Username</label>
+      <div class="flex gap-2 items-center">
         <input
           type="text"
           [(ngModel)]="creds.username"
           appInputSpeak
-          voiceInput
-          class="w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20 
-                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50
-                 outline-none text-[#e6e6e6] transition"
+          #usernameInput
+          [appVoiceInput]="usernameInput"
+          class="flex-1 w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20
+                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50 outline-none text-[#e6e6e6] transition"
           placeholder="Enter username"
+          appSpeak="Enter username"
+          
         />
+        <button
+          type="button"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+          [appVoiceInput]="usernameInput"
+          appSpeak="Start voice input for username"
+        >
+          🎤
+        </button>
       </div>
 
       <!-- EMAIL -->
-      <div>
-        <label class="text-sm text-[#e6e6e6]/70">Email</label>
+      <div class="flex gap-2 items-center">
         <input
           type="email"
           [(ngModel)]="creds.email"
           appInputSpeak
-          voiceInput
-          class="w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20
-                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50
-                 outline-none text-[#e6e6e6] transition"
+          #emailInput
+          [appVoiceInput]="emailInput"
+          class="flex-1 w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20
+                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50 outline-none text-[#e6e6e6] transition"
           placeholder="Enter email"
+           appSpeak="Enter email"
         />
+        <button
+          type="button"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+          [appVoiceInput]="emailInput"
+          appSpeak="Start voice input for email"
+        >
+          🎤
+        </button>
       </div>
 
       <!-- PASSWORD -->
-      <div>
-        <label class="text-sm text-[#e6e6e6]/70">Password</label>
+      <div class="flex gap-2 items-center">
         <input
           type="password"
           [(ngModel)]="creds.password"
           appInputSpeak
-          voiceInput
-          class="w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20
-                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50
-                 outline-none text-[#e6e6e6] transition"
+          #passwordInput
+          [appVoiceInput]="passwordInput"
+          class="flex-1 w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20
+                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50 outline-none text-[#e6e6e6] transition"
           placeholder="Enter password"
+          appSpeak="Enter password"
         />
+        <button
+          type="button"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+          [appVoiceInput]="passwordInput"
+          appSpeak="Start voice input for password"
+        >
+          🎤
+        </button>
       </div>
 
       <!-- SEND OTP BUTTON -->
@@ -86,19 +106,26 @@
       </button>
 
       <!-- OTP FIELD -->
-      <div *ngIf="otpSent"
-           class="animate-[fadeIn_0.4s_ease-out]">
-        <label class="text-sm text-[#e6e6e6]/70">Enter OTP</label>
+      <div *ngIf="otpSent" class="animate-[fadeIn_0.4s_ease-out] flex gap-2 items-center">
         <input
           type="text"
           [(ngModel)]="creds.otp"
           appInputSpeak
-          voiceInput
-          class="w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20
-                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50
-                 outline-none text-[#e6e6e6] transition"
+          #otpInput
+          [appVoiceInput]="otpInput"
+          class="flex-1 w-full mt-1 p-3 rounded-xl bg-white/10 border border-white/20
+                 focus:border-[#01acb4] focus:ring-2 focus:ring-[#01acb4]/50 outline-none text-[#e6e6e6] transition"
           placeholder="Enter the OTP"
+           appSpeak="Enter the OTP"
         />
+        <button
+          type="button"
+          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+          [appVoiceInput]="otpInput"
+          appSpeak="Start voice input for OTP"
+        >
+          🎤
+        </button>
       </div>
 
       <!-- REGISTER BUTTON -->
@@ -126,4 +153,5 @@
 
     </div>
   </div>
-</div>
+</section>
+
