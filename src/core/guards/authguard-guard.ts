@@ -12,9 +12,10 @@ export const authguardGuard: CanActivateFn = (route, state) => {
 
   if (!user) {
     toastService.error('You must login first!');
-    router.navigate(['/dashboad']);
+    router.navigate(['/login']);
     return false;
   }
-
   return true;
 };
+
+

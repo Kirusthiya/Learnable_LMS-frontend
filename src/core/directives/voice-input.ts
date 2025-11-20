@@ -11,8 +11,14 @@ export class VoiceInputDirective {
 
   constructor(private speech: SpeechService) {}
 
+     private canSpeak(): boolean {
+    return document.body.getAttribute('speech-enabled') !== 'false';
+  }
+
+
   @HostListener('click')
   startMic() {
+     if (!this.canSpeak()) return;
     const SR =
       (window as any).webkitSpeechRecognition ||
       (window as any).SpeechRecognition;

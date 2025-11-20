@@ -14,6 +14,7 @@ export class AccountService {
 
   private baseUrl = environment.apiUrl;
 
+  
 
   sendOtp(email: string) {
     return this.http.post(`${this.baseUrl}account/send-otp`,{email});
@@ -57,8 +58,9 @@ export class AccountService {
   }
 
 
-  logout() {
-    localStorage.removeItem('user');
+ logout(){
+    localStorage.removeItem('user'); 
     this.currentUser.set(null);
   }
+
 }

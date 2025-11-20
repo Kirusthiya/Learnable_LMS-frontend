@@ -9,6 +9,7 @@ import { KeyboardNav } from '../../../core/directives/accessibility/keyboard-nav
 import { SpeechService } from '../../../core/services/speech-service';
 import { VoiceInputDirective } from '../../../core/directives/voice-input';
 import { InputSpeakDirective } from '../../../core/directives/app-input-speak';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
@@ -21,6 +22,7 @@ export class Register {
   private accountService = inject(AccountService);
   private toast = inject(ToastService);
   private speech = inject(SpeechService);
+  private router =inject(Router)
 
   cancelRegister = output<boolean>();
   protected creds = {} as RegisterCreds;
@@ -76,6 +78,7 @@ export class Register {
 
     this.accountService.register(this.creds).subscribe({
       next: () => {
+        this.router.navigateByUrl('/dashboad');
         this.toast.success('Registration successful!');
         this.speech.speak('Registration successful!');
         this.registering = false;
