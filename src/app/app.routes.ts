@@ -11,6 +11,7 @@ import { Contact } from '../features/contact/contact';
 import { Login } from '../features/account/login/login';
 import { authguardGuard } from '../core/guards/authguard-guard';
 import { Register } from '../features/account/register/register';
+import { Profile } from '../features/profile/profile';
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -20,21 +21,21 @@ export const routes: Routes = [
   { path: 'contact', component: Contact },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
-
-  {
-    path: 'dashboad',
-    component: Dashboad,
-    canActivate: [authguardGuard],
-    runGuardsAndResolvers: 'always',
-    children: [
-      { path: 'profile', component: Dashboad },
-      { path: 'notification', component: Notification },
-    ]
-  },
-
   { path: 'errors', component: TestErrors },
   { path: 'server-error', component: ServerError },
+  { path: 'dashboad', component: Dashboad },
   { path: '**', component: NotFound },
+
+  // Protected routes
+  {
+    path: 'dashboad',
+    runGuardsAndResolvers: 'always',
+    canActivate: [authguardGuard],
+    children: [
+        { path: 'profile', component: Profile },
+       { path: 'profile', component: Notification },
+    ],
+  },
 ];
 
 
