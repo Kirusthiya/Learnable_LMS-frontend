@@ -16,16 +16,6 @@ import { Router, RouterOutlet } from '@angular/router';
 export class App  {
   
    protected router = inject(Router);
-showLogin = false; // Initially login hide
 
-  // button click aana time la call panna
-  openLogin() {
-    this.showLogin = true;
-  }
-
-  // back button la call panna
-  closeLogin() {
-    this.showLogin = false;
-  }
   
 }
