@@ -33,14 +33,17 @@ export class InitService {
   private accountService = inject(AccountService);
 
   init() {
+  return new Promise<void>((resolve) => {
     const userString = localStorage.getItem('user');
-    if (!userString) return of(null);
 
-    const user: User = JSON.parse(userString);
+    if (userString) {
+      const user: User = JSON.parse(userString);
+      this.accountService.setCurrentUser(user);
+    }
 
-    this.accountService.setCurrentUser(user);
+    resolve();
+  });
+}
 
-    return of(null);
-  }
   
 }

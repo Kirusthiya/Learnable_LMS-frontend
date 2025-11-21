@@ -31,7 +31,6 @@ export class Login {
   closeLogin = output<boolean>();
 
 
-  // 🔹 Add this property
   micActive: boolean = false;  // <-- FIX
 
   // Back button
@@ -61,13 +60,7 @@ export class Login {
     })
   }
 
-  logout(){
-    // this.loggedIn.set(false);
-    this.accountService.logout();
-    this.router.navigateByUrl('/'); 
-    this.toast.info('Logout successfully');
-    this.speech.speak('Logout successfully')
-  }
+
 
   // Mic toggle
   toggleMic() {

@@ -20,21 +20,21 @@ export const routes: Routes = [
   { path: 'contact', component: Contact },
   { path: 'login', component: Login },
   { path: 'register', component: Register },
+
+  {
+    path: 'dashboad',
+    component: Dashboad,
+    canActivate: [authguardGuard],
+    runGuardsAndResolvers: 'always',
+    children: [
+      { path: 'profile', component: Dashboad },
+      { path: 'notification', component: Notification },
+    ]
+  },
+
   { path: 'errors', component: TestErrors },
   { path: 'server-error', component: ServerError },
-  { path: 'dashboad', component: Dashboad },
   { path: '**', component: NotFound },
-
-  // Protected routes
-  {
-    path: '',
-    runGuardsAndResolvers: 'always',
-    canActivate: [authguardGuard],
-    children: [
-        { path: 'dashboad', component: Dashboad },
-      // { path: 'profile', component: ProfileC },
-    ],
-  },
 ];
 
 
