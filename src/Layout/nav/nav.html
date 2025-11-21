@@ -1,47 +1,157 @@
+
+
+
 <header appKeyboardNav>
-  <nav class="md:flex gap-5 my-2 uppercase text-white/90 text-sm">
+  <nav class="md:flex gap-5 my-2 uppercase text-white/90 text-sm relative">
 
-    <a routerLink="/" class="brand aurora-text" appSpeak="Learnable Home">Learnable</a>
+    <!-- Brand -->
+    <a routerLink="/" class="brand aurora-text" appSpeak="Learnable Home" tabindex="0">Learnable</a>
 
-    @if (accountService.currentUser()) {
+    <!-- Right Side -->
+    <div class="flex items-center gap-3">
 
-      <ul class="nav-links">
-        <li><a routerLink="/dashboad" routerLinkActive="active" appSpeak="Dashboard">Dashboard</a></li>
-        <li><a routerLink="/notification" routerLinkActive="active" appSpeak="Notifications">Notifications</a></li>
-        <li><a (click)="logout()">Logout</a></li>
-      </ul>
+      @if (accountService.currentUser()) {
 
-    } @else {
+        <ul class="nav-links flex items-center gap-4">
 
-      <ul class="nav-links">
-        <li><a routerLink="/" routerLinkActive="active"  appSpeak=" Home">Home</a></li>
-        <li><a routerLink="/about" routerLinkActive="active"  appSpeak=" About">About</a></li>
-        <li><a routerLink="/features" routerLinkActive="active" appSpeak="Features">Features</a></li>
-        <li><a routerLink="/testimonials" routerLinkActive="active" appSpeak="Testimonials">Testimonials</a></li>
-      </ul>
+          <!-- PROFILE -->
+          <li class="relative">
+            <button class="p-2 rounded-full hover:bg-white/20 transition md:block hidden flex items-center gap-2"
+                    (click)="toggleProfileDropdown($event)" 
+                    appSpeak="Profile" tabindex="0"
+                    aria-haspopup="true" [attr.aria-expanded]="profileDropdownOpen">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                   stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M17.982 18.725A7.488 7.488 0 0 0 12 15.75a7.488 7.488 0 0 0-5.982 2.975m11.963 0a9 9 0 1 0-11.963 0m11.963 0A8.966 8.966 0 0 1 12 21a8.966 8.966 0 0 1-5.982-2.275M15 9.75a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"/>
+              </svg>
+            </button>
 
+            <!-- Profile Dropdown -->
+            @if (profileDropdownOpen) {
+              <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-xl z-50 p-3"
+                 appKeyboardNav  tabindex="0">
+
+                <div class="px-3 py-2 font-semibold border-b" appSpeak={{accountService.currentUser()?.fullName}}>
+                {{accountService.currentUser()?.fullName}}
+                </div>
+
+                <a routerLink="/dashboad/upgradeplan" class="block px-3 py-2 hover:bg-gray-100"
+                   appSpeak="Upgrade Plan" tabindex="0">Upgrade Plan</a>
+
+                <!-- HELP submenu -->
+                <div >
+                  <button class="w-full text-left px-3 py-2 hover:bg-gray-100 flex justify-between items-center"
+                          (click)="toggleHelpDropdown($event)" appSpeak="Help Menu" tabindex="0"
+                          aria-haspopup="true" [attr.aria-expanded]="helpDropdownOpen">
+                    Help <span>&#9654;</span>
+                  </button>
+
+                  @if (helpDropdownOpen) {
+                    <div class="absolute left-full top-0 w-48 bg-white text-black rounded-lg shadow-xl p-2"
+                         tabindex="0">
+                      <a routerLink="/dashboad/help" class="block px-3 py-2 hover:bg-gray-100"
+                         appSpeak="Help Center" tabindex="0">Help Center</a>
+                      <a routerLink="/dashboad/profile" class="block px-3 py-2 hover:bg-gray-100"
+                         appSpeak="Keyboard Shortcuts" tabindex="0">Keyboard Shortcuts</a>
+                    </div>
+                  }
+                </div>
+
+                <a routerLink="/dashboad/profile" class="block px-3 py-2 hover:bg-gray-100"
+                   appSpeak="Edit Profile" tabindex="0">Edit Profile</a>
+                <a routerLink="/dashboad/setting" class="block px-3 py-2 hover:bg-gray-100 rounded-lg shadow-sm"
+                   appSpeak="Settings" tabindex="0">Settings</a>
+                <button (click)="logout()" class="w-full text-left px-3 py-2 hover:bg-red-100 text-red-600"
+                        appSpeak="Logout" tabindex="0">Logout</button>
+              </div>
+            }
+          </li>
+
+          <!-- NOTIFICATION -->
+          <li>
+            <a routerLink="/dashboad/notification" routerLinkActive="active"
+               class="p-2 rounded-full hover:bg-white/20 transition md:block hidden"
+               appSpeak="Notification" tabindex="0">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                   stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0M3.124 7.5A8.969 8.969 0 0 1 5.292 3m13.416 0a8.969 8.969 0 0 1 2.168 4.5"/>
+              </svg>
+            </a>
+          </li>
+
+        </ul>
+        
+
+      } @else {
+
+          <!-- Accessibility Button -->
+      <button (click)="toggleMenu()"
+        class="p-2 rounded-full hover:bg-white/20 transition md:block hidden">
+        <svg xmlns="http://www.w3.org/2000/svg" class="size-6" fill="currentColor"
+          viewBox="0 0 16 16">
+          <path fill-rule="evenodd"
+            d="M11.914 4.086a2 2 0 0 0-2.828 
+            0l-5 5a2 2 0 1 0 2.828 
+            2.828l.556-.555a.75.75 
+            0 0 1 1.06 
+            1.06l-.555.556a3.5 3.5 
+            0 0 1-4.95-4.95l5-5a3.5 
+            3.5 0 0 1 4.95 
+            4.95l-1.972 
+            1.972a.625.625 
+            0 0 0 .884.883l1.972-1.972a2 2 
+            0 0 0 0-2.828Z" />
+        </svg>
+      </button>
+
+        <ul class="nav-links">
+          <li><a routerLink="/" routerLinkActive="active" appSpeak="Home" tabindex="0">Home</a></li>
+          <li><a routerLink="/about" routerLinkActive="active" appSpeak="About" tabindex="0">About</a></li>
+          <li><a routerLink="/features" routerLinkActive="active" appSpeak="Features" tabindex="0">Features</a></li>
+          <li><a routerLink="/testimonials" routerLinkActive="active" appSpeak="Testimonials" tabindex="0">Testimonials</a></li>
+        </ul>
+
+      }
+
+      <!-- MOBILE MENU ICON -->
+      <button id="mobile-menu-toggle" class="md:hidden" (click)="toggleMobileMenu()" appSpeak="Mobile Menu Toggle" tabindex="0">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 6h16M4 12h16M4 18h16"/>
+        </svg>
+      </button>
+
+    </div>
+
+    <!-- Accessibility Popup -->
+    @if (showMenu) {
+      <div class="absolute top-16 bg-white text-black rounded shadow-md p-2 w-40 z-50" appKeyboardNav>
+        <button class="w-full px-3 py-2 hover:bg-gray-200"
+                (click)="setMode('blind'); closeMobileMenu()" appSpeak="Blind Mode">Blind Mode</button>
+        <button class="w-full px-3 py-2 hover:bg-gray-200"
+                (click)="setMode('deaf'); closeMobileMenu()" appSpeak="Deaf Mode">Deaf Mode</button>
+      </div>
     }
 
-    <button id="mobile-menu-toggle" aria-label="Toggle mobile menu" appSpeak="Toggle Mobile Menu">
-      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-        <path stroke-linecapzz="round" stroke-linejoin="round" stroke-width="2"
-              d="M4 6h16M4 12h16M4 18h16"/>
-      </svg>
-    </button>
-    
+    <!-- MOBILE MENU -->
+    <div id="mobile-menu" [class.open]="mobileMenuOpen">
+      @if (accountService.currentUser()) {
+        <a routerLink="/dashboad/profile" (click)="closeMobileMenu()" appSpeak="Profile">Profile</a>
+        <a routerLink="/dashboad/notification" (click)="closeMobileMenu()" appSpeak="Notifications">Notifications</a>
+        <a routerLink="/dashboad/upgradeplan" (click)="closeMobileMenu()" appSpeak="Upgrade Plan">Upgrade Plan</a>
+        <a routerLink="/dashboad/help" (click)="closeMobileMenu()" appSpeak="Help Center">Help Center</a>
+        <a routerLink="/dashboad/editprofile" (click)="closeMobileMenu()" appSpeak="Edit Profile">Edit Profile</a>
+        <a routerLink="/dashboad/setting" (click)="closeMobileMenu()" appSpeak="Settings">Settings</a>
+        <a (click)="logout()" appSpeak="Logout">Logout</a>
+      } @else {
+        <a routerLink="/" appSpeak="Home" (click)="closeMobileMenu()">Home</a>
+        <a routerLink="/about" appSpeak="About" (click)="closeMobileMenu()">About</a>
+        <a routerLink="/features" appSpeak="Features" (click)="closeMobileMenu()">Features</a>
+        <a routerLink="/testimonials" appSpeak="Testimonials" (click)="closeMobileMenu()">Testimonials</a>
+      }
+    </div>
+
   </nav>
-
-  <!-- MOBILE MENU -->
-  <div id="mobile-menu">
-    @if (accountService.currentUser()) {
-      <a routerLink="/dashboad" appSpeak="Dashboard">Dashboard</a>
-      <a routerLink="/notification" appSpeak="Notifications">Notifications</a>
-      <a (click)="logout()" appSpeak="Logout">Logout</a>
-    } @else {
-      <a routerLink="/" routerLinkActive="active"  appSpeak=" Home">Home</a>
-      <a routerLink="/about" appSpeak=" About">About</a>
-      <a routerLink="/features" appSpeak=" Features">Features</a>
-      <a routerLink="/testimonials" appSpeak=" Testimonials">Testimonials</a>
-    }
-  </div>
 </header>
