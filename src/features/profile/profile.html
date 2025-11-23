@@ -1,15 +1,39 @@
- <div class="about-grid">
-      <div class="fade-up" tabindex="0" appSpeak="About Learnable">
-        <h2 class="about-title">About Learnable</h2>
-        <p class="about-text" tabindex="0" appSpeak="Learnable is a revolutionary learning management system designed with accessibility at its core. We believe education should be available to everyone, regardless of their abilities or learning preferences.">
-          Learnable is a revolutionary learning management system designed with accessibility at its core. We
-          believe education should be available to everyone, regardless of their abilities or learning
-          preferences.
-        </p>
-        <p class="about-text" tabindex="0" appSpeak="Our platform integrates cutting-edge speech technology, keyboard navigation, and visual design principles to create an inclusive learning environment. Every feature is built with WCAG 2.1 AA compliance in mind, ensuring that students with visual, auditory, motor, or cognitive disabilities can fully participate in their education.">
-          Our platform integrates cutting-edge speech technology, keyboard navigation, and visual design
-          principles to create an inclusive learning environment. Every feature is built with WCAG 2.1 AA
-          compliance in mind, ensuring that students with visual, auditory, motor, or cognitive disabilities can
-          fully participate in their education.
-        </p>
+<div class="min-h-screen flex items-center justify-center bg-[#212730] text-[#e6e6e6]">
+  <div class="bg-[#212730] p-6 rounded-xl w-full max-w-md shadow-lg relative">
+
+    <div class="flex justify-center mb-4">
+      <img [src]="avatarUrl" alt="avatar" class="w-24 h-24 rounded-full border-2 border-[#01acb4]" />
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="submit()">
+      <h2 class="text-2xl font-bold mb-6 text-center">Edit Profile</h2>
+
+      <div class="mb-4 flex flex-col">
+        <label class="mb-1 font-medium">Full Name</label>
+        <input formControlName="fullName" placeholder="Optional"
+               class="p-2 rounded-md border border-[#e6e6e6] bg-[#212730] text-[#e6e6e6] focus:border-[#01acb4] focus:outline-none" />
+        <small class="text-red-500">{{ fullNameError }}</small>
       </div>
+
+      <div class="mb-4 flex flex-col">
+        <label class="mb-1 font-medium">Display Name</label>
+        <input formControlName="displayName" placeholder="Required"
+               class="p-2 rounded-md border border-[#e6e6e6] bg-[#212730] text-[#e6e6e6] focus:border-[#01acb4] focus:outline-none" />
+        <small class="text-red-500">{{ displayNameError }}</small>
+      </div>
+
+      <div class="mb-6 flex flex-col">
+        <label class="mb-1 font-medium">Username</label>
+        <input formControlName="username"
+               class="p-2 rounded-md border border-[#e6e6e6] bg-[#212730] text-[#e6e6e6] focus:border-[#01acb4] focus:outline-none" />
+        <small class="text-red-500">{{ usernameError }}</small>
+      </div>
+
+      <button type="submit"
+              [disabled]="submitting"
+              class="w-full bg-[#01acb4] text-[#212730] font-bold py-2 rounded-md hover:bg-opacity-90 disabled:bg-gray-500">
+        {{ submitting ? 'Updating...' : 'Update Profile' }}
+      </button>
+    </form>
+  </div>
+</div>
