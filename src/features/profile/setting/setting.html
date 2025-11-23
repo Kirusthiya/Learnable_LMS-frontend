@@ -1,24 +1,21 @@
 <div class="relative flex h-auto min-h-screen w-full flex-col overflow-x-hidden">
   <!-- Header -->
-  <div class="sticky top-0 z-10 w-full border-b border-gray-200/80 dark:border-gray-800/80 bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
+  <div class="sticky top-0 z-10 w-full border-b bg-background-light/80 dark:bg-background-dark/80 backdrop-blur-sm">
     <div class="flex items-center p-4">
-      <h2 class="text-lg font-bold flex-1 text-center pr-10 text-gray-900 dark:text-gray-50">
-        Accessibility Settings
-      </h2>
+      <h2 class="text-lg font-bold flex-1 text-center pr-10">Accessibility Settings</h2>
     </div>
   </div>
 
   <main class="flex-1 pb-28 space-y-6 px-4">
-
     <!-- Display & Vision -->
-    <section class="bg-white dark:bg-gray-800/50 rounded-lg border border-gray-200/80 dark:border-gray-700/60 p-4 space-y-4">
-      <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Display & Vision</h3>
+    <section class="bg-white dark:bg-gray-800/50 rounded-lg border p-4 space-y-4">
+      <h3 class="text-lg font-bold">Display & Vision</h3>
 
       <div>
-        <p class="text-base font-medium text-gray-900 dark:text-gray-100">Text Size: {{settings.textSize}}px</p>
+        <p class="text-base font-medium">Text Size: {{settings.textSize}}px</p>
         <input type="range" min="12" max="40" step="1" [value]="settings.textSize"
                (input)="settings.textSize = $any($event.target).value"
-               class="w-full h-2 bg-gray-200 rounded-lg appearance-none dark:bg-gray-700"/>
+               class="w-full h-2 rounded-lg bg-gray-200" />
       </div>
 
       <div class="flex gap-2">
@@ -35,55 +32,55 @@
     </section>
 
     <!-- Audio & Hearing -->
-    <section class="bg-white dark:bg-gray-800/50 rounded-lg border border-gray-200/80 dark:border-gray-700/60 p-4 space-y-4">
-      <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Audio & Hearing</h3>
+    <section class="bg-white dark:bg-gray-800/50 rounded-lg border p-4 space-y-4">
+      <h3 class="text-lg font-bold">Audio & Hearing</h3>
 
       <div class="flex justify-between items-center">
-        <p class="text-base font-normal text-gray-900 dark:text-gray-100">Enable Subtitles</p>
-        <input type="checkbox" [(ngModel)]="settings.enableSubtitles" class="toggle-checkbox"/>
+        <p class="text-base font-normal">Enable Subtitles</p>
+        <input type="checkbox" [(ngModel)]="settings.enableSubtitles" />
       </div>
 
       <div>
-        <p class="text-base font-medium text-gray-900 dark:text-gray-100">Voice Speed: {{settings.voiceSpeed}}x</p>
+        <p class="text-base font-medium">Voice Speed: {{settings.voiceSpeed}}x</p>
         <input type="range" min="0.5" max="2.0" step="0.1" [value]="settings.voiceSpeed"
                (input)="settings.voiceSpeed = $any($event.target).value"
-               class="w-full h-2 bg-gray-200 rounded-lg appearance-none dark:bg-gray-700"/>
+               class="w-full h-2 rounded-lg bg-gray-200" />
+      </div>
+
+      <div>
+        <p class="text-base font-medium">Voice Volume: {{settings.voiceVolume | number:'1.1-2'}}</p>
+        <input type="range" min="0" max="1" step="0.05" [value]="settings.voiceVolume"
+               (input)="settings.voiceVolume = $any($event.target).value"
+               class="w-full h-2 rounded-lg bg-gray-200" />
+      </div>
+
+      <div class="flex gap-2">
+        <button type="button" (click)="previewVoice()" class="px-3 py-2 rounded bg-primary text-white">Preview Voice</button>
       </div>
     </section>
 
     <!-- Interaction & Control -->
-    <section class="bg-white dark:bg-gray-800/50 rounded-lg border border-gray-200/80 dark:border-gray-700/60 p-4 space-y-4">
-      <h3 class="text-lg font-bold text-gray-800 dark:text-gray-200">Interaction & Control</h3>
+    <section class="bg-white dark:bg-gray-800/50 rounded-lg border p-4 space-y-4">
+      <h3 class="text-lg font-bold">Interaction & Control</h3>
 
       <div class="flex justify-between items-center">
-        <p class="text-base font-normal text-gray-900 dark:text-gray-100">Speech-to-Text Input</p>
-        <input type="checkbox" [(ngModel)]="settings.speechToText" class="toggle-checkbox"/>
+        <p class="text-base font-normal">Speech-to-Text Input</p>
+        <input type="checkbox" [(ngModel)]="settings.speechToText" />
       </div>
 
       <div class="flex justify-between items-center">
-        <p class="text-base font-normal text-gray-900 dark:text-gray-100">Keyboard Navigation</p>
-        <input type="checkbox" [(ngModel)]="settings.keyboardNav" class="toggle-checkbox"/>
+        <p class="text-base font-normal">Keyboard Navigation</p>
+        <input type="checkbox" [(ngModel)]="settings.keyboardNav" />
       </div>
     </section>
-
-    <!-- Help & Info -->
-    <section class="bg-white dark:bg-gray-800/50 rounded-lg border border-gray-200/80 dark:border-gray-700/60">
-      <a href="#" class="flex items-center justify-between p-4 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors duration-150">
-        <p class="text-base font-medium text-gray-900 dark:text-gray-100">Accessibility Guide</p>
-        <span class="material-symbols-outlined text-gray-400 dark:text-gray-500">chevron_right</span>
-      </a>
-    </section>
-
   </main>
 
   <!-- Buttons -->
   <div class="flex gap-4 p-4">
-    <button (click)="applyChanges()"
-            class="flex-1 h-12 bg-primary text-white font-bold rounded-lg shadow hover:bg-primary/90 transition-all">
+    <button (click)="applyChanges()" class="flex-1 h-12 bg-primary text-white font-bold rounded-lg">
       Apply Changes
     </button>
-    <button (click)="cancelChanges()"
-            class="flex-1 h-12 bg-gray-300 text-gray-800 font-bold rounded-lg shadow hover:bg-gray-400 transition-all">
+    <button (click)="cancelChanges()" class="flex-1 h-12 bg-gray-300 text-gray-800 font-bold rounded-lg">
       Cancel
     </button>
   </div>

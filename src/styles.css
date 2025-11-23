@@ -46,7 +46,7 @@ body {
   --app-voice-speed: 1;
 }
 
-body {
+html, body {
   font-size: var(--app-font-size);
 }
 
