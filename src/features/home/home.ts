@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Output, signal } from '@angular/core';
-import { Speak } from '../../core/directives/accessibility/speak';
+import {  Speak } from '../../core/directives/accessibility/speak';
 import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
 import { About } from "../about/about";
 import { Contact } from "../contact/contact";
