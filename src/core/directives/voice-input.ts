@@ -1,5 +1,5 @@
 import { Directive, HostListener, Input } from '@angular/core';
-import { SpeechService } from '../services/speech-service';
+import { SpeechService } from '../services/Voice/speech-service';
 
 @Directive({
   selector: '[appVoiceInput]'

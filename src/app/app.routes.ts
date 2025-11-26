@@ -18,6 +18,8 @@ import { Upgradeplan } from '../features/profile/upgradeplan/upgradeplan';
 import { Help } from '../features/profile/help/help';
 import { Setting } from '../features/profile/setting/setting';
 import { Editprofile } from '../features/profile/editprofile/editprofile';
+import { Details } from '../features/details/details';
+
 
 export const routes: Routes = [
   { path: '', component: Home },
@@ -28,6 +30,8 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'errors', component: TestErrors },
+  { path: 'details/:id', component: Details },
+
  
 
   { path: 'server-error', component: ServerError },

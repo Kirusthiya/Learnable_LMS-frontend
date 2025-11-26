@@ -2,8 +2,9 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccessibilitySettings } from '../../../types/SettingsService';
-import { SettingsService } from '../../../core/services/settings-service';
-import { SpeechService } from '../../../core/services/speech-service';
+import { SettingsService } from '../../../core/services/Voice/settings-service';
+import { SpeechService } from '../../../core/services/Voice/speech-service';
+
 
 
 @Component({
