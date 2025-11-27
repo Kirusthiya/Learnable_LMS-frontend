@@ -7,7 +7,7 @@ module.exports = {
         primary: '#01acb4',
         background: '#212730',
         inputbg: '#1f2730',
-        textlight: '#e6e6e6',
+        textlight: '#212730',
       },
       fontFamily: {
         sans: ['Inter', 'ui-sans-serif', 'system-ui'], // modern sans
