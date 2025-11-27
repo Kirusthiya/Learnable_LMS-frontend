@@ -1,0 +1,82 @@
+<div class="p-4 rounded-lg shadow-xl bg-background border border-inputbg max-w-lg mx-auto relative">
+  
+  <div class="flex items-center space-x-2">
+    <input
+      type="text"
+      placeholder="Search class names or teachers..."
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onSearchTermChange()"
+      class="flex-grow p-3 text-textlight bg-inputbg rounded-lg focus:outline-none focus:ring-2 focus:ring-primary placeholder-textlight/50 transition duration-150"
+      (blur)="searchService.clearResults()"
+      (focus)="onSearchTermChange()"
+    />
+
+    <!-- Loader -->
+    <div *ngIf="loading" class="text-primary animate-spin">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m15.356-2A8.001 8.001 0 004.582 15m0 0H9m1.071 3.511a8.001 8.001 0 0015.356-2A8.001 8.001 0 004.582 9">
+        </path>
+      </svg>
+    </div>
+
+    <!-- Search icon -->
+    <div *ngIf="!loading && !selectedItem" class="text-textlight/70">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z">
+        </path>
+      </svg>
+    </div>
+    
+    <!-- View details button -->
+    <button 
+      *ngIf="selectedItem"
+      (click)="viewDetails()" 
+      class="px-4 py-2 text-white bg-primary rounded-lg font-display text-sm hover:bg-opacity-90 transition duration-150 shadow-md whitespace-nowrap"
+    >
+      View Details
+    </button>
+  </div>
+
+  <!-- Suggestions Dropdown -->
+  <ul 
+    *ngIf="suggestions().length > 0"
+    class="absolute z-10 w-full left-0 mt-2 bg-inputbg rounded-lg shadow-2xl border border-primary/50 max-h-60 overflow-y-auto"
+  >
+    <li 
+      *ngFor="let result of suggestions()"
+      (mousedown)="selectSuggestion(result)" 
+      class="p-3 cursor-pointer text-textlight hover:bg-background/70 border-b border-background/50 flex justify-between items-center transition duration-100"
+    >
+      <span class="font-body text-sm truncate">
+        {{ result.className || result.userName }}
+      </span>
+
+      <span 
+        class="ml-4 px-2 py-0.5 text-xs rounded-full"
+        [ngClass]="{
+          'bg-blue-600 text-white': result.userRole === 'Teacher',
+          'bg-green-600 text-white': result.userRole === 'Student',
+          'bg-gray-600 text-white': !result.className
+        }"
+      >
+        {{ result.className ? 'Class' : result.userRole }}
+      </span>
+    </li>
+  </ul>
+
+  <!-- No results message -->
+  <div 
+    *ngIf="!loading && suggestions().length === 0 && searchTerm.length > 2" 
+    class="mt-4 p-3 text-sm text-textlight/70 text-center"
+  >
+    No results found for "{{ searchTerm }}"
+  </div>
+
+  <!-- Selected item banner -->
+  <div *ngIf="selectedItem" class="mt-4 p-3 text-sm bg-background border-t border-inputbg rounded-b-lg text-primary">
+    Selected: {{ selectedItem.className || selectedItem.userName }} ({{ selectedItem.userRole }})
+  </div>
+
+</div>

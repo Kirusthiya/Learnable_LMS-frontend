@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
-import { AccessibilitySettings } from '../../types/SettingsService';
+import { AccessibilitySettings } from '../../../types/SettingsService';
 
 @Injectable({
   providedIn: 'root',

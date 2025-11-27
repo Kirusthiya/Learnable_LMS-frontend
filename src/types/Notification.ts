@@ -7,3 +7,13 @@ export interface Notification {
   type?: 'info' | 'success' | 'warning' | 'request';
   meta?: any;
 }
+
+
+export type GlobalSearch = {
+  classId: string; 
+  className: string;
+  userId:string
+  userName: string;
+  userRole: string;
+};
+

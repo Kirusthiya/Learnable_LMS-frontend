@@ -1,5 +1,6 @@
-import { Directive, HostListener } from '@angular/core';
-import { SpeechService } from '../../services/speech-service';
+import { Directive, HostListener } from "@angular/core";
+import { SpeechService } from "../../services/Voice/speech-service";
+
 
 @Directive({
   selector: '[appKeyboardNav]'
