@@ -5,7 +5,7 @@ import { Speak } from "../../../core/directives/accessibility/speak";
 import { InputSpeakDirective } from "../../../core/directives/app-input-speak";
 import { AccountService } from "../../../core/services/accountservices";
 import { Router } from "@angular/router";
-import { SpeechService } from "../../../core/services/speech-service";
+import { SpeechService } from "../../../core/services/Voice/speech-service";
 import { ToastService } from "../../../core/services/toast-service";
 import { Register } from "../register/register";
 import { LoginCreds } from "../../../types/user";

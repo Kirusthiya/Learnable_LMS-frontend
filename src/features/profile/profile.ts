@@ -5,10 +5,17 @@ import { AccountService } from '../../core/services/accountservices';
 import { UserService } from '../../core/services/user-service';
 import { ToastService } from '../../core/services/toast-service';
 import { User } from '../../types/user';
+import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
+import { Speak } from "../../core/directives/accessibility/speak";
+import { SpeechService } from '../../core/services/Voice/speech-service';
+import { VoiceInputDirective } from '../../core/directives/voice-input';
 
 @Component({
   selector: 'app-profile',
-  imports: [CommonModule, ReactiveFormsModule],
+  standalone: true,
+  imports: [
+    CommonModule, ReactiveFormsModule,KeyboardNav,Speak,VoiceInputDirective
+  ],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css'],
 })
@@ -18,29 +25,29 @@ export class Profile implements OnInit {
   private accountService = inject(AccountService);
   private userService = inject(UserService);
   private toast = inject(ToastService);
+  private speech = inject(SpeechService);
 
   editForm!: FormGroup;
   currentUser!: User;
   allUsers: User[] = [];
-  avatarUrl: string = '';
 
-  displayNameError: string = '';
-  usernameError: string = '';
-  fullNameError: string = '';
-  submitting: boolean = false;
+  displayNameError = '';
+  usernameError = '';
+  fullNameError = '';
+  submitting = false;
 
   ngOnInit(): void {
     const user = this.accountService.currentUser();
     if (!user) {
       this.toast.error('Unauthorized! Please login first.');
+      this.speech.speak("Unauthorized! Please login first.");
       return;
     }
 
     this.currentUser = user;
-    this.avatarUrl = `https://i.pravatar.cc/150?u=${this.currentUser.id}`;
 
     this.userService.getAllUsers().subscribe(users => {
-      this.allUsers = users.filter(u => u.id !== this.currentUser.id);
+      this.allUsers = users.filter(x => x.id !== this.currentUser.id);
     });
 
     this.initForm();
@@ -63,10 +70,6 @@ export class Profile implements OnInit {
     });
   }
 
-  isDisplayNameDuplicate(name: string): boolean {
-    return this.allUsers.some(u => u.displayName.toLowerCase() === name.toLowerCase());
-  }
-
   submit() {
     if (!this.currentUser) return;
 
@@ -76,53 +79,54 @@ export class Profile implements OnInit {
 
     const { fullName, displayName, username } = this.editForm.value;
 
-    // Username validation
+    // VALIDATION
     if (!username) {
       this.usernameError = 'Username is required';
+      this.speech.speak(this.usernameError);
       return;
     }
+
     if (username.length < 6 || username.length > 16) {
       this.usernameError = 'Username must be 6-16 characters';
+      this.speech.speak(this.usernameError);
       return;
     }
 
-    // Display name validation
-    if (!displayName) {
-      this.displayNameError = 'Display Name is required';
-      return;
-    }
     if (displayName.length < 6 || displayName.length > 16) {
       this.displayNameError = 'Display Name must be 6-16 characters';
-      return;
-    }
-    if (displayName === this.currentUser.displayName) {
-      this.displayNameError = 'Display Name same as current. Cannot reuse.';
-      return;
-    }
-    if (this.isDisplayNameDuplicate(displayName)) {
-      this.displayNameError = 'Display Name already taken';
+      this.speech.speak(this.displayNameError);
       return;
     }
 
-    // Full name validation (optional)
     if (fullName && (fullName.length < 6 || fullName.length > 16)) {
       this.fullNameError = 'Full Name must be 6-16 characters';
+      this.speech.speak(this.fullNameError);
       return;
     }
 
-    const updatedUser: User = { ...this.currentUser, fullName, displayName, username };
+    const updatedUser: User = {
+      ...this.currentUser,
+      fullName,
+      displayName,
+      username
+    };
 
     this.submitting = true;
 
     this.userService.updateUser(updatedUser).subscribe({
-      next: (res) => {
+      next: () => {
         this.accountService.setCurrentUser(updatedUser);
         this.submitting = false;
-        this.toast.success('Profile updated successfully!');
+
+        this.toast.success("Profile updated successfully!");
+        this.speech.speak("Profile updated successfully!");
       },
-      error: (err) => {
+      error: err => {
         this.submitting = false;
-        this.toast.error(err?.error?.message || 'Failed to update profile');
+
+        const msg = err?.error?.message || 'Failed to update profile';
+        this.toast.error(msg);
+        this.speech.speak(msg);
       }
     });
   }
