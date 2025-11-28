@@ -14,7 +14,6 @@ export class AccountService {
 
   private baseUrl = environment.apiUrl;
 
-  
 
   sendOtp(email: string) {
     return this.http.post(`${this.baseUrl}account/send-otp`,{email});

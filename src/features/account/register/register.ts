@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Speak } from '../../../core/directives/accessibility/speak';
 import { KeyboardNav } from '../../../core/directives/accessibility/keyboard-nav';
-import { SpeechService } from '../../../core/services/speech-service';
+import { SpeechService } from '../../../core/services/Voice/speech-service';
 import { VoiceInputDirective } from '../../../core/directives/voice-input';
 import { InputSpeakDirective } from '../../../core/directives/app-input-speak';
 import { Router } from '@angular/router';

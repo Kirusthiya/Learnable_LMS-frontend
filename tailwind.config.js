@@ -3,13 +3,18 @@ module.exports = {
   content: ["./src/**/*.{html,ts}"],
   theme: {
     extend: {
-       colors: {
-        dark: 'var(--color-dark)',
-        light: 'var(--color-light)',
-        accent: 'var(--color-accent)',
+      colors: {
+        primary: '#01acb4',
+        background: '#212730',
+        inputbg: '#1f2730',
+        textlight: '#e6e6e6',
+      },
+      fontFamily: {
+        sans: ['Inter', 'ui-sans-serif', 'system-ui'], // modern sans
+        display: ['Poppins', 'sans-serif'],
+        body: ['Roboto', 'sans-serif'],
       },
     },
   },
   plugins: [],
 }
-

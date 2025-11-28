@@ -1,11 +1,12 @@
 // User type
 export type User = {
-  id: string;               // User ID from backend
-  fullName: string;         // displayName → backend uses fullName
-  email: string;
-  token?: string;           // JWT token (optional, after login/register)
-      
+  id: string;            // Backend UUID
+  fullName: string;      // Full name
+  displayName: string;   // display name
+  username: string;      // Email / username
+  token?: string;        // JWT token
 };
+
 
 // Normal login creds
 export type LoginCreds = {
