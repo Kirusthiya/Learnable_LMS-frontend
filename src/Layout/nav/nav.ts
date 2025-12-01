@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, inject, OnDestroy, HostListener } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, HostListener, Output, EventEmitter } from '@angular/core';
 import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
 import { Speak } from '../../core/directives/accessibility/speak';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
@@ -14,6 +14,7 @@ export class Nav implements AfterViewInit, OnDestroy {
   private scrollHandler: any;
   private router = inject(Router);
   protected accountService = inject(AccountService);
+  @Output() menuStateChange = new EventEmitter<boolean>();
 
   showMenu = false; // accessibility menu toggle
   mobileMenuOpen = false; // mobile menu toggle
@@ -27,7 +28,7 @@ export class Nav implements AfterViewInit, OnDestroy {
     this.applyMode();
   }
 
-  toggleMenu() { this.showMenu = !this.showMenu; }
+  toggleMenu() { this.showMenu = !this.showMenu; }//for accessibility menu
 
   setMode(mode: 'blind' | 'deaf') {
     this.mode = mode;
@@ -41,41 +42,33 @@ export class Nav implements AfterViewInit, OnDestroy {
     document.body.setAttribute('speech-enabled', this.mode === 'blind' ? 'true' : 'false');
   }
 
-  toggleMobileMenu() { this.mobileMenuOpen = !this.mobileMenuOpen; }
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+    this.menuStateChange.emit(this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen);
+  }
 
-  // closeMobileMenu() {
-  //   this.mobileMenuOpen = false;
-  //   this.showMenu = false;
-  //   this.profileDropdownOpen = false;
-  //   this.helpDropdownOpen = false;
-  //   const mobileMenu = document.getElementById('mobile-menu');
-  //   mobileMenu?.classList.remove('open');
-  // }
-
-  closeMobileMenu() {
+ 
+ closeMobileMenu() {
     this.mobileMenuOpen = false;
     this.showMenu = false;
     this.profileDropdownOpen = false;
     this.helpDropdownOpen = false;
+    this.menuStateChange.emit(false); 
   }
 
   toggleProfileDropdown(event: Event) {
     event.stopPropagation();
     this.profileDropdownOpen = !this.profileDropdownOpen;
     if (!this.profileDropdownOpen) this.helpDropdownOpen = false;
+    this.menuStateChange.emit(this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen); // நிலையை அனுப்பவும்
   }
 
   toggleHelpDropdown(event: Event) {
     event.stopPropagation();
     this.helpDropdownOpen = !this.helpDropdownOpen;
+    this.menuStateChange.emit(this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen); // நிலையை அனுப்பவும்
   }
 
-  // @HostListener('document:click', ['$event'])
-  // handleClickOutside(event: any) {
-  //   const target = event.target as HTMLElement;
-  //   const header = document.querySelector('header');
-  //   if (!header?.contains(target)) this.closeMobileMenu();
-  // }
 
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: any) {
