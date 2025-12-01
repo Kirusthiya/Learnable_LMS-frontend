@@ -42,7 +42,7 @@ export class Details implements OnInit {
     const classInfo = this.classDetails();
     if (!user || !classInfo) return false;
 
-    return classInfo.students?.some(s => s.userId === user.id) || false;
+    return classInfo.students?.some(s => s.userId === user.user.id) || false;
   }
 
   handleJoinClass(): void {
@@ -58,7 +58,7 @@ export class Details implements OnInit {
     // Wrap payload in RequestDto as backend expects
     const payload = {
       RequestDto: {
-        SenderId: currentUser.id,
+        SenderId: currentUser.user.id,
         ReceiverId: classInfo.teacher.userId,
         ClassId: classInfo.classId,
         NotificationStatus: 'Pending'
@@ -79,4 +79,3 @@ export class Details implements OnInit {
     });
   }
 }
-
