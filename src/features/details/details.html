@@ -1,6 +1,54 @@
-<div class="pt-20 text-white">
-  <h2 class="text-xl font-bold">Class Details</h2>
+<div class="pt-20 flex justify-center">
+  <div *ngIf="classDetails() || userDetails()" class="max-w-md w-full bg-gray-800 text-white rounded-xl shadow-lg p-6 space-y-4">
 
-  <p>Class Name: {{ details?.className }}</p>
-  <p>Teacher: {{ details?.userName }}</p>
+    
+    <div *ngIf="classDetails()">
+      <h2 class="text-2xl font-bold text-center">
+        {{ classDetails()?.className }}
+      </h2>
+
+      <p class="text-center text-gray-400">
+        {{ classDetails()?.description }}
+      </p>
+
+      <hr class="border-gray-700 my-3"/>
+
+      <h3 class="text-lg font-semibold text-center">Teacher Details</h3>
+      <p class="text-gray-300 text-center">Name: {{ classDetails()?.teacher.fullName }}</p>
+      <p class="text-gray-300 text-center">Email: {{ classDetails()?.teacher.email }}</p>
+      <p class="text-gray-300 text-center">Bio: {{ classDetails()?.teacher.bio }}</p>
+
+      <hr class="border-gray-700 my-4"/>
+
+    </div>
+
+    <div *ngIf="userDetails()">
+      <h2 class="text-xl font-semibold text-center">{{ userDetails()?.fullName || 'User Info' }}</h2>
+      <h2 class="text-xl font-semibold text-center">{{ userDetails()?.displayName || 'User Info' }}</h2>
+      <p class="text-gray-300 text-center">Email: {{ userDetails()?.email }}</p>
+      <p class="text-gray-300 text-center">Phone: {{ userDetails()?.contactNumber }}</p>
+      <p class="text-gray-300 text-center">Bio: {{ userDetails()?.bio }}</p>
+
+      <h3 class="text-lg font-semibold">Enrolled Classes:</h3>
+      <ul>
+        <li *ngFor="let c of userDetails()?.enrolledClasses" class="text-gray-300">
+          {{ c.className }}
+        </li>
+      </ul>
+    </div>
+    
+      <button (click)="handleJoinClass()" [disabled]="joinLoading()" class="w-full px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
+        <span *ngIf="joinLoading()">Sending Request...</span>
+        <span *ngIf="!joinLoading()">Request to Join Class</span>
+      </button>
+
+      <p *ngIf="joinMessage()" class="text-green-400 text-center">{{ joinMessage() }}</p>
+
+  </div>
+
+  <div *ngIf="!classDetails() && !userDetails()" class="text-gray-400 text-center">
+    Loading details...
+  </div>
 </div>
+
+

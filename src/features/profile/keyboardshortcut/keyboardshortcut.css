@@ -1,0 +1,44 @@
+.shortcut-container {
+  max-width: 700px;
+  margin: 30px auto;
+  background: #000000;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0px 2px 8px rgba(0,0,0,0.1);
+}
+
+.title {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.subtitle {
+  color: #01acb4;
+  margin-bottom: 20px;
+}
+
+.shortcut-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.shortcut-table th,
+.shortcut-table td {
+  padding: 12px;
+  border-bottom: 1px solid #747474;
+}
+
+.shortcut-table th {
+  background: #000000;
+  text-align: left;
+}
+
+kbd {
+  background: #212730;
+  border-radius: 4px;
+  padding: 4px 7px;
+  border: 1px solid #212730;
+  font-weight: bold;
+  font-size: 14px;
+}

@@ -88,18 +88,7 @@ export class Nav implements AfterViewInit, OnDestroy {
     }
   }
 
-  // ngAfterViewInit(): void {
-  //   const header = document.querySelector('header');
-  //   const toggleBtn = document.getElementById('mobile-menu-toggle');
-
-  //   this.scrollHandler = () => {
-  //     if (window.scrollY > 50) header?.classList.add('scrolled');
-  //     else header?.classList.remove('scrolled');
-  //   };
-  //   window.addEventListener('scroll', this.scrollHandler);
-
-  //   toggleBtn?.addEventListener('click', () => this.toggleMobileMenu());
-  // }
+ 
 
   ngAfterViewInit(): void {
     const header = document.querySelector('header');

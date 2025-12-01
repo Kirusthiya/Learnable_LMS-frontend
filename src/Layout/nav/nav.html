@@ -29,8 +29,8 @@
               <div class="absolute right-0 mt-2 w-48 bg-white text-black rounded-lg shadow-xl z-50 p-3"
                  appKeyboardNav appSpeak="profil eDropdown Open"  tabindex="0">
 
-                <div class="px-3 py-2 font-semibold border-b" appSpeak={{accountService.currentUser()?.fullName}}>
-                {{accountService.currentUser()?.fullName}}
+                <div class="px-3 py-2 font-semibold border-b" appSpeak={{accountService.currentUser()?.user?.fullName}}>
+                {{accountService.currentUser()?.user?.fullName}}
                 </div>
 
                 <a routerLink="/dashboad/upgradeplan" class="block px-3 py-2 hover:bg-gray-100"
@@ -49,7 +49,7 @@
                      tabindex="0">
                       <a routerLink="/dashboad/help" class="block px-3 py-2 hover:bg-gray-100"
                          appSpeak="Help Center" tabindex="0">Help Center</a>
-                      <a routerLink="/dashboad/profile" class="block px-3 py-2 hover:bg-gray-100"
+                      <a routerLink="/dashboad/keyboardshortcut" class="block px-3 py-2 hover:bg-gray-100"
                          appSpeak="Keyboard Shortcuts" tabindex="0">Keyboard Shortcuts</a>
                     </div>
                   }
