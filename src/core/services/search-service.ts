@@ -1,42 +1,72 @@
-import { Injectable, signal } from '@angular/core';
+import { Injectable, inject, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { GlobalSearch } from '../../types/Notification';
-import { Subject, debounceTime, switchMap, of } from 'rxjs';
+import { environment } from '../../environments/environment';
+import { ClassDto, GlobalSearch, UserDetailsDto } from '../../types/Notification';
+
+
 
 @Injectable({
   providedIn: 'root'
 })
 export class SearchService {
-  private apiUrl = 'http://localhost:5071/api/Search';
 
-  // Signal for storing search results
-  private _results = signal<GlobalSearch[]>([]);
-  searchResults = this._results.asReadonly();
+  private http = inject(HttpClient);
+  private baseUrl = environment.apiUrl; // e.g., 'http://localhost:5071/api/'
 
-  // Subject to handle input changes
-  private searchTerm$ = new Subject<string>();
+  // === Signals ===
+  public globalSearchResults: WritableSignal<GlobalSearch[]> = signal([]);
+  public classDetails: WritableSignal<ClassDto | null> = signal(null);
+  public userDetails: WritableSignal<UserDetailsDto | null> = signal(null);
+  public joinClassLoading: WritableSignal<boolean> = signal(false);
+  public joinClassMessage: WritableSignal<string | null> = signal(null);
 
-  constructor(private http: HttpClient) {
-    // Observable pipeline for debouncing and API call
-    this.searchTerm$.pipe(
-      debounceTime(300),
-      switchMap(term => {
-        if (!term.trim()) return of([]); // Empty search returns empty array
-        return this.http.get<GlobalSearch[]>(`${this.apiUrl}?query=${encodeURIComponent(term)}`);
-      })
-    ).subscribe({
-      next: (res: GlobalSearch[]) => this._results.set(res),
-      error: () => this._results.set([])
+  // === Global Search ===
+  public globalSearch(query: string): void {
+    if (!query || query.trim() === '') {
+      this.globalSearchResults.set([]);
+      return;
+    }
+
+    const url = `${this.baseUrl}Search/GlobalSearch`;
+    this.http.get<GlobalSearch[]>(url, { params: { query } })
+      .subscribe({
+        next: (results) => this.globalSearchResults.set(results),
+        error: (err) => {
+          console.error('Global search failed', err);
+          this.globalSearchResults.set([]);
+        }
+      });
+  }
+
+  // === Class Details ===
+  public loadClassDetails(classId: string): void {
+    this.classDetails.set(null);
+    const url = `${this.baseUrl}Class/${classId}`;
+    this.http.get<ClassDto>(url)
+      .subscribe({
+        next: (details) => this.classDetails.set(details),
+        error: (err) => {
+          console.error('Class details fetch failed', err);
+          this.classDetails.set(null);
+        }
+      });
+  }
+
+  // === User Details + enrolled classes ===
+public loadUserDetails(userId: string): void {
+  this.userDetails.set(null);
+  const url = `${this.baseUrl}User/${userId}`;
+  
+  this.http.get<UserDetailsDto>(url)
+    .subscribe({
+      next: (details) => {
+        this.userDetails.set(details);
+      },
+      error: (err) => {
+        console.error('User details fetch failed', err);
+        this.userDetails.set(null);
+      }
     });
-  }
+}
 
-  // Called from component when user types
-  globalSearch(term: string) {
-    this.searchTerm$.next(term);
-  }
-
-  // Clear results signal
-  clearResults() {
-    this._results.set([]);
-  }
 }
