@@ -41,16 +41,23 @@ export class Nav implements AfterViewInit, OnDestroy {
     document.body.setAttribute('speech-enabled', this.mode === 'blind' ? 'true' : 'false');
   }
 
+  toggleMobileMenu() { this.mobileMenuOpen = !this.mobileMenuOpen; }
+
+  // closeMobileMenu() {
+  //   this.mobileMenuOpen = false;
+  //   this.showMenu = false;
+  //   this.profileDropdownOpen = false;
+  //   this.helpDropdownOpen = false;
+  //   const mobileMenu = document.getElementById('mobile-menu');
+  //   mobileMenu?.classList.remove('open');
+  // }
+
   closeMobileMenu() {
     this.mobileMenuOpen = false;
     this.showMenu = false;
     this.profileDropdownOpen = false;
     this.helpDropdownOpen = false;
-    const mobileMenu = document.getElementById('mobile-menu');
-    mobileMenu?.classList.remove('open');
   }
-
-  toggleMobileMenu() { this.mobileMenuOpen = !this.mobileMenuOpen; }
 
   toggleProfileDropdown(event: Event) {
     event.stopPropagation();
@@ -63,24 +70,44 @@ export class Nav implements AfterViewInit, OnDestroy {
     this.helpDropdownOpen = !this.helpDropdownOpen;
   }
 
+  // @HostListener('document:click', ['$event'])
+  // handleClickOutside(event: any) {
+  //   const target = event.target as HTMLElement;
+  //   const header = document.querySelector('header');
+  //   if (!header?.contains(target)) this.closeMobileMenu();
+  // }
+
   @HostListener('document:click', ['$event'])
   handleClickOutside(event: any) {
     const target = event.target as HTMLElement;
     const header = document.querySelector('header');
-    if (!header?.contains(target)) this.closeMobileMenu();
+    // Only close if menu is open and click is outside BOTH header and mobile menu
+    const mobileMenu = document.getElementById('mobile-menu');
+    if (this.mobileMenuOpen && !header?.contains(target) && !mobileMenu?.contains(target)) {
+      this.closeMobileMenu();
+    }
   }
+
+  // ngAfterViewInit(): void {
+  //   const header = document.querySelector('header');
+  //   const toggleBtn = document.getElementById('mobile-menu-toggle');
+
+  //   this.scrollHandler = () => {
+  //     if (window.scrollY > 50) header?.classList.add('scrolled');
+  //     else header?.classList.remove('scrolled');
+  //   };
+  //   window.addEventListener('scroll', this.scrollHandler);
+
+  //   toggleBtn?.addEventListener('click', () => this.toggleMobileMenu());
+  // }
 
   ngAfterViewInit(): void {
     const header = document.querySelector('header');
-    const toggleBtn = document.getElementById('mobile-menu-toggle');
-
     this.scrollHandler = () => {
       if (window.scrollY > 50) header?.classList.add('scrolled');
       else header?.classList.remove('scrolled');
     };
     window.addEventListener('scroll', this.scrollHandler);
-
-    toggleBtn?.addEventListener('click', () => this.toggleMobileMenu());
   }
 
   ngOnDestroy(): void { window.removeEventListener('scroll', this.scrollHandler); }
