@@ -18,7 +18,6 @@ import { Upgradeplan } from '../features/profile/upgradeplan/upgradeplan';
 import { Setting } from '../features/profile/setting/setting';
 import { Editprofile } from '../features/profile/editprofile/editprofile';
 import { Details } from '../features/details/details';
-import { Help } from '../features/profile/help/help';
 import { Keyboardshortcut } from '../features/profile/keyboardshortcut/keyboardshortcut';
 
 
