@@ -14,7 +14,6 @@ import { Register } from '../features/account/register/register';
 import { Profile } from '../features/profile/profile';
 import { Notification } from '../features/notification/notification';
 import { Upgradeplan } from '../features/profile/upgradeplan/upgradeplan';
-import { Help } from '../features/profile/help/help';
 import { Setting } from '../features/profile/setting/setting';
 import { Editprofile } from '../features/profile/editprofile/editprofile';
 import { Details } from '../features/details/details';
@@ -31,6 +30,7 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'errors', component: TestErrors },
   { path: 'details/:id', component: Details },
+   
 
  
 
@@ -50,7 +50,7 @@ export const routes: Routes = [
     { path: 'upgradeplan', component: Upgradeplan },
     { path: 'help', component: Help },
     { path: 'keyboardshortcut', component:Keyboardshortcut },
-
+  
     ],
   },
 
@@ -65,7 +65,6 @@ export const routes: Routes = [
 // ng g c features/Contact
 // ng g c features/Home
 // ng g c Layout/nav
-// ng g c features/Profile/setting
-// ng g c features/Profile/keyboardshortcut
+// ng g c features/Profile/Keyboardshortcut
 
 //ng g c shared/error/NotFound
