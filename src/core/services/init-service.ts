@@ -2,7 +2,7 @@
 import { inject, Injectable } from '@angular/core';
 import { of } from 'rxjs';
 import { AccountService } from './accountservices';
-import { User } from '../../types/user';
+import { User, UserResponse } from '../../types/user';
 
 @Injectable({
   providedIn: 'root'
@@ -13,11 +13,12 @@ export class InitService {
 
   init() {
   return new Promise<void>((resolve) => {
-    const userString = localStorage.getItem('user');
+     const userString = localStorage.getItem('user');
 
-    if (userString) {
-      const user: User = JSON.parse(userString);
-      this.accountService.setCurrentUser(user);
+
+   if (userString) {
+    const userResponse: UserResponse = JSON.parse(userString);
+      this.accountService.setCurrentUser(userResponse);
     }
 
     resolve();

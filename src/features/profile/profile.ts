@@ -44,7 +44,6 @@ export class Profile implements OnInit {
       return;
     }
 
-    this.currentUser = user;
 
     this.userService.getAllUsers().subscribe(users => {
       this.allUsers = users.filter(x => x.id !== this.currentUser.id);
@@ -115,7 +114,8 @@ export class Profile implements OnInit {
 
     this.userService.updateUser(updatedUser).subscribe({
       next: () => {
-        this.accountService.setCurrentUser(updatedUser);
+        // Wrap updatedUser to match the expected shape and cast to any to satisfy the service signature
+        this.accountService.setCurrentUser({ user: updatedUser } as any); // Refresh current user data
         this.submitting = false;
 
         this.toast.success("Profile updated successfully!");
