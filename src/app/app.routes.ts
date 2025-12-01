@@ -19,6 +19,7 @@ import { Help } from '../features/profile/help/help';
 import { Setting } from '../features/profile/setting/setting';
 import { Editprofile } from '../features/profile/editprofile/editprofile';
 import { Details } from '../features/details/details';
+import { Keyboardshortcut } from '../features/profile/keyboardshortcut/keyboardshortcut';
 
 
 export const routes: Routes = [
@@ -49,6 +50,8 @@ export const routes: Routes = [
     { path: 'setting', component: Setting },
     { path: 'upgradeplan', component: Upgradeplan },
     { path: 'help', component: Help },
+    { path: 'keyboardshortcut', component:Keyboardshortcut },
+
     ],
   },
 
@@ -64,5 +67,6 @@ export const routes: Routes = [
 // ng g c features/Home
 // ng g c Layout/nav
 // ng g c features/Profile/setting
+// ng g c features/Profile/keyboardshortcut
 
 //ng g c shared/error/NotFound
