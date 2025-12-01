@@ -1,7 +1,6 @@
-import { Component, computed, effect, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { GlobalSearch } from '../../types/Notification';
 import { SearchService } from '../../core/services/search-service';
-import { DataSharingService } from '../../core/services/DataSharingService';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
@@ -13,53 +12,37 @@ import { Router } from '@angular/router';
   styleUrls: ['./search.css'],
 })
 export class Search {
+ private searchService = inject(SearchService);
   
-  searchTerm = '';
-  loading = false;
-  selectedItem: GlobalSearch | null = null;
-  private route =inject(Router)
+  // Directly access the signal from the service
+  searchResults = this.searchService.globalSearchResults; 
+  router = inject(Router);
 
-  suggestions = computed(() => this.searchService.searchResults());
+  handleSearchInput(event: Event): void {
+    const query = (event.target as HTMLInputElement).value;
+    // Call the service function to initiate the request and update the signal
+    this.searchService.globalSearch(query);
+  }
+  
+// viewDetails(selectedId: string, selectedType: 'User' | 'Class'): void {
+//     if (!selectedId) return console.error('ID is missing');
 
-  constructor(
-    public searchService: SearchService,
-    private dataSharingService: DataSharingService
-  ) {
-    effect(() => {
-      this.searchService.searchResults();
-      this.loading = false;
+//     if (selectedType === 'User') {
+//       this.router.navigate(['/details', selectedId, { type: 'User' }]);
+//     } else {
+//       this.router.navigate(['/details', selectedId, { type: 'Class' }]);
+//     }
+// }
+
+// ... in Search component
+viewDetails(selectedId: string, selectedType: 'User' | 'Class'): void {
+    if (!selectedId) return console.error('ID is missing');
+
+    this.router.navigate(['/details', selectedId], { 
+      queryParams: { 
+        type: selectedType // <-- 'queryParams' என்று மாற்றவும்
+      } 
     });
-  }
-
-  onSearchTermChange(): void {
-    if (!this.searchTerm.trim()) {
-      this.searchService.clearResults();
-      this.selectedItem = null;
-      return;
-    }
-
-    this.loading = true;
-    this.searchService.globalSearch(this.searchTerm);
-  }
-
-  selectSuggestion(item: GlobalSearch) {
-    this.selectedItem = item;
-    this.searchTerm = item.className || item.userName;
-    this.searchService.clearResults();
-  }
-
- viewDetails() {
-  if (this.selectedItem) {
-    this.dataSharingService.setSelectedSearchResult(this.selectedItem);
-    // Redirect to details component
-    this.route.navigate(['/details', this.selectedItem.classId || this.selectedItem.userId]);
-  }
 }
 
-
-  // Optional: Highlight typed letters in suggestions
-  highlight(text: string) {
-    const re = new RegExp(`(${this.searchTerm})`, 'gi');
-    return text.replace(re, '<b>$1</b>');
-  }
 }
