@@ -80,9 +80,6 @@ export class Nav implements AfterViewInit, OnDestroy {
       this.closeMobileMenu();
     }
   }
-
- 
-
   ngAfterViewInit(): void {
     const header = document.querySelector('header');
     this.scrollHandler = () => {
