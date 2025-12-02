@@ -1,1 +1,33 @@
-<p>repository works!</p>
+<div class="p-4 bg-gray-800 rounded-xl text-white" appKeyboardNav>
+  <h2 class="text-xl font-bold mb-2" 
+      [appSpeak]="classData?.className + ' Repositories'" tabindex="0">
+    {{ classData?.className }} Repositories
+  </h2>
+
+  <!-- Loading -->
+  <p *ngIf="!classData" class="text-gray-400" appSpeak="Loading class details..." tabindex="0">
+    Loading class details...
+  </p>
+
+  <!-- Empty -->
+  <div *ngIf="classData?.repositories?.length === 0" class="text-gray-400" 
+       appSpeak="No repositories found." tabindex="0"> 
+    No repositories found.
+  </div>
+
+  <!-- Repository List -->
+  <div *ngFor="let repo of classData?.repositories" 
+       class="bg-gray-700 p-3 rounded-lg mb-2"
+       [appSpeak]="repo.title + '. ' + (repo.description || 'No description available')" tabindex="0">
+    <h3 class="font-semibold">{{ repo.title }}</h3>
+    <p class="text-gray-300 text-sm">{{ repo.description }}</p>
+
+    <a 
+      [href]="repo.fileUrl" 
+      target="_blank"
+      class="text-blue-400 underline text-sm"
+      [appSpeak]="'Download ' + repo.title" tabindex="0">
+      Download
+    </a>
+  </div>
+</div>

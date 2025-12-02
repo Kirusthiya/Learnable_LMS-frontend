@@ -36,25 +36,14 @@
                 <a routerLink="/dashboad/upgradeplan" class="block px-3 py-2 hover:bg-gray-100"
                    appSpeak="Upgrade Plan" tabindex="0">Upgrade Plan</a>
 
-                <!-- HELP submenu -->
-                <div >
-                  <button class="w-full text-left px-3 py-2 hover:bg-gray-100 flex justify-between items-center"
-                          (click)="toggleHelpDropdown($event)" appSpeak="Help Menu" tabindex="0"
-                          aria-haspopup="true" [attr.aria-expanded]="helpDropdownOpen">
-                    Help <span>&#9654;</span>
-                  </button>
+                   <a routerLink="/dashboad/help" class="block px-3 py-2 hover:bg-gray-100"
+                   appSpeak="Help Center" tabindex="0">Help Centern</a>
 
-                  @if (helpDropdownOpen) {
-                    <div class="absolute left-full top-0 w-48 bg-white text-black rounded-lg shadow-xl p-2"
-                     tabindex="0">
-                      <a routerLink="/dashboad/help" class="block px-3 py-2 hover:bg-gray-100"
-                         appSpeak="Help Center" tabindex="0">Help Center</a>
-                      <a routerLink="/dashboad/keyboardshortcut" class="block px-3 py-2 hover:bg-gray-100"
-                         appSpeak="Keyboard Shortcuts" tabindex="0">Keyboard Shortcuts</a>
-                    </div>
-                  }
-                </div>
+                     <a routerLink="/dashboad/keyboardshortcut" class="block px-3 py-2 hover:bg-gray-100"
+                   appSpeak="Keyboard Shortcuts" tabindex="0">Keyboard Shortcuts</a>
 
+
+                   
                 <a routerLink="/dashboad/profile" class="block px-3 py-2 hover:bg-gray-100"
                    appSpeak="Edit Profile" tabindex="0">Edit Profile</a>
                 <a routerLink="/dashboad/setting" class="block px-3 py-2 hover:bg-gray-100 rounded-lg shadow-sm"o 
@@ -62,6 +51,21 @@
                 <button (click)="logout()" class="w-full text-left px-3 py-2 hover:bg-red-100 text-red-600"
                         appSpeak="Logout" tabindex="0">Logout</button>
               </div>
+
+                <!-- HELP submenu -->
+             
+
+                  <!-- @if (helpDropdownOpen) {
+                    <div class="absolute left-full top-0 w-48 bg-white text-black rounded-lg shadow-xl p-2"
+                     tabindex="0">
+                      <a routerLink="/dashboad/help" class="block px-3 py-2 hover:bg-gray-100"
+                         appSpeak="Help Center" tabindex="0">Help Center</a>
+                      <a routerLink="/dashboad/keyboardshortcut" class="block px-3 py-2 hover:bg-gray-100"
+                         appSpeak="Keyboard Shortcuts" tabindex="0">Keyboard Shortcuts</a>
+                    </div>
+                  } -->
+            
+
             }
           </li>
 
