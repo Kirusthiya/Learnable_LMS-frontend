@@ -6,10 +6,12 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from '../../core/services/accountservices';
 import { Class } from '../../types/user';
 import { Repository } from "../repository/repository";
+import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
+import { Speak } from "../../core/directives/accessibility/speak";
 
 @Component({
   selector: 'app-dashboad',
-  imports: [RouterOutlet, Nav, Search, CommonModule, Repository],
+  imports: [RouterOutlet, Nav, Search, CommonModule, Repository, KeyboardNav, Speak],
   templateUrl: './dashboad.html',
   styleUrl: './dashboad.css',
 })
