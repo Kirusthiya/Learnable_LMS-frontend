@@ -1,11 +1,30 @@
-// User type
+export type UserResponse = {
+  user: User,
+  student?: { classes?: Class[] },
+  teacher?: any
+  token: string
+}
+
 export type User = {
-  id: string;               // User ID from backend
-  fullName: string;         // displayName → backend uses fullName
-  email: string;
-  token?: string;           // JWT token (optional, after login/register)
-      
+  id: string;
+  fullName: string;
+  displayName: string;
+  username: string;
+  token?: string;
+  classes?: Class[];
 };
+
+
+  export type Class = {
+      classId: string,
+      className: string,
+      classJoinName: string,
+      description: string,
+      createdAt: string,
+      teacherId: string,
+      status: string
+  };
+ 
 
 // Normal login creds
 export type LoginCreds = {

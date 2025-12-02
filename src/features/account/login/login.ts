@@ -5,7 +5,7 @@ import { Speak } from "../../../core/directives/accessibility/speak";
 import { InputSpeakDirective } from "../../../core/directives/app-input-speak";
 import { AccountService } from "../../../core/services/accountservices";
 import { Router } from "@angular/router";
-import { SpeechService } from "../../../core/services/speech-service";
+import { SpeechService } from "../../../core/services/Voice/speech-service";
 import { ToastService } from "../../../core/services/toast-service";
 import { Register } from "../register/register";
 import { LoginCreds } from "../../../types/user";
@@ -31,7 +31,6 @@ export class Login {
   closeLogin = output<boolean>();
 
 
-  // 🔹 Add this property
   micActive: boolean = false;  // <-- FIX
 
   // Back button
@@ -48,7 +47,7 @@ export class Login {
     this.accountService.login(this.creds).subscribe({
       next: result => {
         // console.log(result);
-        this.router.navigateByUrl('/about');
+        this.router.navigateByUrl('/dashboad');
         this.toast.success("Login successfully");
         this.speech.speak('Login successfully')
 
@@ -61,13 +60,7 @@ export class Login {
     })
   }
 
-  logout(){
-    // this.loggedIn.set(false);
-    this.accountService.logout();
-    this.router.navigateByUrl('/'); 
-    this.toast.info('Logout successfully');
-    this.speech.speak('Logout successfully')
-  }
+
 
   // Mic toggle
   toggleMic() {

@@ -3,6 +3,7 @@ import { TestErrors } from '../shared/error/test-errors/test-errors';
 import { ServerError } from '../shared/error/server-error/server-error';
 import { NotFound } from '../shared/error/not-found/not-found';
 import { Home } from '../features/home/home';
+import { Dashboad } from '../features/dashboad/dashboad';
 import { About } from '../features/about/about';
 import { Feature } from '../features/feature/feature';
 import { Testimonials } from '../features/testimonials/testimonials';
@@ -10,9 +11,18 @@ import { Contact } from '../features/contact/contact';
 import { Login } from '../features/account/login/login';
 import { authguardGuard } from '../core/guards/authguard-guard';
 import { Register } from '../features/account/register/register';
+import { Profile } from '../features/profile/profile';
+import { Notification } from '../features/notification/notification';
+import { Upgradeplan } from '../features/profile/upgradeplan/upgradeplan';
+import { Setting } from '../features/profile/setting/setting';
+import { Editprofile } from '../features/profile/editprofile/editprofile';
+import { Details } from '../features/details/details';
+import { Keyboardshortcut } from '../features/profile/keyboardshortcut/keyboardshortcut';
+import { Help } from '../features/profile/help/help';
+
 
 export const routes: Routes = [
-  { path: 'home', component: Home },
+  { path: '', component: Home },
   { path: 'about', component: About },
   { path: 'features', component: Feature },
   { path: 'testimonials', component: Testimonials },
@@ -20,22 +30,33 @@ export const routes: Routes = [
   { path: 'login', component: Login },
   { path: 'register', component: Register },
   { path: 'errors', component: TestErrors },
-  { path: 'server-error', component: ServerError },
-  { path: '**', component: NotFound },
+  { path: 'details/:id', component: Details },
+   
 
-  // Protected routes
+ 
+
+  { path: 'server-error', component: ServerError },
+
+  // Protected dashboard
   {
-    path: '',
+    path: 'dashboad',
+    component: Dashboad,
     runGuardsAndResolvers: 'always',
     canActivate: [authguardGuard],
     children: [
-        { path: 'home', component: Home },
-      // { path: 'dashboard', component: DashboardComponent },
-      // { path: 'profile', component: ProfileComponent },
+      { path: 'profile', component: Profile },
+      { path: 'notification', component: Notification },
+    { path: 'editprofile', component: Editprofile },
+    { path: 'setting', component: Setting },
+    { path: 'upgradeplan', component: Upgradeplan },
+    { path: 'help', component: Help },
+    { path: 'keyboardshortcut', component:Keyboardshortcut },
+  
     ],
   },
-];
 
+  { path: '**', component: NotFound },
+];
 
 
 
@@ -45,5 +66,6 @@ export const routes: Routes = [
 // ng g c features/Contact
 // ng g c features/Home
 // ng g c Layout/nav
+// ng g c features/Profile/Keyboardshortcut
 
 //ng g c shared/error/NotFound

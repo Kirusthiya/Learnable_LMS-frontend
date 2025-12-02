@@ -1,5 +1,5 @@
 import { Directive, ElementRef, HostListener } from '@angular/core';
-import { SpeechService } from '../services/speech-service';
+import { SpeechService } from '../services/Voice/speech-service';
 
 @Directive({
   selector: '[appInputSpeak]'
@@ -14,9 +14,15 @@ export class InputSpeakDirective {
     private speech: SpeechService
   ) {}
 
+
+    private canSpeak(): boolean {
+    return document.body.getAttribute('speech-enabled') !== 'false';
+  }
+
   // LETTER BY LETTER
   @HostListener('input')
   onInput() {
+     if (!this.canSpeak()) return;
     const val = this.el.nativeElement.value;
     const last = val[val.length - 1];
     if (last) this.speech.speak(last);
@@ -25,6 +31,7 @@ export class InputSpeakDirective {
   // KEYBOARD SHORTCUTS
   @HostListener('document:keydown', ['$event'])
   handleKeys(event: KeyboardEvent) {
+    if (!this.canSpeak()) return;
     const active = document.activeElement as HTMLInputElement;
     if (active !== this.el.nativeElement) return;
 
@@ -47,6 +54,7 @@ export class InputSpeakDirective {
 
   // MIC CONTROL
   toggleMic() {
+     if (!this.canSpeak()) return;
     if (this.listening) {
       this.recognition.stop();
       this.listening = false;

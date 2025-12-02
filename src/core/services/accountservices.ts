@@ -1,8 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { RegisterCreds, User } from '../../types/user';
+import { RegisterCreds, UserResponse } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+
+// Full response type from backend
+
 
 @Injectable({
   providedIn: 'root'
@@ -10,16 +13,16 @@ import { environment } from '../../environments/environment';
 export class AccountService {
 
   private http = inject(HttpClient);
-  currentUser = signal<User | null>(null);
+  currentUser = signal<UserResponse | null>(null); // Full response signal
 
   private baseUrl = environment.apiUrl;
 
-
+  // Send OTP
   sendOtp(email: string) {
-    return this.http.post(`${this.baseUrl}account/send-otp`,{email});
+    return this.http.post(`${this.baseUrl}account/send-otp`, { email });
   }
 
-
+  // Register
   register(creds: RegisterCreds) {
     const body = {
       user: {
@@ -30,35 +33,44 @@ export class AccountService {
       otp: creds.otp
     };
 
-    return this.http.post<any>(`${this.baseUrl}account/register`, body).pipe(
+    return this.http.post<UserResponse>(`${this.baseUrl}account/register`, body).pipe(
       tap((res) => {
-        if (res && res.user) {
-          this.setCurrentUser(res.user);
-        }
+        if (res) this.setCurrentUser(res);
       })
     );
   }
 
-
-  setCurrentUser(user: User) {
-    localStorage.setItem('user', JSON.stringify(user));
-    this.currentUser.set(user);
+  // Set current user (full response)
+  setCurrentUser(userResponse: UserResponse) {
+    localStorage.setItem('user', JSON.stringify(userResponse));
+    this.currentUser.set(userResponse);
   }
 
-
+  // Login
   login(creds: any) {
-    return this.http.post<User>(`${this.baseUrl}account/login`, creds).pipe(
-      tap((user) => {
-        if (user) {
-          this.setCurrentUser(user);
-        }
+    return this.http.post<UserResponse>(`${this.baseUrl}account/login`, creds).pipe(
+      tap((res) => {
+        if (res) this.setCurrentUser(res);
       })
     );
   }
 
-
+  // Logout
   logout() {
     localStorage.removeItem('user');
     this.currentUser.set(null);
+  }
+
+  // Get User ID
+  getUserId(): string | null {
+    const user = localStorage.getItem('user');
+    if (!user) return null;
+
+    try {
+      const parsed: UserResponse = JSON.parse(user);
+      return parsed.user.id || null; // Correct path to userId
+    } catch {
+      return null;
+    }
   }
 }

@@ -1,0 +1,102 @@
+<div class="flex justify-center">
+  <div class="bg-[#212730] p-6 rounded-xl w-full max-w-md shadow-lg" appKeyboardNav>
+
+    <div class="flex justify-center mb-4">
+      <img src="../../../assets/image/user.png" alt="avatar"
+           class="w-24 h-24 rounded-full border-2 border-[#01acb4]" />
+    </div>
+
+    <form [formGroup]="editForm" (ngSubmit)="submit()">
+      <h2 class="text-2xl font-bold mb-6 text-center"
+          appSpeak="Edit Profile" tabindex="0">
+        Edit Profile
+      </h2>
+
+      <!-- FULL NAME -->
+      <div class="mb-4 flex flex-col">
+        <label class="mb-1 font-medium" appSpeak="Full Name" tabindex="0">Full Name</label>
+
+        <div class="flex gap-2 items-center">
+          <input formControlName="fullName"
+                 name="fullName"
+                 placeholder="Optional"
+                 tabindex="0"
+                 appInputSpeak
+                 #fullNameInput
+                 class="flex-1 p-2 rounded-md border border-[#e6e6e6] bg-[#212730] text-[#e6e6e6]
+                        focus:border-[#01acb4] focus:outline-none" />
+
+          <button type="button"
+                  class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+                  [appVoiceInput]="fullNameInput"
+                  tabindex="0"
+                  appSpeak="Start voice input for full name">
+            🎤
+          </button>
+        </div>
+        <small class="text-red-500">{{ fullNameError }}</small>
+      </div>
+
+      <!-- DISPLAY NAME -->
+      <div class="mb-4 flex flex-col">
+        <label class="mb-1 font-medium" appSpeak="Display Name" tabindex="0">Display Name</label>
+
+        <div class="flex gap-2 items-center">
+          <input formControlName="displayName"
+                 name="displayName"
+                 placeholder="Required"
+                 tabindex="0"
+                 appInputSpeak
+                 #displayNameInput
+                 class="flex-1 p-2 rounded-md border border-[#e6e6e6] bg-[#212730] text-[#e6e6e6]
+                        focus:border-[#01acb4] focus:outline-none" />
+
+          <button type="button"
+                  class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+                  [appVoiceInput]="displayNameInput"
+                  tabindex="0"
+                  appSpeak="Start voice input for display name">
+            🎤
+          </button>
+        </div>
+        <small class="text-red-500">{{ displayNameError }}</small>
+      </div>
+
+      <!-- USERNAME -->
+      <div class="mb-6 flex flex-col">
+        <label class="mb-1 font-medium" appSpeak="Username" tabindex="0">Username</label>
+
+        <div class="flex gap-2 items-center">
+          <input formControlName="username"
+                 name="username"
+                 placeholder="Required"
+                 tabindex="0"
+                 appInputSpeak
+                 #usernameInput
+                 class="flex-1 p-2 rounded-md border border-[#e6e6e6] bg-[#212730] text-[#e6e6e6]
+                        focus:border-[#01acb4] focus:outline-none" />
+
+          <button type="button"
+                  class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+                  [appVoiceInput]="usernameInput"
+                  tabindex="0"
+                  appSpeak="Start voice input for username">
+            🎤
+          </button>
+        </div>
+        <small class="text-red-500">{{ usernameError }}</small>
+      </div>
+
+      <!-- SUBMIT BUTTON -->
+      <button type="submit"
+              tabindex="0"
+              appSpeak="Update Profile"
+              [disabled]="submitting"
+              class="w-full bg-[#01acb4] text-[#212730] font-bold py-2 rounded-md
+                     hover:bg-opacity-90 disabled:bg-gray-500">
+        {{ submitting ? 'Updating...' : 'Update Profile' }}
+      </button>
+
+    </form>
+  </div>
+</div>

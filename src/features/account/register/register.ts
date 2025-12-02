@@ -6,13 +6,14 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Speak } from '../../../core/directives/accessibility/speak';
 import { KeyboardNav } from '../../../core/directives/accessibility/keyboard-nav';
-import { SpeechService } from '../../../core/services/speech-service';
+import { SpeechService } from '../../../core/services/Voice/speech-service';
 import { VoiceInputDirective } from '../../../core/directives/voice-input';
 import { InputSpeakDirective } from '../../../core/directives/app-input-speak';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-register',
-  imports: [FormsModule, CommonModule, Speak, KeyboardNav, VoiceInputDirective, InputSpeakDirective],
+  imports: [FormsModule, CommonModule, Speak, VoiceInputDirective, InputSpeakDirective,KeyboardNav],
   templateUrl: './register.html',
   styleUrls: ['./register.css'],
 })
@@ -21,6 +22,7 @@ export class Register {
   private accountService = inject(AccountService);
   private toast = inject(ToastService);
   private speech = inject(SpeechService);
+  private router =inject(Router)
 
   cancelRegister = output<boolean>();
   protected creds = {} as RegisterCreds;
@@ -76,6 +78,7 @@ export class Register {
 
     this.accountService.register(this.creds).subscribe({
       next: () => {
+        this.router.navigateByUrl('/dashboad');
         this.toast.success('Registration successful!');
         this.speech.speak('Registration successful!');
         this.registering = false;
@@ -86,14 +89,7 @@ export class Register {
         this.toast.error(msg);
         this.speech.speak(msg);
 
-        // If backend sends "new OTP generated"
-        if (msg.includes('New OTP')) {
-          this.creds.otp = '';
-          this.otpSent = true;
-        }
-
-        this.registering = false;
-        console.error(err);
+     
       }
     });
   }

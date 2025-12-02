@@ -39,3 +39,15 @@ body {
   border-radius: 6px;
   font-weight: 600;
 }
+
+
+:root {
+  --app-font-size: 16px;
+  --app-voice-speed: 1;
+}
+
+html, body {
+  font-size: var(--app-font-size);
+}
+
+
