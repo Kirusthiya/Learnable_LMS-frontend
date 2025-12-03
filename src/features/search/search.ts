@@ -4,6 +4,8 @@ import { SearchService } from '../../core/services/search-service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { AccountService } from '../../core/services/accountservices';
+import { User, UserResponse } from '../../types/user';
 
 @Component({
   selector: 'app-search',
@@ -13,6 +15,7 @@ import { Router } from '@angular/router';
 })
 export class Search {
  private searchService = inject(SearchService);
+ private accountService = inject(AccountService);
   
   // Directly access the signal from the service
   searchResults = this.searchService.globalSearchResults; 
@@ -20,21 +23,10 @@ export class Search {
 
   handleSearchInput(event: Event): void {
     const query = (event.target as HTMLInputElement).value;
-    // Call the service function to initiate the request and update the signal
-    this.searchService.globalSearch(query);
+    this.searchService.globalSearch(query, (this.accountService.currentUser()?.user.role|| 'student'));
   }
   
-// viewDetails(selectedId: string, selectedType: 'User' | 'Class'): void {
-//     if (!selectedId) return console.error('ID is missing');
 
-//     if (selectedType === 'User') {
-//       this.router.navigate(['/details', selectedId, { type: 'User' }]);
-//     } else {
-//       this.router.navigate(['/details', selectedId, { type: 'Class' }]);
-//     }
-// }
-
-// ... in Search component
 viewDetails(selectedId: string, selectedType: 'User' | 'Class'): void {
     if (!selectedId) return console.error('ID is missing');
 
