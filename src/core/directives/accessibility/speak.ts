@@ -1,5 +1,3 @@
-
-
 import { Directive, ElementRef, HostListener, Input } from '@angular/core';
 import { SpeechService } from '../../services/Voice/speech-service';
 import { SettingsService } from '../../services/Voice/settings-service';
@@ -18,35 +16,40 @@ export class Speak {
   ) {}
 
   private canSpeak(): boolean {
-    const bodyAttr = document.body.getAttribute('speech-enabled');
-    if (bodyAttr === 'false') return false;
+    // Directly read signal value → TypeScript 100% safe
+    const modeValue = this.settings.mode(); // type: 'blind' | 'deaf'
+
+    if (modeValue === 'deaf') return false;
+
     return true;
   }
-  private getVoiceSpeed(): number {
-    return this.settings.currentSettings?.voiceSpeed ?? 1;
-  }
 
-  private getVoiceVolume(): number {
-    return this.settings.currentSettings?.voiceVolume ?? 1;
-  }
   private extractText(): string {
     if (this.textToSpeak && this.textToSpeak.trim() !== '') {
       return this.textToSpeak;
     }
-
-    // Dynamic content safe reading
     return (this.el.nativeElement.textContent || '').trim();
   }
 
   @HostListener('focus')
   onFocus() {
     if (!this.canSpeak()) return;
-    this.speech.speak(this.extractText(), this.settings.currentSettings?.voiceSpeed ?? 1, this.settings.currentSettings?.voiceVolume ?? 1);
+
+    this.speech.speak(
+      this.extractText(),
+      this.settings.currentSettings.voiceSpeed,
+      this.settings.currentSettings.voiceVolume
+    );
   }
 
   @HostListener('click')
   onClick() {
     if (!this.canSpeak()) return;
-    this.speech.speak(this.extractText(), this.settings.currentSettings?.voiceSpeed ?? 1, this.settings.currentSettings?.voiceVolume ?? 1);
+
+    this.speech.speak(
+      this.extractText(),
+      this.settings.currentSettings.voiceSpeed,
+      this.settings.currentSettings.voiceVolume
+    );
   }
 }
