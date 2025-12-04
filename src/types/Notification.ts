@@ -2,7 +2,7 @@ export interface Notification {
   id: string;
   title: string;
   message: string;
-  createdAt: string;  // ISO string
+  createdAt: string;  
   read: boolean;
   type?: 'info' | 'success' | 'warning' | 'request';
   meta?: any;
@@ -10,8 +10,8 @@ export interface Notification {
 
 
 export type GlobalSearch = {
- id: string; // Guid is mapped to string in TypeScript
-    type: 'User' | 'Class'; // The type of the result
+ id: string; 
+    type: 'User' | 'Class'; 
     title: string;
     subTitle: string;
 };
@@ -27,7 +27,6 @@ export type ClassDto = {
   repositories: any[];
 }
 
-
 export type UserDetailsDto= {
    userId: string;
    role: 'Student' | 'Teacher' ;
@@ -41,12 +40,13 @@ export type UserDetailsDto= {
     enrolledClasses?: ClassDto[];
 }
 
-
-// types/Notification.ts (or appropriate)
-export type SimpleClass= {
-  classId: string;
-  className: string;
-  description?: string | null;
+export type Asset = {
+  assetId: string;
+  type: string; 
+  title: string;
+  description: string;
+  url: string; 
+  ocrPdfs?: { chunkId: number; chunk: string }[];    
 }
 
 

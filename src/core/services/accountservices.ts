@@ -17,6 +17,14 @@ export class AccountService {
 
   private baseUrl = environment.apiUrl;
 
+
+  constructor() {
+  const savedUser = localStorage.getItem('user');
+  if (savedUser) {
+    this.currentUser.set(JSON.parse(savedUser));
+  }
+}
+
   // Send OTP
   sendOtp(email: string) {
     return this.http.post(`${this.baseUrl}account/send-otp`, { email });

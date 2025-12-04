@@ -1,7 +1,8 @@
 import { Injectable, inject, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
-import { ClassDto, GlobalSearch, UserDetailsDto } from '../../types/Notification';
+import { Asset, ClassDto, GlobalSearch, UserDetailsDto } from '../../types/Notification';
+import { AccountService } from './accountservices';
 
 
 
@@ -20,23 +21,23 @@ export class SearchService {
   public joinClassLoading: WritableSignal<boolean> = signal(false);
   public joinClassMessage: WritableSignal<string | null> = signal(null);
 
-  // === Global Search ===
-  public globalSearch(query: string): void {
-    if (!query || query.trim() === '') {
-      this.globalSearchResults.set([]);
-      return;
-    }
-
-    const url = `${this.baseUrl}Search/GlobalSearch`;
-    this.http.get<GlobalSearch[]>(url, { params: { query } })
-      .subscribe({
-        next: (results) => this.globalSearchResults.set(results),
-        error: (err) => {
-          console.error('Global search failed', err);
-          this.globalSearchResults.set([]);
-        }
-      });
+ public globalSearch(query: string, role: string): void {
+  if (!query || query.trim() === '') {
+    this.globalSearchResults.set([]);
+    return;
   }
+
+  const url = `${this.baseUrl}Search/GlobalSearch`;
+
+  this.http.get<GlobalSearch[]>(url, { params: { query, role } })
+    .subscribe({
+      next: (results) => this.globalSearchResults.set(results),
+      error: (err) => {
+        console.error('Global search failed', err);
+        this.globalSearchResults.set([]);
+      }
+    });
+}
 
   // === Class Details ===
   public loadClassDetails(classId: string): void {
@@ -68,5 +69,6 @@ public loadUserDetails(userId: string): void {
       }
     });
 }
+
 
 }

@@ -1,33 +1,50 @@
-<div class="p-4 bg-gray-800 rounded-xl text-white" appKeyboardNav>
-  <h2 class="text-xl font-bold mb-2" 
-      [appSpeak]="classData?.className + ' Repositories'" tabindex="0">
+<!-- File: repository.html -->
+<div class="p-6 bg-gray-900 rounded-2xl shadow-2xl text-white border border-gray-700" appKeyboardNav>
+  <h2 class="text-3xl font-extrabold text-blue-400 mb-6 border-b border-gray-700 pb-3" 
+      [appSpeak]="classData?.className + ' Repositories'" 
+      tabindex="0">
     {{ classData?.className }} Repositories
   </h2>
 
-  <!-- Loading -->
-  <p *ngIf="!classData" class="text-gray-400" appSpeak="Loading class details..." tabindex="0">
-    Loading class details...
+  <p *ngIf="!classData" class="text-gray-400 text-lg p-8 text-center" appSpeak="Loading class details. Please wait." tabindex="0">
+    <span class="animate-pulse">Loading class details...</span>
   </p>
 
-  <!-- Empty -->
-  <div *ngIf="classData?.repositories?.length === 0" class="text-gray-400" 
-       appSpeak="No repositories found." tabindex="0"> 
-    No repositories found.
+  <div *ngIf="classData && classData.repositories && classData.repositories.length === 0" 
+       class="text-center p-10 border-2 border-dashed border-gray-700 rounded-xl text-gray-500 bg-gray-800"
+       appSpeak="No repositories found for this class." tabindex="0"> 
+    <p class="text-xl font-medium">No Repositories Found</p>
+    <p class="mt-2 text-sm">The teacher has not uploaded any repository files yet.</p>
   </div>
 
-  <!-- Repository List -->
-  <div *ngFor="let repo of classData?.repositories" 
-       class="bg-gray-700 p-3 rounded-lg mb-2"
-       [appSpeak]="repo.title + '. ' + (repo.description || 'No description available')" tabindex="0">
-    <h3 class="font-semibold">{{ repo.title }}</h3>
-    <p class="text-gray-300 text-sm">{{ repo.description }}</p>
+  <div *ngFor="let repo of classData?.repositories; let i = index" 
+       class="bg-gray-800 p-5 rounded-xl mb-4 shadow-lg hover:shadow-blue-500/30 transition duration-300 transform hover:scale-[1.01] focus-within:ring-2 focus-within:ring-blue-500"
+       [attr.aria-label]="repo.fileName + '. Certification: ' + repo.repoCertification" 
+       tabindex="0">
 
-    <a 
-      [href]="repo.fileUrl" 
-      target="_blank"
-      class="text-blue-400 underline text-sm"
-      [appSpeak]="'Download ' + repo.title" tabindex="0">
-      Download
-    </a>
+    <div class="flex justify-between items-start mb-3">
+      <h3 class="font-bold text-xl text-white" 
+          [appSpeak]="'Repository ' + (i + 1) + '. Title: ' + repo.fileName" tabindex="0">
+        {{ repo.fileName }}
+      </h3>
+    </div>
+    <p class="text-gray-300 text-sm mb-4" 
+       [appSpeak]="'Certification: ' + (repo.repoCertification || 'No description available')" tabindex="0">
+      <span class="font-semibold text-gray-400">Certification:</span> {{ repo.repoCertification || 'No description available' }}
+    </p>
+
+    <p class="text-gray-300 text-sm mb-4" 
+       [appSpeak]="'Description: ' + (repo.repoDescription || 'No description available')" tabindex="0">
+      <span class="font-semibold text-gray-400">Description:</span> {{ repo.repoDescription || 'No description available' }}
+    </p>
+
+    <div class="flex flex-wrap gap-3 items-center pt-2 border-t border-gray-700">
+      <button
+        (click)="openRepository(repo.repositoryId)"
+        class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition text-sm"
+        appSpeak="Open repository details" tabindex="0">
+        ➡️ Open Repository
+      </button>
+    </div>
   </div>
 </div>
