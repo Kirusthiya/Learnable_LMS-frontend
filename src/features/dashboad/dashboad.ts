@@ -1,3 +1,4 @@
+// File: dashboad.ts
 import { Component, computed, inject, signal, WritableSignal } from '@angular/core';
 import { RouterOutlet } from "@angular/router";
 import { Nav } from "../../Layout/nav/nav";
@@ -6,19 +7,21 @@ import { CommonModule } from '@angular/common';
 import { AccountService } from '../../core/services/accountservices';
 import { Class } from '../../types/user';
 import { Repository } from "../repository/repository";
+import { Assets } from '../assets/assets';
 import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
 import { Speak } from "../../core/directives/accessibility/speak";
 
 @Component({
   selector: 'app-dashboad',
-  imports: [RouterOutlet, Nav, Search, CommonModule, Repository, KeyboardNav, Speak],
+  imports: [Nav, Search, CommonModule, Repository, Assets, KeyboardNav, Speak, RouterOutlet],
   templateUrl: './dashboad.html',
-  styleUrl: './dashboad.css',
+  styleUrls: ['./dashboad.css'],
 })
 export class Dashboad {
   private accountService = inject(AccountService);
 
-  selectedClassId = signal<string | null>(null);  // current classId
+  selectedClassId = signal<string | null>(null);        // current classId
+  selectedRepositoryId = signal<string | null>(null);   // current repositoryId
   showMainContent = signal(true);
   isSidebarOpen: WritableSignal<boolean> = signal(false); 
   isNavOverlayActive = signal(false);
@@ -32,6 +35,15 @@ export class Dashboad {
   viewClass(id: string) {
     this.selectedClassId.set(id);
     if (this.isSidebarOpen()) this.isSidebarOpen.set(false);
+  }
+
+  // Repository clicked → show assets
+  openRepository(repoId: string) {
+    this.selectedRepositoryId.set(repoId);
+  }
+
+  backFromAssets() {
+    this.selectedRepositoryId.set(null);
   }
 
   toggleSidebar(): void {
@@ -49,6 +61,6 @@ export class Dashboad {
   }
 
   backToDashboard() {
-    this.selectedClassId.set(null); // back to class list
+    this.selectedClassId.set(null);
   }
 }

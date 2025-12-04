@@ -1,8 +1,10 @@
+
 export type UserResponse = {
   user: User,
   student?: { classes?: Class[] },
   teacher?: any
   token: string
+  role: string;
 }
 
 export type User = {
@@ -11,6 +13,7 @@ export type User = {
   displayName: string;
   username: string;
   token?: string;
+   role: string;
   classes?: Class[];
 };
 
@@ -23,21 +26,30 @@ export type User = {
       createdAt: string,
       teacherId: string,
       status: string
+      repositories?: Repository[];
   };
  
 
+export type Repository={
+  repoId: string;
+  repoName: string;
+  description: string;
+  certification: string;
+}
+
 // Normal login creds
 export type LoginCreds = {
-  email: string;            // backend expects email
+  email: string;           
   password: string;
 };
 
 // Register creds
 export type RegisterCreds = {
-  username: string;          // displayName → fullName
+  username: string;          
   email: string;
   password: string;
-  otp?: string;              // OTP required for registration
+  otp?: string;  
+      
 };
 
 
