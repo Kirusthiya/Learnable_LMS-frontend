@@ -1,1 +1,36 @@
-<h1>hello</h1>
+<div *ngIf="isTeacher">
+  <h2>🔔 Received Join Requests (Action Required)</h2>
+  
+  <div *ngIf="pendingRequests().length === 0" class="text-gray-400">
+    No pending join requests.
+  </div>
+  
+  <div *ngFor="let request of pendingRequests()">
+    <p>
+      **{{ request.senderName }}** requests to join class **{{ request.className }}**.
+    </p>
+    <div>
+            <button (click)="handleApprove(request.notificationId)">✅ Approve</button>
+      <button (click)="handleReject(request.notificationId)">❌ Reject</button>
+    </div>
+  </div>
+</div>
+
+---
+
+<div *ngIf="!isTeacher">
+  <h2>📤 Sent Join Requests (Status)</h2>
+  
+  <div *ngIf="sentRequests().length === 0" class="text-gray-400">
+    You haven't sent any join requests yet.
+  </div>
+
+  <div *ngFor="let request of sentRequests()">
+    <p>
+      Request to join class **{{ request.className }}** is currently: 
+      <span [class]="getStatusClass(request.Status)">
+        {{ request.status }}
+      </span>
+    </p>
+  </div>
+</div>

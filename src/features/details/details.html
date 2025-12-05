@@ -1,7 +1,7 @@
 <div class="pt-20 flex justify-center">
   <div *ngIf="classDetails() || userDetails()" class="max-w-md w-full bg-gray-800 text-white rounded-xl shadow-lg p-6 space-y-4">
 
-    
+    <!-- ================= CLASS DETAILS ================= -->
     <div *ngIf="classDetails()">
       <h2 class="text-2xl font-bold text-center">
         {{ classDetails()?.className }}
@@ -19,30 +19,43 @@
       <p class="text-gray-300 text-center">Bio: {{ classDetails()?.teacher.bio }}</p>
 
       <hr class="border-gray-700 my-4"/>
-
     </div>
 
+    <!-- ================= USER DETAILS ================= -->
     <div *ngIf="userDetails()">
-      <h2 class="text-xl font-semibold text-center">{{ userDetails()?.fullName || 'User Info' }}</h2>
-      <h2 class="text-xl font-semibold text-center">{{ userDetails()?.displayName || 'User Info' }}</h2>
-      <p class="text-gray-300 text-center">Email: {{ userDetails()?.email }}</p>
-      <p class="text-gray-300 text-center">Phone: {{ userDetails()?.contactNumber }}</p>
-      <p class="text-gray-300 text-center">Bio: {{ userDetails()?.bio }}</p>
+      <h2 class="text-xl font-semibold text-center">{{ userDetails()?.fullName }}</h2>
+      <h2 class="text-xl font-semibold text-center">{{ userDetails()?.displayName }}</h2>
 
-      <h3 class="text-lg font-semibold">Enrolled Classes:</h3>
-      <ul>
-        <li *ngFor="let c of userDetails()?.enrolledClasses" class="text-gray-300">
+      <h3 class="text-lg font-semibold mt-4">Select a Class:</h3>
+
+      <!-- CLASS DROPDOWN -->
+      <select
+        [(ngModel)]="selectedClassId"
+        class="w-full p-2 mt-2 rounded bg-gray-700 text-white"
+      >
+        <option value="" disabled selected>Select Class</option>
+
+        <option *ngFor="let c of currentUserClasses" [value]="c.classId">
           {{ c.className }}
-        </li>
-      </ul>
-    </div>
-    
-      <button (click)="handleJoinClass()" [disabled]="joinLoading()" class="w-full px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors">
-        <span *ngIf="joinLoading()">Sending Request...</span>
-        <span *ngIf="!joinLoading()">Request to Join Class</span>
-      </button>
+        </option>
+      </select>
 
-      <p *ngIf="joinMessage()" class="text-green-400 text-center">{{ joinMessage() }}</p>
+      <p *ngIf="currentUserClasses.length === 0" class="text-red-400 mt-2">
+        No classes found for your account.
+      </p>
+    </div>
+
+    <!-- ================= SEND REQUEST BUTTON ================= -->
+    <button 
+      (click)="handleJoinClass()" 
+      [disabled]="joinLoading()" 
+      class="w-full px-4 py-2 bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors"
+    >
+      <span *ngIf="joinLoading()">Sending Request...</span>
+      <span *ngIf="!joinLoading()">Send Request</span>
+    </button>
+
+    <p *ngIf="joinMessage()" class="text-green-400 text-center">{{ joinMessage() }}</p>
 
   </div>
 
@@ -50,5 +63,3 @@
     Loading details...
   </div>
 </div>
-
-
