@@ -11,8 +11,8 @@ export class SpeechService {
 
   speak(text: string, rate: number = 1, volume: number = 1) {
     if (!text || !text.trim()) return;
-    // stop any previous utterance
-    try { this.synth.cancel(); } catch (e) { /* ignore */ }
+
+    try { this.synth.cancel(); } catch {}
 
     this.currentUtterance = new SpeechSynthesisUtterance(text);
     this.currentUtterance.rate = Math.max(0.5, Math.min(2.0, rate));
@@ -23,7 +23,7 @@ export class SpeechService {
     this.synth.speak(this.currentUtterance);
   }
 
-  stop() {
-    try { this.synth.cancel(); } catch (e) { /* ignore */ }
+  stopAll() {
+    try { this.synth.cancel(); } catch {}
   }
 }

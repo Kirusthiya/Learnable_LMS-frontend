@@ -15,11 +15,11 @@ import { Profile } from '../features/profile/profile';
 import { Notification } from '../features/notification/notification';
 import { Upgradeplan } from '../features/profile/upgradeplan/upgradeplan';
 import { Setting } from '../features/profile/setting/setting';
-import { Editprofile } from '../features/profile/editprofile/editprofile';
 import { Details } from '../features/details/details';
 import { Keyboardshortcut } from '../features/profile/keyboardshortcut/keyboardshortcut';
 import { Help } from '../features/profile/help/help';
 import { Assets } from '../features/assets/assets';
+import { Loading } from '../shared/loading/loading';
 
 
 export const routes: Routes = [
@@ -33,9 +33,7 @@ export const routes: Routes = [
   { path: 'errors', component: TestErrors },
   { path: 'details/:id', component: Details },
   {path:'assets', component:Assets},
-   
-
- 
+  {path: 'loading', component: Loading},
 
   { path: 'server-error', component: ServerError },
 
@@ -48,7 +46,6 @@ export const routes: Routes = [
     children: [
       { path: 'profile', component: Profile },
       { path: 'notification', component: Notification },
-    { path: 'editprofile', component: Editprofile },
     { path: 'setting', component: Setting },
     { path: 'upgradeplan', component: Upgradeplan },
     { path: 'help', component: Help },

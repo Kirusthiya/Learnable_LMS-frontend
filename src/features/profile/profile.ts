@@ -1,133 +1,105 @@
-import { CommonModule } from '@angular/common';
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, Output, EventEmitter } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AccountService } from '../../core/services/accountservices';
 import { UserService } from '../../core/services/user-service';
 import { ToastService } from '../../core/services/toast-service';
-import { User } from '../../types/user';
-import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
-import { Speak } from "../../core/directives/accessibility/speak";
+import { Router } from '@angular/router';
+import { firstValueFrom } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 import { SpeechService } from '../../core/services/Voice/speech-service';
-import { VoiceInputDirective } from '../../core/directives/voice-input';
+import { VoiceInputDirective } from "../../core/directives/voice-input";
+import { Speak } from '../../core/directives/accessibility/speak';
+import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-profile',
-  standalone: true,
-  imports: [
-    CommonModule, ReactiveFormsModule,KeyboardNav,Speak,VoiceInputDirective
-  ],
   templateUrl: './profile.html',
   styleUrls: ['./profile.css'],
+  imports: [ CommonModule, ReactiveFormsModule,KeyboardNav, Speak, VoiceInputDirective],
 })
 export class Profile implements OnInit {
-
   private fb = inject(FormBuilder);
   private accountService = inject(AccountService);
   private userService = inject(UserService);
   private toast = inject(ToastService);
+  private router = inject(Router);
   private speech = inject(SpeechService);
 
-  editForm!: FormGroup;
-  currentUser!: User;
-  allUsers: User[] = [];
+  @Output() cancelRegister = new EventEmitter<boolean>();
 
-  displayNameError = '';
-  usernameError = '';
-  fullNameError = '';
-  submitting = false;
+  profileForm: FormGroup;
+  private currentUsername = '';
+
+  constructor() {
+    this.profileForm = this.fb.group({
+      fullName: [''],
+      displayName: [''],
+      username: ['', Validators.required]
+    });
+  }
 
   ngOnInit(): void {
-    const user = this.accountService.currentUser();
-    if (!user) {
-      this.toast.error('Unauthorized! Please login first.');
-      this.speech.speak("Unauthorized! Please login first.");
-      return;
-    }
-
-
-    this.userService.getAllUsers().subscribe(users => {
-      this.allUsers = users.filter(x => x.id !== this.currentUser.id);
-    });
-
-    this.initForm();
+    this.loadUserProfile();
   }
 
-  initForm() {
-    this.editForm = this.fb.group({
-      fullName: [
-        this.currentUser.fullName || '',
-        [Validators.minLength(6), Validators.maxLength(16)]
-      ],
-      displayName: [
-        this.currentUser.displayName || '',
-        [Validators.minLength(6), Validators.maxLength(16)]
-      ],
-      username: [
-        this.currentUser.username || '',
-        [Validators.required, Validators.minLength(6), Validators.maxLength(16)]
-      ],
-    });
+  loadUserProfile() {
+    const userResponse = this.accountService.currentUser();
+    if (userResponse) {
+      const user = userResponse.user;
+      this.profileForm.patchValue({
+        fullName: user.fullName,
+        displayName: user.displayName,
+        username: user.username
+      });
+      this.currentUsername = user.username;
+    } else {
+      this.toast.error("No user data found.");
+      this.speech.speak("No user data found.");
+    }
   }
 
-  submit() {
-    if (!this.currentUser) return;
-
-    this.displayNameError = '';
-    this.usernameError = '';
-    this.fullNameError = '';
-
-    const { fullName, displayName, username } = this.editForm.value;
-
-    // VALIDATION
-    if (!username) {
-      this.usernameError = 'Username is required';
-      this.speech.speak(this.usernameError);
+  async updateProfile() {
+    if (this.profileForm.invalid) {
+      this.toast.error("Username is required.");
+      this.speech.speak("Username is required.");
       return;
     }
 
-    if (username.length < 6 || username.length > 16) {
-      this.usernameError = 'Username must be 6-16 characters';
-      this.speech.speak(this.usernameError);
-      return;
-    }
-
-    if (displayName.length < 6 || displayName.length > 16) {
-      this.displayNameError = 'Display Name must be 6-16 characters';
-      this.speech.speak(this.displayNameError);
-      return;
-    }
-
-    if (fullName && (fullName.length < 6 || fullName.length > 16)) {
-      this.fullNameError = 'Full Name must be 6-16 characters';
-      this.speech.speak(this.fullNameError);
-      return;
-    }
-
-    const updatedUser: User = {
-      ...this.currentUser,
-      fullName,
-      displayName,
-      username
+    const formValue = this.profileForm.value;
+    const payload = {
+      fullName: formValue.fullName,
+      displayName: formValue.displayName,
+      newUsername: formValue.username
     };
 
-    this.submitting = true;
+    try {
+      await firstValueFrom(this.userService.updateUser(payload));
 
-    this.userService.updateUser(updatedUser).subscribe({
-      next: () => {
-        // Wrap updatedUser to match the expected shape and cast to any to satisfy the service signature
-        this.accountService.setCurrentUser({ user: updatedUser } as any); // Refresh current user data
-        this.submitting = false;
+      const updatedUserResponse = this.accountService.currentUser()!;
+      updatedUserResponse.user.fullName = payload.fullName;
+      updatedUserResponse.user.displayName = payload.displayName;
+      updatedUserResponse.user.username = payload.newUsername;
+      this.accountService.setCurrentUser(updatedUserResponse);
 
-        this.toast.success("Profile updated successfully!");
-        this.speech.speak("Profile updated successfully!");
-      },
-      error: err => {
-        this.submitting = false;
-
-        const msg = err?.error?.message || 'Failed to update profile';
-        this.toast.error(msg);
-        this.speech.speak(msg);
+      this.toast.success("Profile updated successfully!");
+      this.speech.speak("Profile updated successfully!");
+    } catch (error) {
+      console.error(error);
+      let message = 'An unexpected error occurred.';
+      if (error instanceof HttpErrorResponse && error.status === 400 && error.error?.message) {
+        message = error.error.message;
       }
-    });
+      this.toast.error(message);
+      this.speech.speak("Profile update failed. " + message);
+    }
   }
+
+  cancel() {
+     const ok = confirm('Are you sure you want to discard changes?');
+    if (!ok) return;
+    this.router.navigate(['/dashboad']);
+    this.speech.speak("Profile update cancelled. Returning to dashboard.");
+  }
+ 
 }

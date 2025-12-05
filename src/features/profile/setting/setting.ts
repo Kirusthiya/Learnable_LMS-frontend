@@ -1,21 +1,27 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AccessibilitySettings } from '../../../types/SettingsService';
 import { SettingsService } from '../../../core/services/Voice/settings-service';
 import { SpeechService } from '../../../core/services/Voice/speech-service';
-
-
+import { Router } from '@angular/router';
+import { KeyboardNav } from "../../../core/directives/accessibility/keyboard-nav";
+import { Speak } from "../../../core/directives/accessibility/speak";
 
 @Component({
   selector: 'app-setting',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule, KeyboardNav, Speak],
   templateUrl: './setting.html',
   styleUrl: './setting.css',
 })
 export class Setting implements OnInit {
 
-   settings: AccessibilitySettings = {
+  private settingsService = inject(SettingsService);
+  private speechService = inject(SpeechService);
+  private router = inject(Router);
+
+  // UI model
+  settings: AccessibilitySettings = {
     textSize: 16,
     contrastMode: 'Light',
     enableSubtitles: false,
@@ -23,52 +29,61 @@ export class Setting implements OnInit {
     voiceVolume: 1.0,
     speechToText: false,
     keyboardNav: false,
+    mode: 'blind'
   };
 
-  // snapshot of last applied
+  // Store last successfully applied settings
   private appliedSettings: AccessibilitySettings = { ...this.settings };
 
-  constructor(
-    private settingsService: SettingsService,
-    private speechService: SpeechService
-  ) {}
-
   ngOnInit() {
-    // get current app settings from service
     const current = this.settingsService.currentSettings;
+
     if (current) {
       this.settings = { ...current };
       this.appliedSettings = { ...current };
     }
   }
 
-  // Apply (with confirmation). Only on OK will the service be updated and app changed.
+  // Apply & save settings
   applyChanges() {
     const ok = confirm('Are you sure you want to apply changes?');
     if (!ok) return;
 
-    // update globally via service (also saves to localStorage)
+    // Update the global application settings + persist
     this.settingsService.updateSettings({ ...this.settings });
 
-    // optional: immediate voice test to confirm speed + volume
+    // Optional voice test
     try {
-      this.speechService.speak('Settings applied. Voice test.', this.settings.voiceSpeed, this.settings.voiceVolume);
+      this.speechService.speak(
+        'Settings applied. Voice test.',
+        this.settings.voiceSpeed,
+        this.settings.voiceVolume
+      );
     } catch {
-      // ignore if synthesis not available
+      // ignore errors (browser restrictions)
     }
 
-    // set snapshot
     this.appliedSettings = { ...this.settings };
+
     alert('Changes applied successfully!');
   }
 
-  // Cancel: restore last applied settings in UI (no app change)
+  // Restore without applying
   cancelChanges() {
+    const ok = confirm('Are you sure you want to discard changes?');
+    if (!ok) return;
+
     this.settings = { ...this.appliedSettings };
+    this.router.navigate(['/dashboad']);
   }
 
-  // helper for immediate preview without applying (optional)
   previewVoice() {
-    this.speechService.speak('This is a voice preview.', this.settings.voiceSpeed, this.settings.voiceVolume);
+    this.speechService.speak(
+      'This is a voice preview.',
+      this.settings.voiceSpeed,
+      this.settings.voiceVolume
+    );
   }
+
+  
 }

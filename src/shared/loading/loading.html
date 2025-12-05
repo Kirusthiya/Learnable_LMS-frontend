@@ -1,0 +1,15 @@
+<div 
+  class="loading-overlay" 
+  *ngIf="loadingService.isLoading()"
+>
+    <div id="initial-splash" class="fixed inset-0 flex flex-col justify-center items-center bg-gray-900 text-white z-50 transition-opacity duration-500">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-28 h-28 text-cyan-400 animate-spin" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+        d="M9.75 17L15 12l-5.25-5M12 3v3m0 12v3m9-9h-3M3 12H0m16.95-7.05l-2.12 2.12M7.17 16.83l-2.12 2.12M16.95 16.95l-2.12-2.12M7.17 7.17l-2.12-2.12" />
+    </svg>
+    <h1 class="text-4xl font-bold mt-4 text-cyan-400 animate-pulse" appSpeak="Loding please wait" tabindex="0"
+    >Loading...</h1>
+  </div>
+
+  
+</div>
