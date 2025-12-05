@@ -14,7 +14,9 @@ import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
 export class Repository implements OnChanges {
 
   @Input() classId: string | null = null;
-  @Output() openAssets = new EventEmitter<string>();   // 🔹 EVENT EMITTER
+  @Output() openAssets = new EventEmitter<string>();
+  
+  @Output() back = new EventEmitter<void>();
 
   private searchService = inject(SearchService);
 
@@ -29,6 +31,11 @@ export class Repository implements OnChanges {
   }
 
   openRepository(repoId: string): void {
-    this.openAssets.emit(repoId);  // 🔹 Emit to dashboard
+    this.openAssets.emit(repoId);
   }
+
+  goBack(): void {
+    this.back.emit();
+  }
+  
 }

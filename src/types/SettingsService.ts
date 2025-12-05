@@ -6,4 +6,6 @@ export type AccessibilitySettings= {
   voiceVolume: number;
   speechToText: boolean;
   keyboardNav: boolean;
+  mode: 'blind' | 'deaf'; 
 };
+
