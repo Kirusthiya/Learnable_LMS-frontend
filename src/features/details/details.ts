@@ -44,6 +44,7 @@ export class Details implements OnInit {
 
     return classInfo.students?.some(s => s.userId === user.user.id) || false;
   }
+  
 
   handleJoinClass(): void {
     const currentUser = this.accountService.currentUser();
@@ -56,15 +57,14 @@ export class Details implements OnInit {
     }
 
     // Wrap payload in RequestDto as backend expects
-    const payload = {
-      RequestDto: {
-        SenderId: currentUser.user.id,
-        ReceiverId: classInfo.teacher.userId,
-        ClassId: classInfo.classId,
-        NotificationStatus: 'Pending'
-      }
-    };
-
+  const payload = {
+    RequestDto: {
+      SenderId: currentUser.user.id,
+      ReceiverId: classInfo.teacher.userId,
+      ClassId: classInfo.classId,
+      NotificationStatus: 'Pending'
+    }
+};
     this.joinLoading.set(true);
     this.requestService.sendJoinRequest(payload).subscribe({
       next: () => {

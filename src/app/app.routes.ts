@@ -19,6 +19,7 @@ import { Editprofile } from '../features/profile/editprofile/editprofile';
 import { Details } from '../features/details/details';
 import { Keyboardshortcut } from '../features/profile/keyboardshortcut/keyboardshortcut';
 import { Help } from '../features/profile/help/help';
+import { Assets } from '../features/assets/assets';
 
 
 export const routes: Routes = [
@@ -31,6 +32,7 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'errors', component: TestErrors },
   { path: 'details/:id', component: Details },
+  {path:'assets', component:Assets},
    
 
  
@@ -64,7 +66,7 @@ export const routes: Routes = [
 // ng g c features/Feature/
 // ng g c features/Testimonials
 // ng g c features/Contact
-// ng g c features/Home
+// ng g c features/Assets
 // ng g c Layout/nav
 // ng g c features/Profile/Keyboardshortcut
 

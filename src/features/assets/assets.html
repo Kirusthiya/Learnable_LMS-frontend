@@ -1,0 +1,142 @@
+<div class="assets-container relative" appSpeak="Assets screen loaded" appKeyboardNav tabindex="0">
+
+  <!-- 🔥 Blur Background When Popup Visible -->
+  <div 
+    [class.blur-sm]="AssetService.explainPopupVisible()" 
+    [class.pointer-events-none]="AssetService.explainPopupVisible()"
+    class="transition-all duration-300"
+    appSpeak="Content blurred due to popup">
+
+    <!-- ASSET LIST -->
+    <div class="asset-list" *ngIf="!AssetDetailsVisible()" appSpeak="Repository assets list" tabindex="0">
+
+      <h2 class="text-2xl font-bold text-primary mb-4" appSpeak="Repository Assets" tabindex="0">
+         Repository Assets
+      </h2>
+
+      <p *ngIf="AssetService.loading()" class="text-textlight" appSpeak="Loading assets" tabindex="0">
+        Loading assets...
+      </p>
+
+      <ul *ngIf="(assets() || []).length > 0">
+        <li *ngFor="let asset of (assets() || [])" class="mb-3">
+          <div class="asset-item bg-inputbg p-4 rounded-xl shadow" appSpeak="{{ asset.title }}" tabindex="0">
+            <strong class="text-textlight">{{ asset.title }}</strong>
+            <p class="text-gray-400">{{ asset.description | slice:0:100 }}...</p>
+
+            <div class="actions mt-2">
+              <button 
+                class="px-4 py-2 bg-primary text-white rounded-lg"
+                (click)="viewAssetDetails(asset.assetId)"
+                appSpeak="View asset {{ asset.title }}" tabindex="0">
+                View
+              </button>
+            </div>
+          </div>
+        </li>
+      </ul>
+
+      <p *ngIf="(assets() || []).length === 0" appSpeak="No assets found for this repository" tabindex="0">
+        No assets found for this repository.
+      </p>
+    </div>
+
+    <!-- ASSET DETAILS -->
+    <ng-container *ngIf="AssetDetailsVisible() && selectedAsset() as asset">
+      <div class="asset-details-view bg-inputbg p-6 rounded-xl shadow-xl text-textlight mt-5" appSpeak="Asset details view" tabindex="0">
+
+        <button 
+          (click)="goBackToList()" 
+          class="back-btn px-3 py-2 bg-gray-700 rounded-lg mb-3"
+          appSpeak="Back to list" tabindex="0">
+          ← Back to List
+        </button>
+
+        <h2 class="text-xl font-bold text-primary" appSpeak="Asset title {{ asset.title }}" tabindex="0">
+          {{ asset.title }}
+        </h2>
+
+        <p class="mt-2" appSpeak="Asset description {{ asset.description }}" tabindex="0">
+          {{ asset.description }}
+        </p>
+
+        <p appSpeak="Asset link" tabindex="0">
+          <strong>URL:</strong>
+          <a [href]="asset.url" target="_blank" class="text-blue-400 underline" appSpeak="Open asset link" tabindex="0">
+            {{ asset.url }}
+          </a>
+        </p>
+
+        <hr class="my-4 border-gray-600">
+
+        <h3 class="text-lg font-bold text-white" appSpeak="OCR chunks" tabindex="0">
+          OCR Chunks ({{ asset.ocrPdfs?.length || 0 }})
+        </h3>
+
+        <div class="ocr-chunks-list mt-3 space-y-3" *ngIf="asset.ocrPdfs && asset.ocrPdfs.length > 0">
+          <div *ngFor="let chunk of asset.ocrPdfs" class="bg-background p-4 rounded-xl border border-gray-700" >
+            <blockquote class="chunk-content text-gray-300 mt-2" [appSpeak]="chunk.chunk" tabindex="0">
+              {{ chunk.chunk }}
+            </blockquote>
+            <button 
+              (click)="requestExplanation(chunk)"
+              class="px-4 py-2 bg-primary text-white mt-3 rounded-xl"
+              appSpeak="Request AI explanation"
+              tabindex="0">
+              Request AI Explanation
+            </button>
+          </div>
+        </div>
+
+        <p *ngIf="!asset.ocrPdfs || asset.ocrPdfs.length === 0" appSpeak="No OCR chunks available"  tabindex="0">
+          No OCR chunks available for this asset.
+        </p>
+      </div>
+    </ng-container>
+
+  </div>
+
+  <!-- 🔥 AI EXPLANATION POPUP -->
+  <div *ngIf="AssetService.explainPopupVisible()" 
+     class="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm flex items-center justify-center z-50">
+
+  <!-- Popup container -->
+  <div class="bg-background p-6 rounded-2xl shadow-2xl border border-gray-700 w-11/12 md:w-1/2 max-h-[80vh] flex flex-col">
+
+    <h3 class="text-xl font-bold text-primary mb-3" appSpeak="AI explanation result" tabindex="0">
+      🤖 AI Explanation Result
+    </h3>
+
+    <!-- Scrollable content -->
+    <div class="overflow-y-auto flex-1 pr-2">
+
+      <div *ngIf="AssetService.loading()" class="text-gray-400 mb-3" appSpeak="Loading explanation" tabindex="0">
+        Loading explanation...
+      </div>
+
+      <div *ngIf="AssetService.error()" class="error-msg text-red-400" appSpeak="Error occurred" tabindex="0">
+        Error: {{ AssetService.error() }}
+      </div>
+
+      <ul *ngIf="(AssetService.explainResult() || []).length > 0" class="space-y-2">
+        <li *ngFor="let line of (AssetService.explainResult() || [])" class="bg-inputbg p-2 rounded-lg" [appSpeak]="line" tabindex="0">
+          {{ line }}
+        </li>
+      </ul>
+
+    </div>
+
+    <!-- Close button fixed at bottom -->
+    <div class="text-right mt-3">
+      <button class="px-4 py-2 bg-primary text-white rounded-xl" 
+              (click)="AssetService.hideExplainPopup()" 
+              appSpeak="Close popup" tabindex="0">
+        Close
+      </button>
+    </div>
+
+  </div>
+</div>
+
+
+</div>
