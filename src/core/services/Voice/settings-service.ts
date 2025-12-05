@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, effect } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { AccessibilitySettings } from '../../../types/SettingsService';
 
@@ -14,13 +14,32 @@ export class SettingsService {
     voiceVolume: 1.0,
     speechToText: false,
     keyboardNav: false,
+    mode: 'blind',
   };
 
-  private _settings = new BehaviorSubject<AccessibilitySettings>({ ...this.defaultSettings });
+  mode = signal<'blind' | 'deaf'>(
+    (localStorage.getItem('accessibilityMode') as 'blind' | 'deaf') || 'blind'
+  );
+
+  private _settings = new BehaviorSubject<AccessibilitySettings>({
+    ...this.defaultSettings,
+    mode: this.mode(),
+  });
   public settings$ = this._settings.asObservable();
 
   constructor() {
     this.loadSettings();
+
+    effect(() => {
+      const m = this.mode();
+
+      localStorage.setItem('accessibilityMode', m);
+
+      // If user switches to deaf → stop speech IMMEDIATELY
+      if (m === 'deaf') {
+        try { window.speechSynthesis.cancel(); } catch {}
+      }
+    });
   }
 
   get currentSettings(): AccessibilitySettings {
@@ -29,13 +48,14 @@ export class SettingsService {
 
   updateSettings(settings: AccessibilitySettings) {
     this._settings.next({ ...settings });
+
+    this.mode.set(settings.mode);
+
     localStorage.setItem('accessibilitySettings', JSON.stringify(settings));
-    document.documentElement.style.setProperty('--app-font-size', settings.textSize + 'px');
-    document.documentElement.style.setProperty('--app-voice-speed', settings.voiceSpeed.toString());
-    document.body.classList.remove('light-mode', 'dark-mode', 'high-contrast');
-    if (settings.contrastMode === 'Light') document.body.classList.add('light-mode');
-    else if (settings.contrastMode === 'Dark') document.body.classList.add('dark-mode');
-    else document.body.classList.add('high-contrast');
+
+    this.applyTextSize(settings.textSize);
+    this.applyVoiceSpeed(settings.voiceSpeed);
+    this.applyContrastMode(settings.contrastMode);
   }
 
   loadSettings() {
@@ -44,18 +64,30 @@ export class SettingsService {
       try {
         const parsed: AccessibilitySettings = JSON.parse(saved);
         this._settings.next(parsed);
-        document.documentElement.style.setProperty('--app-font-size', parsed.textSize + 'px');
-        document.documentElement.style.setProperty('--app-voice-speed', parsed.voiceSpeed.toString());
-        document.body.classList.remove('light-mode', 'dark-mode', 'high-contrast');
-        if (parsed.contrastMode === 'Light') document.body.classList.add('light-mode');
-        else if (parsed.contrastMode === 'Dark') document.body.classList.add('dark-mode');
-        else document.body.classList.add('high-contrast');
+        this.mode.set(parsed.mode);
+        this.applyTextSize(parsed.textSize);
+        this.applyVoiceSpeed(parsed.voiceSpeed);
+        this.applyContrastMode(parsed.contrastMode);
       } catch {
-        this._settings.next(this.defaultSettings);
         this.updateSettings(this.defaultSettings);
       }
     } else {
       this.updateSettings(this.defaultSettings);
     }
+  }
+
+  private applyTextSize(size: number) {
+    document.documentElement.style.setProperty('--app-font-size', size + 'px');
+  }
+
+  private applyVoiceSpeed(speed: number) {
+    document.documentElement.style.setProperty('--app-voice-speed', speed.toString());
+  }
+
+  private applyContrastMode(mode: string) {
+    document.body.classList.remove('light-mode', 'dark-mode', 'high-contrast');
+    if (mode === 'Light') document.body.classList.add('light-mode');
+    else if (mode === 'Dark') document.body.classList.add('dark-mode');
+    else document.body.classList.add('high-contrast');
   }
 }

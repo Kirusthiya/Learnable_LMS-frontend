@@ -18,49 +18,54 @@ import { Speak } from "../../core/directives/accessibility/speak";
   styleUrls: ['./dashboad.css'],
 })
 export class Dashboad {
+
   private accountService = inject(AccountService);
 
-  selectedClassId = signal<string | null>(null);        // current classId
-  selectedRepositoryId = signal<string | null>(null);   // current repositoryId
-  showMainContent = signal(true);
-  isSidebarOpen: WritableSignal<boolean> = signal(false); 
+  selectedClassId = signal<string | null>(null);
+  selectedRepositoryId = signal<string | null>(null);
+
+  isSidebarOpen: WritableSignal<boolean> = signal(false);
   isNavOverlayActive = signal(false);
-  
+
   studentClasses = computed<Class[]>(() => {
-    const userResponse = this.accountService.currentUser();
-    return userResponse?.student?.classes || [];
+    const user = this.accountService.currentUser();
+    return user?.student?.classes || [];
   });
 
-  // Click on class → set classId
-  viewClass(id: string) {
-    this.selectedClassId.set(id);
-    if (this.isSidebarOpen()) this.isSidebarOpen.set(false);
+
+   protected LoginMode = signal(false);
+
+  onGetStartedClick(value: boolean) {
+    this.LoginMode.set(value);
   }
 
-  // Repository clicked → show assets
+  // When class is clicked
+  viewClass(id: string) {
+    this.selectedClassId.set(id);
+    this.isSidebarOpen.set(false);
+  }
+
+  // Repository clicked
   openRepository(repoId: string) {
     this.selectedRepositoryId.set(repoId);
   }
 
+  // 🔥 Back from assets → go to repository list
   backFromAssets() {
     this.selectedRepositoryId.set(null);
   }
 
-  toggleSidebar(): void {
-    this.isSidebarOpen.update(current => !current);
+  // 🔥 Back from repositories → go to class list
+  backToDashboard() {
+    this.selectedClassId.set(null);
   }
 
-  showContent() {
-    this.showMainContent.set(true);
-    if (this.isSidebarOpen()) this.isSidebarOpen.set(false);
+  toggleSidebar() {
+    this.isSidebarOpen.update(x => !x);
   }
 
   handleNavMenuStateChange(isOpen: boolean) {
     this.isNavOverlayActive.set(isOpen);
     if (isOpen) this.isSidebarOpen.set(false);
-  }
-
-  backToDashboard() {
-    this.selectedClassId.set(null);
   }
 }

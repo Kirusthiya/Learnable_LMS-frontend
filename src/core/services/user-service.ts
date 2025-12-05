@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { User } from '../../types/user';
+import { UpdateUserPayload, User } from '../../types/user';
 import { environment } from '../../environments/environment';
-import { firstValueFrom, Observable } from 'rxjs';
+import { firstValueFrom } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -17,28 +17,16 @@ export class UserService {
     return firstValueFrom(this.http.get<User>(url));
   }
 
+
   // Get user by ID
-  getUserById(id: string): Observable<User> {
-    return this.http.get<User>(`${this.baseUrl}user/${id}`);
-  }
+  updateUser(payload: UpdateUserPayload) {
+    const url = `${this.baseUrl}User/update`;
 
-  // Get all users
-  getAllUsers(): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}user/all`);
-  }
-
-  // Update user
-  updateUser(model: User) {
-    return this.http.put(`${this.baseUrl}user/update`, model);
-  }
-
-  // Delete user
-  deleteUser(id: string) {
-    return this.http.delete(`${this.baseUrl}user/${id}`);
-  }
-
-  // Search users
-  searchUser(query: string): Observable<User[]> {
-    return this.http.get<User[]>(`${this.baseUrl}user/search${query}`);
-  }
+      const command = {
+      fullName: payload.fullName,
+      displayName: payload.displayName,
+      username: payload.newUsername // C# Command-ல் username என இருந்தால், இதை 'username' என்றே அனுப்பலாம்.
+    }
+     return this.http.put(url, command);
+       }
 }
