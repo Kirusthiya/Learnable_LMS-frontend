@@ -1,8 +1,9 @@
-import { AfterViewInit, Component, inject, OnDestroy, HostListener, Output, EventEmitter } from '@angular/core';
+import { AfterViewInit, Component, inject, OnDestroy, HostListener, Output, EventEmitter, effect, OnInit } from '@angular/core';
 import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
 import { Speak } from '../../core/directives/accessibility/speak';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AccountService } from '../../core/services/accountservices';
+import { SettingsService } from '../../core/services/Voice/settings-service';
 
 @Component({
   selector: 'app-nav',
@@ -11,89 +12,109 @@ import { AccountService } from '../../core/services/accountservices';
   styleUrls: ['./nav.css'],
 })
 export class Nav implements AfterViewInit, OnDestroy {
-  private scrollHandler: any;
+  private accessibilityModeService = inject(SettingsService);
   private router = inject(Router);
   protected accountService = inject(AccountService);
+
   @Output() menuStateChange = new EventEmitter<boolean>();
 
-  showMenu = false; // accessibility menu toggle
-  mobileMenuOpen = false; // mobile menu toggle
-  profileDropdownOpen = false; // profile dropdown toggle
-  helpDropdownOpen = false; // help submenu toggle
-  mode: 'blind' | 'deaf' = 'blind';
+  showMenu = false;
+  mobileMenuOpen = false;
+  profileDropdownOpen = false;
+  helpDropdownOpen = false;
 
-  ngOnInit() {
-    const saved = localStorage.getItem('accessibilityMode');
-    this.mode = saved === 'deaf' ? 'deaf' : 'blind';
-    this.applyMode();
+  mode: 'blind' | 'deaf' = 'blind';
+  private scrollHandler: any;
+
+ 
+  // Accessibility menu toggle
+  toggleMenu() {
+    this.showMenu = !this.showMenu;
+    this.emitMenuState();
   }
 
-  toggleMenu() { this.showMenu = !this.showMenu; }//for accessibility menu
-
-  setMode(mode: 'blind' | 'deaf') {
-    this.mode = mode;
-    localStorage.setItem('accessibilityMode', mode);
-    this.applyMode();
+  // Set mode
+  setMode(newMode: 'blind' | 'deaf') {
+    this.accessibilityModeService.mode.set(newMode);
     this.showMenu = false;
     this.mobileMenuOpen = false;
+    this.emitMenuState();
   }
 
+  // Apply mode to <html> & <body>
   applyMode() {
-    document.body.setAttribute('speech-enabled', this.mode === 'blind' ? 'true' : 'false');
+    const enableSpeech = this.mode === 'blind';
+
+    document.body.setAttribute('speech-enabled', enableSpeech ? 'true' : 'false');
+    document.documentElement.setAttribute('speech-enabled', enableSpeech ? 'true' : 'false');
   }
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
-    this.menuStateChange.emit(this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen);
+    this.emitMenuState();
   }
 
- 
- closeMobileMenu() {
+  closeMobileMenu() {
     this.mobileMenuOpen = false;
     this.showMenu = false;
     this.profileDropdownOpen = false;
     this.helpDropdownOpen = false;
-    this.menuStateChange.emit(false); 
+    this.emitMenuState();
   }
 
-  toggleProfileDropdown(event: Event) {
-    event.stopPropagation();
+ toggleProfileDropdown() {
     this.profileDropdownOpen = !this.profileDropdownOpen;
     if (!this.profileDropdownOpen) this.helpDropdownOpen = false;
-    this.menuStateChange.emit(this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen); // நிலையை அனுப்பவும்
+    this.emitMenuState();
   }
 
   toggleHelpDropdown(event: Event) {
     event.stopPropagation();
     this.helpDropdownOpen = !this.helpDropdownOpen;
-    this.menuStateChange.emit(this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen); // நிலையை அனுப்பவும்
+    this.emitMenuState();
   }
 
-
+  // For header outside click
   @HostListener('document:click', ['$event'])
-  handleClickOutside(event: any) {
+  handleClickOutside(event: MouseEvent) {
     const target = event.target as HTMLElement;
     const header = document.querySelector('header');
-    // Only close if menu is open and click is outside BOTH header and mobile menu
     const mobileMenu = document.getElementById('mobile-menu');
-    if (this.mobileMenuOpen && !header?.contains(target) && !mobileMenu?.contains(target)) {
+
+    if (
+      this.mobileMenuOpen &&
+      !header?.contains(target) &&
+      !mobileMenu?.contains(target)
+    ) {
       this.closeMobileMenu();
     }
   }
-  ngAfterViewInit(): void {
+
+  ngAfterViewInit() {
     const header = document.querySelector('header');
+
     this.scrollHandler = () => {
       if (window.scrollY > 50) header?.classList.add('scrolled');
       else header?.classList.remove('scrolled');
     };
+
     window.addEventListener('scroll', this.scrollHandler);
   }
 
-  ngOnDestroy(): void { window.removeEventListener('scroll', this.scrollHandler); }
+  ngOnDestroy() {
+    window.removeEventListener('scroll', this.scrollHandler);
+  }
 
   logout() {
     this.accountService.logout();
     this.router.navigateByUrl('/');
     this.closeMobileMenu();
+  }
+
+  // Emits final state to parent
+  private emitMenuState() {
+    this.menuStateChange.emit(
+      this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen
+    );
   }
 }

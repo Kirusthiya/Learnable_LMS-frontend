@@ -1,5 +1,5 @@
 // assets.ts
-import { Component, Input, OnChanges, inject, signal } from '@angular/core'; 
+import { Component, EventEmitter, Input, OnChanges, Output, inject, signal } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { AssetService } from '../../core/services/asset-service';
 import { Asset } from '../../types/Notification';
@@ -17,6 +17,7 @@ import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
 export class Assets implements OnChanges {
 
   @Input() repoId: string | null = null;
+   @Output() back = new EventEmitter<void>();
   public AssetService = inject(AssetService);
 
   assets = this.AssetService.repositoryAssets;
@@ -52,5 +53,9 @@ export class Assets implements OnChanges {
         alert("No OCR text available for this chunk.");
       }
     }
+
+    goBack(): void {
+    this.back.emit();
+  }
     
 }

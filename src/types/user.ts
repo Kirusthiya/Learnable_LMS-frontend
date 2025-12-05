@@ -17,6 +17,13 @@ export type User = {
   classes?: Class[];
 };
 
+// Update Payload-க்கான ஒரு interface-ஐ உருவாக்குதல்
+export type UpdateUserPayload = {
+  fullName: string;
+  displayName: string;
+  newUsername: string; // Backend-ன் 'UpdateUserCommand'-க்கு ஏற்றவாறு
+}
+
 
   export type Class = {
       classId: string,

@@ -1,50 +1,72 @@
-<!-- File: repository.html -->
-<div class="p-6 bg-gray-900 rounded-2xl shadow-2xl text-white border border-gray-700" appKeyboardNav>
-  <h2 class="text-3xl font-extrabold text-blue-400 mb-6 border-b border-gray-700 pb-3" 
-      [appSpeak]="classData?.className + ' Repositories'" 
+<div class="p-8  rounded-3xl shadow-xl text-textlight border border-gray-700 font-body" appKeyboardNav>
+
+  <h2 class="text-4xl font-extrabold text-primary mb-8 border-b border-gray-700 pb-4 font-display"
+      [appSpeak]="classData?.className + ' Repositories'"
       tabindex="0">
     {{ classData?.className }} Repositories
   </h2>
 
-  <p *ngIf="!classData" class="text-gray-400 text-lg p-8 text-center" appSpeak="Loading class details. Please wait." tabindex="0">
-    <span class="animate-pulse">Loading class details...</span>
+  <p *ngIf="!classData"
+    class="text-gray-400 text-lg p-12 text-center"
+    appSpeak="Loading class details. Please wait."
+    tabindex="0">
+    <span class="animate-pulse text-2xl font-medium">Retrieving class details...</span>
   </p>
 
-  <div *ngIf="classData && classData.repositories && classData.repositories.length === 0" 
-       class="text-center p-10 border-2 border-dashed border-gray-700 rounded-xl text-gray-500 bg-gray-800"
-       appSpeak="No repositories found for this class." tabindex="0"> 
-    <p class="text-xl font-medium">No Repositories Found</p>
-    <p class="mt-2 text-sm">The teacher has not uploaded any repository files yet.</p>
+  <div *ngIf="classData?.repositories?.length === 0 && classData"
+        class="text-center p-16 border-2 border-dashed border-primary/50 rounded-2xl text-gray-500 bg-inputbg"
+        appSpeak="No repositories found for this class."
+        tabindex="0">
+    <p class="text-2xl font-bold text-primary">No Repositories Found</p>
+    <p class="mt-3 text-base text-textlight/70">The teacher has not uploaded any repository files yet.</p>
   </div>
 
-  <div *ngFor="let repo of classData?.repositories; let i = index" 
-       class="bg-gray-800 p-5 rounded-xl mb-4 shadow-lg hover:shadow-blue-500/30 transition duration-300 transform hover:scale-[1.01] focus-within:ring-2 focus-within:ring-blue-500"
-       [attr.aria-label]="repo.fileName + '. Certification: ' + repo.repoCertification" 
-       tabindex="0">
+  <div class="space-y-6">
+    <div *ngFor="let repo of classData?.repositories; let i = index"
+          class="bg-inputbg p-6 rounded-2xl shadow-lg border border-gray-700 hover:shadow-primary/50 transition duration-300 transform hover:scale-[1.01] focus-within:ring-2 focus-within:ring-primary"
+          tabindex="0">
 
-    <div class="flex justify-between items-start mb-3">
-      <h3 class="font-bold text-xl text-white" 
-          [appSpeak]="'Repository ' + (i + 1) + '. Title: ' + repo.fileName" tabindex="0">
-        {{ repo.fileName }}
-      </h3>
-    </div>
-    <p class="text-gray-300 text-sm mb-4" 
-       [appSpeak]="'Certification: ' + (repo.repoCertification || 'No description available')" tabindex="0">
-      <span class="font-semibold text-gray-400">Certification:</span> {{ repo.repoCertification || 'No description available' }}
-    </p>
+      <div class="flex justify-between items-start mb-4">
+        <h3 class="font-bold text-2xl text-textlight"
+            [appSpeak]="'Repository ' + (i + 1) + '. Title: ' + repo.fileName"
+            tabindex="0">
+          {{ repo.fileName }}
+        </h3>
+        <span class="text-sm font-medium text-primary bg-primary/20 px-3 py-1 rounded-full border border-primary/50">
+            Repo #{{ i + 1 }}
+        </span>
+      </div>
+      
+      <div class="text-sm mb-3">
+        <p class="font-semibold text-primary/80 mb-1">Certification:</p>
+        <p class="text-textlight/80" appSpeak="Certification {{repo.repoCertification}}" tabindex="0">
+          {{ repo.repoCertification || 'No certification specified' }}
+        </p>
+      </div>
 
-    <p class="text-gray-300 text-sm mb-4" 
-       [appSpeak]="'Description: ' + (repo.repoDescription || 'No description available')" tabindex="0">
-      <span class="font-semibold text-gray-400">Description:</span> {{ repo.repoDescription || 'No description available' }}
-    </p>
+      <div class="text-sm mb-5">
+        <p class="font-semibold text-primary/80 mb-1">Description:</p>
+        <p class="text-textlight/80" appSpeak="Description {{repo.repoDescription}}" tabindex="0">
+          {{ repo.repoDescription || 'No description available' }}
+        </p>
+      </div>
 
-    <div class="flex flex-wrap gap-3 items-center pt-2 border-t border-gray-700">
-      <button
-        (click)="openRepository(repo.repositoryId)"
-        class="flex items-center space-x-2 bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-500 transition text-sm"
-        appSpeak="Open repository details" tabindex="0">
-        ➡️ Open Repository
-      </button>
+      <div class="flex flex-wrap gap-4 items-center pt-4 border-t border-gray-700">
+        <button
+          (click)="openRepository(repo.repositoryId)"
+          class="flex items-center space-x-2 bg-primary text-background px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition text-base shadow-lg shadow-primary/30"
+          appSpeak="Open repository details"
+          tabindex="0">
+          Open Repository
+        </button>
+        <button
+          (click)="goBack()"
+          class="bg-gray-700 text-textlight px-5 py-2 rounded-lg hover:bg-gray-600 transition text-base"
+          appSpeak="Back to class list"
+          tabindex="0">
+          Back to Class List
+        </button>
+      </div>
     </div>
   </div>
 </div>
