@@ -12,8 +12,7 @@ import { AccountService } from './accountservices';
 export class SearchService {
 
   private http = inject(HttpClient);
-  private baseUrl = environment.apiUrl; // e.g., 'http://localhost:5071/api/'
-
+  private baseUrl = environment.apiUrl; 
   // === Signals ===
   public globalSearchResults: WritableSignal<GlobalSearch[]> = signal([]);
   public classDetails: WritableSignal<ClassDto | null> = signal(null);
@@ -69,6 +68,7 @@ public loadUserDetails(userId: string): void {
       }
     });
 }
+
 
 
 }
