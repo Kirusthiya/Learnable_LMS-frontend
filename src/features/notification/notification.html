@@ -1,36 +1,62 @@
-<div *ngIf="isTeacher">
-  <h2>🔔 Received Join Requests (Action Required)</h2>
-  
-  <div *ngIf="pendingRequests().length === 0" class="text-gray-400">
-    No pending join requests.
-  </div>
-  
-  <div *ngFor="let request of pendingRequests()">
-    <p>
-      **{{ request.senderName }}** requests to join class **{{ request.className }}**.
-    </p>
-    <div>
-            <button (click)="handleApprove(request.notificationId)">✅ Approve</button>
-      <button (click)="handleReject(request.notificationId)">❌ Reject</button>
-    </div>
-  </div>
-</div>
+<div class="pt-12 flex flex-col items-center px-4 space-y-8" appKeyboardNav >
 
----
+  <!-- ================= TEACHER VIEW ================= -->
+  <div *ngIf="isTeacher" class="w-full max-w-2xl space-y-6" appKeyboardNav>
+    <h2 class="text-2xl font-bold text-center text-primary" appSpeak="Received join request" tabindex="0"> Received Join Requests</h2>
+    <p class="text-gray-400 text-center" appSpeak="Action Required" tabindex="0">Action Required</p>
 
-<div *ngIf="!isTeacher">
-  <h2>📤 Sent Join Requests (Status)</h2>
-  
-  <div *ngIf="sentRequests().length === 0" class="text-gray-400">
-    You haven't sent any join requests yet.
-  </div>
+    <div *ngIf="pendingRequests().length === 0" class="text-gray-400 text-center" appSpeak="No pending join requests" tabindex="0">
+      No pending join requests.
+    </div>
 
-  <div *ngFor="let request of sentRequests()">
-    <p>
-      Request to join class **{{ request.className }}** is currently: 
-      <span [class]="getStatusClass(request.Status)">
-        {{ request.status }}
-      </span>
-    </p>
-  </div>
+    <div *ngFor="let request of pendingRequests()" class="bg-gray-800 rounded-xl shadow-md p-4 space-y-2" tabindex="0">
+      <p class="text-white font-medium">
+        <span class="font-bold" tabindex="0" [appSpeak]="'senderName'+request.senderName+'request to join class'">{{ request.senderName }}</span> requests to join class 
+        <span class="font-bold" tabindex="0" [appSpeak]="'class nam'+request.className">  {{ request.className }}</span>.
+      </p>
+      <div class="flex justify-end space-x-3">
+        <button  appSpeak="Approve" tabindex="0"
+          (click)="handleApprove(request.notificationId)"
+          class="px-4 py-2 bg-green-500 hover:bg-green-600 rounded-lg font-semibold transition-colors"
+        >
+          Approve
+        </button>
+        <button  appSpeak="Reject" tabindex="0"
+          (click)="handleReject(request.notificationId)"
+          class="px-4 py-2 bg-red-500 hover:bg-red-600 rounded-lg font-semibold transition-colors"
+        >
+          Reject
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= STUDENT VIEW ================= -->
+  <div *ngIf="!isTeacher" class="w-full max-w-2xl space-y-6" appKeyboardNav>
+    <h2 class="text-2xl font-bold text-center text-primary" appSpeak="Sent Join Request" tabindex="0">Sent Join Requests</h2>
+    <p class="text-gray-400 text-center" appSpeak="Status of your requests" tabindex="0">Status of your requests</p>
+
+    <div *ngIf="sentRequests().length === 0" class="text-gray-400 text-center" appSpeak="you haven't sent any jooin requests yet" tabindex="0">
+      You haven't sent any join requests yet.
+    </div>
+
+    <div *ngFor="let request of sentRequests()" [appSpeak]="'Request to Join'+request.className" tabindex="0"
+    class="bg-gray-800 rounded-xl shadow-md p-4 flex justify-between items-center">
+      <p class="text-white font-medium">
+        Request to join <span class="font-bold">{{ request.className }}</span>
+      </p>
+      <span 
+        [class]="getStatusClass(request.status)"
+        class="px-3 py-1 rounded-full text-sm font-semibold"
+      >
+        {{ request.status }}
+      </span>
+    </div>
+  </div>
+
+
+
+    <button class="btn-secondary" (click)="goBack()">← Go Back</button>
+    
+  
 </div>

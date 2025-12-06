@@ -1,0 +1,14 @@
+ <div class="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+      <div class="bg-gray-900 text-white p-6 rounded w-96 relative">
+        <button (click)="close.emit()" 
+                class="absolute top-2 right-2 text-gray-400 hover:text-white">&times;</button>
+
+        <h2 class="text-2xl font-bold mb-4">Repository Details</h2>
+
+        <p><strong>Name:</strong> {{ repository.fileName }}</p>
+        <p><strong>Description:</strong> {{ repository.repoDescription }}</p>
+        <p><strong>Certification:</strong> {{ repository.repoCertification }}</p>
+
+        <!-- Add more details or actions if needed -->
+      </div>
+    </div>
