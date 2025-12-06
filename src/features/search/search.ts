@@ -5,7 +5,6 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AccountService } from '../../core/services/accountservices';
-import { User, UserResponse } from '../../types/user';
 
 @Component({
   selector: 'app-search',
@@ -32,7 +31,7 @@ viewDetails(selectedId: string, selectedType: 'User' | 'Class'): void {
 
     this.router.navigate(['/details', selectedId], { 
       queryParams: { 
-        type: selectedType // <-- 'queryParams' என்று மாற்றவும்
+        type: selectedType 
       } 
     });
 }

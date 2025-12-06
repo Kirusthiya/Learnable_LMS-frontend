@@ -1,27 +1,27 @@
 
 export type UserResponse = {
+  id:string,
   user: User,
   student?: { classes?: Class[] },
-  teacher?: any
+  teacher?: { classes?: Class[] },
   token: string
   role: string;
 }
 
 export type User = {
-  id: string;
+  userId: string;
   fullName: string;
   displayName: string;
   username: string;
   token?: string;
-   role: string;
+  role: string;
   classes?: Class[];
 };
 
-// Update Payload-க்கான ஒரு interface-ஐ உருவாக்குதல்
 export type UpdateUserPayload = {
   fullName: string;
   displayName: string;
-  newUsername: string; // Backend-ன் 'UpdateUserCommand'-க்கு ஏற்றவாறு
+  newUsername: string; 
 }
 
 
