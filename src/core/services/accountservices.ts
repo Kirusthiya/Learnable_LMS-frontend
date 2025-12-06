@@ -1,8 +1,10 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, Injector, runInInjectionContext, signal } from '@angular/core';
 import { RegisterCreds, UserResponse } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { RegisterTeacherRequest, TeacherUserDto } from '../../types/teacher';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 
 @Injectable({
@@ -12,6 +14,8 @@ export class AccountService {
 
   private http = inject(HttpClient);
   currentUser = signal<UserResponse | null>(null);
+  private injector = inject(Injector);
+
 
   private baseUrl = environment.apiUrl;
 
@@ -58,5 +62,13 @@ export class AccountService {
     this.currentUser.set(null);
   }
 
- 
+  registerTeacherSignal(payload: RegisterTeacherRequest) {
+    return runInInjectionContext(this.injector, () =>
+      toSignal(
+        this.http.post<TeacherUserDto>(`${this.baseUrl}account/register-teacher`, payload),
+        { initialValue: null }
+      )
+    );
+  }
+
 }
