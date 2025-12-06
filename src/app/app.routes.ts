@@ -1,3 +1,4 @@
+// File: app.routes.ts
 import { Routes } from '@angular/router';
 import { TestErrors } from '../shared/error/test-errors/test-errors';
 import { ServerError } from '../shared/error/server-error/server-error';
@@ -20,6 +21,7 @@ import { Keyboardshortcut } from '../features/profile/keyboardshortcut/keyboards
 import { Help } from '../features/profile/help/help';
 import { Assets } from '../features/assets/assets';
 import { Loading } from '../shared/loading/loading';
+import { DashboardHome } from '../features/dashboad/home/dashboard-home';
 
 
 export const routes: Routes = [
@@ -32,8 +34,8 @@ export const routes: Routes = [
   { path: 'register', component: Register },
   { path: 'errors', component: TestErrors },
   { path: 'details/:id', component: Details },
-  {path:'assets', component:Assets},
-  {path: 'loading', component: Loading},
+  { path: 'assets', component: Assets },
+  { path: 'loading', component: Loading },
 
   { path: 'server-error', component: ServerError },
 
@@ -44,18 +46,20 @@ export const routes: Routes = [
     runGuardsAndResolvers: 'always',
     canActivate: [authguardGuard],
     children: [
+      { path: '', component: DashboardHome },
       { path: 'profile', component: Profile },
       { path: 'notification', component: Notification },
-    { path: 'setting', component: Setting },
-    { path: 'upgradeplan', component: Upgradeplan },
-    { path: 'help', component: Help },
-    { path: 'keyboardshortcut', component:Keyboardshortcut },
-  
+      { path: 'setting', component: Setting },
+      { path: 'upgradeplan', component: Upgradeplan },
+      { path: 'help', component: Help },
+      { path: 'keyboardshortcut', component: Keyboardshortcut },
+
     ],
   },
 
   { path: '**', component: NotFound },
 ];
+
 
 
 
