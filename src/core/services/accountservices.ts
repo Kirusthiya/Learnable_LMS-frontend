@@ -4,8 +4,6 @@ import { RegisterCreds, UserResponse } from '../../types/user';
 import { tap } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-// Full response type from backend
-
 
 @Injectable({
   providedIn: 'root'
@@ -13,17 +11,9 @@ import { environment } from '../../environments/environment';
 export class AccountService {
 
   private http = inject(HttpClient);
-  currentUser = signal<UserResponse | null>(null); // Full response signal
+  currentUser = signal<UserResponse | null>(null);
 
   private baseUrl = environment.apiUrl;
-
-
-  constructor() {
-  const savedUser = localStorage.getItem('user');
-  if (savedUser) {
-    this.currentUser.set(JSON.parse(savedUser));
-  }
-}
 
   // Send OTP
   sendOtp(email: string) {
@@ -48,11 +38,10 @@ export class AccountService {
     );
   }
 
-  // Set current user (full response)
   setCurrentUser(userResponse: UserResponse) {
     localStorage.setItem('user', JSON.stringify(userResponse));
-    this.currentUser.set(userResponse);
-  }
+     this.currentUser.set(userResponse);
+   }
 
   // Login
   login(creds: any) {
@@ -69,16 +58,5 @@ export class AccountService {
     this.currentUser.set(null);
   }
 
-  // Get User ID
-  getUserId(): string | null {
-    const user = localStorage.getItem('user');
-    if (!user) return null;
-
-    try {
-      const parsed: UserResponse = JSON.parse(user);
-      return parsed.user.id || null; // Correct path to userId
-    } catch {
-      return null;
-    }
-  }
+ 
 }
