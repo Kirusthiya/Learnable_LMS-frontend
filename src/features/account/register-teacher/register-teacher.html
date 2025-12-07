@@ -1,95 +1,87 @@
-<main id="main-content" role="main"
-      class="min-h-screen flex items-center justify-center bg-background text-textlight p-6">
+<div class="w-full">
 
-  <div class="w-full max-w-2xl bg-white/10 backdrop-blur-xl rounded-2xl p-8 shadow-2xl border border-white/10">
+  <h2 class="text-3xl font-display font-extrabold text-textlight text-center mb-8">
+    <span class="text-primary">Register</span> Teacher
+  </h2>
 
-    <h2 class="text-3xl font-display font-bold text-center mb-8">Register Teacher</h2>
+  <form (ngSubmit)="submit()" class="space-y-5">
 
-    <!-- ======================== FORM ======================== -->
-    <form (ngSubmit)="submit()" class="space-y-6">
+    <div>
+      <label class="block text-sm mb-1 text-textlight/90">Full Name</label>
+      <input
+        type="text"
+        class="w-full px-4 py-2.5 rounded-xl bg-background text-textlight/80 outline-none
+               border border-gray-700 focus:border-primary transition shadow-inner"
+        [(ngModel)]="model().fullName"
+        name="fullName"
+        placeholder="Enter full name"
+        required
+      />
+    </div>
 
-      <!-- Full Name -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Full Name</label>
-        <input
-          type="text"
-          class="w-full px-4 py-2 rounded-lg bg-inputbg text-textlight outline-none
-                 border border-gray-700 focus:border-primary"
-          [(ngModel)]="model().fullName"
-          name="fullName"
-          required
-        />
-      </div>
+    <div>
+      <label class="block text-sm mb-1 text-textlight/90">Display Name</label>
+      <input
+        type="text"
+        class="w-full px-4 py-2.5 rounded-xl bg-background text-textlight/80 outline-none
+               border border-gray-700 focus:border-primary transition shadow-inner"
+        [(ngModel)]="model().displayName"
+        name="displayName"
+        placeholder="Preferred display name"
+      />
+    </div>
 
-      <!-- Display Name -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Display Name</label>
-        <input
-          type="text"
-          class="w-full px-4 py-2 rounded-lg bg-inputbg text-textlight outline-none
-                 border border-gray-700 focus:border-primary"
-          [(ngModel)]="model().displayName"
-          name="displayName"
-        />
-      </div>
+    <div>
+      <label class="block text-sm mb-1 text-textlight/90">Date of Birth</label>
+      <input
+        type="date"
+        class="w-full px-4 py-2.5 rounded-xl bg-background text-textlight/80 outline-none
+               border border-gray-700 focus:border-primary transition shadow-inner
+               [color-scheme:dark]"
+        [(ngModel)]="model().dateOfBirth"
+        name="dateOfBirth"
+      />
+    </div>
 
-      <!-- Date of Birth -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Date of Birth</label>
-        <input
-          type="date"
-          class="w-full px-4 py-2 rounded-lg bg-inputbg text-textlight outline-none
-                 border border-gray-700 focus:border-primary"
-          [(ngModel)]="model().dateOfBirth"
-          name="dateOfBirth"
-        />
-      </div>
+    <div>
+      <label class="block text-sm mb-1 text-textlight/90">Contact Phone</label>
+      <input
+        type="text"
+        class="w-full px-4 py-2.5 rounded-xl bg-background text-textlight/80 outline-none
+               border border-gray-700 focus:border-primary transition shadow-inner"
+        [(ngModel)]="model().contactPhone"
+        name="contactPhone"
+        placeholder="+1 555-123-4567"
+      />
+    </div>
 
-      <!-- Contact Phone -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Contact Phone</label>
-        <input
-          type="text"
-          class="w-full px-4 py-2 rounded-lg bg-inputbg text-textlight outline-none
-                 border border-gray-700 focus:border-primary"
-          [(ngModel)]="model().contactPhone"
-          name="contactPhone"
-        />
-      </div>
+    <div>
+      <label class="block text-sm mb-1 text-textlight/90">Bio</label>
+      <textarea
+        rows="3"
+        class="w-full px-4 py-2.5 rounded-xl bg-background text-textlight/80 outline-none
+               border border-gray-700 focus:border-primary transition shadow-inner resize-none"
+        [(ngModel)]="model().bio"
+        name="bio"
+        placeholder="Tell us about your experience..."
+      ></textarea>
+    </div>
 
-      <!-- Bio -->
-      <div>
-        <label class="block text-sm font-medium mb-1">Bio</label>
-        <textarea
-          rows="3"
-          class="w-full px-4 py-2 rounded-lg bg-inputbg text-textlight outline-none
-                 border border-gray-700 focus:border-primary"
-          [(ngModel)]="model().bio"
-          name="bio"
-        ></textarea>
-      </div>
+    <button
+      type="submit"
+      class="w-full mt-6 py-3 rounded-xl bg-primary text-black font-semibold text-lg
+             hover:bg-primary/90 transition shadow-lg shadow-primary/30"
+      [disabled]="isLoading()"
+    >
+      @if (isLoading()) { Registering... } @else { Register Teacher }
+    </button>
 
-      <!-- Submit -->
-      <button
-        type="submit"
-        class="w-full py-3 rounded-lg bg-primary hover:bg-primary/80 transition font-semibold"
-        [disabled]="isLoading()"
-      >
-        @if (isLoading()) {
-          Registering...
-        } @else {
-          Register Teacher
-        }
-      </button>
+  </form>
 
-    </form>
+  @if (error()) {
+    <div class="mt-4 p-3 bg-red-800/40 border border-red-500 rounded-lg">
+      <p class="text-red-300 text-sm">{{ error() }}</p>
+    </div>
+  }
 
-    <!-- ======================== ERROR ======================== -->
-    @if (error()) {
-      <div class="mt-4 p-4 bg-red-600/30 border border-red-500 rounded-lg">
-        <p class="text-red-200">{{ error() }}</p>
-      </div>
-    }
-
-  </div>
-</main>
+</div>

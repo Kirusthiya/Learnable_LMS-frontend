@@ -3,18 +3,22 @@ import { AccountService } from '../../core/services/accountservices';
 import { RequestService } from '../../core/services/request-service';
 import { NotificationDto } from '../../types/Notification';
 import { CommonModule } from '@angular/common';
+import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
+import { Speak } from "../../core/directives/accessibility/speak";
+import { FormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-notification',
-  imports: [CommonModule],
+  imports: [CommonModule, KeyboardNav, Speak,FormsModule],
   templateUrl: './notification.html',
   styleUrl: './notification.css',
 })
 export class Notification {
   private accountService = inject(AccountService);
   private requestService = inject(RequestService);
+  private router=inject(Router)
 
-  // Signals to hold the data
   pendingRequests = signal<any[]>([]); 
   sentRequests = signal<any[]>([]); 
   
@@ -25,12 +29,10 @@ export class Notification {
     const user = this.accountService.currentUser();
     if (!user) return;
 
-    // 🛑 CRITICAL FIX: Ensure you use the correct path to the User ID
-    // Use nullish coalescing or checking to be safe
+
     this.currentUserId = user.user?.userId || user.id; // Assuming user.user.userId is the correct path
     
     this.isTeacher = user.user.role === 'Teacher'; 
-    // The rest of the logic is correct for calling the service with zero arguments
     if (this.isTeacher) {
       this.loadReceivedRequests();
     } else {
@@ -38,16 +40,12 @@ export class Notification {
     }
   }
   loadReceivedRequests(): void {
-    // 1. Teacher: Fetch pending requests sent TO them
-    // ✅ CORRECT: Assuming the backend uses the JWT token to get the user ID.
     this.requestService.getReceivedRequests().subscribe(requests => {
       this.pendingRequests.set(requests);
     });
   }
 
-  loadSentRequests(): void {
-    // ✅ CORRECT: Assuming the backend uses the JWT token to get the user ID.
-    this.requestService.getSentRequests().subscribe(requests => {
+  loadSentRequests(): void {    this.requestService.getSentRequests().subscribe(requests => {
       this.sentRequests.set(requests);
     });
 
@@ -65,7 +63,6 @@ export class Notification {
       this.loadReceivedRequests(); 
     },
     error: (err) => {
-      // Log the error to debug the exact message structure
       console.error('Approval failed', err.error || err); 
     }
   });
@@ -88,7 +85,6 @@ handleReject(requestId: string): void {
   });
 }
 
-  // 🚨 FIX 3: Add the missing getStatusClass method
 getStatusClass(status: string): string {
   switch (status) {
     case 'Approved':
@@ -101,4 +97,9 @@ getStatusClass(status: string): string {
       return 'text-gray-400';
   }
 }
+
+goBack() {
+      this.router.navigateByUrl('/dashboad');
+  } 
+  
 }

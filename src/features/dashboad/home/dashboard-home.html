@@ -1,65 +1,66 @@
-<div class="h-full flex flex-col bg-gray-900">
 
-    <!-- 1️⃣ Class List -->
-    <div appKeyboardNav>
-        <section *ngIf="!selectedClassId() && !selectedRepositoryId()" class="flex-1 overflow-y-auto p-4">
-            <header class="p-4 border-b border-gray-700 flex items-center justify-end">
-                <div class="w-full md:w-96">
-                    <app-search appSpeak="Search bar" tabindex="0"></app-search>
-                </div>
-            </header>
-
-            <h2 class="text-2xl font-extrabold text-blue-400 mb-6" appSpeak="class history" tabindex="0">Class History
-            </h2>
-
-            <div *ngFor="let class of studentClasses()" (click)="viewClass(class.classId)"
-                class="bg-gray-800 p-4 rounded-xl mb-4 cursor-pointer hover:bg-gray-700 transition duration-200">
-
-                <h3 class="text-white text-xl font-semibold" appSpeak="class name {{ class.className }}" tabindex="0">
-                    {{ class.className }} </h3>
-                <p class="text-gray-400 text-sm mt-1" appSpeak="join name {{ class.classJoinName }}" tabindex="0">
-                    Join Code: {{ class.classJoinName }}
-                <p class="text-gray-500 text-sm mt-1 italic"
-                    appSpeak="class description {{ class.description || 'No description available' }}" tabindex="0">
-                    {{ class.description || 'No description available' }}
-                <p class="text-gray-500 text-xs mt-2" appSpeak="Created {{class.createdAt}} ">Created: {{
-                    class.createdAt |
-                    date:'mediumDate' }}</p>
+<div *ngIf="!isNavOverlayActive()" class="h-screen flex flex-col bg-gray-900" appKeyboardNav>
 
 
-                <button (click)="viewClass(class.classId); $event.stopPropagation()"
-                    class="mt-3 bg-blue-600 text-white font-bold px-4 py-1.5 rounded-full hover:bg-blue-500 text-sm"
-                    appSpeak="View" tabindex="">
-                    View
-                </button>
+  
 
-            </div>
+  <!-- STUDENT VIEW -->
+  @if (userRole() === 'Student') {
 
-            <ng-container *ngIf="studentClasses().length === 0">
-                <div class="text-center p-8 border border-gray-700 rounded-xl text-gray-400" appSpeak="No classes found"
-                    tabindex="0">
-                    No classes found.
-                </div>
-            </ng-container>
-        </section>
+      <section *ngIf="!selectedClassId() && !selectedRepositoryId()" class="flex-1 overflow-y-auto p-4">
+        <header class="p-4 border-b border-gray-700 flex items-center justify-end">
+          <div class="w-full md:w-96">
+            <app-search appSpeak="Search bar" tabindex="0"></app-search>
+          </div>
+        </header>
 
-        <!-- 2️⃣ Repository List -->
-        <section *ngIf="selectedClassId() && !selectedRepositoryId()" class="flex-1 overflow-y-auto p-4">
+        <h2 class="text-2xl font-extrabold text-blue-400 mb-6">Class History</h2>
 
-            <app-repository [classId]="selectedClassId()" (openAssets)="openRepository($event)"
-                (back)="backToDashboard()">
-            </app-repository>
+        <div *ngFor="let class of studentClasses()"
+             (click)="viewClass(class.classId)"
+             class="bg-gray-800 p-4 rounded-xl mb-4 cursor-pointer hover:bg-gray-700 transition duration-200">
 
-        </section>
+          <h3 class="text-white text-xl font-semibold">{{ class.className }}</h3>
+          <p class="text-gray-400 text-sm mt-1">Join Code: {{ class.classJoinName }}</p>
+          <p class="text-gray-500 text-sm mt-1 italic">{{ class.description || 'No description available' }}</p>
+          <p class="text-gray-500 text-xs mt-2">Created: {{ class.createdAt | date:'mediumDate' }}</p>
 
-        <!-- 3️⃣ Assets List -->
-        <section *ngIf="selectedRepositoryId()" class="flex-1 overflow-y-auto p-4">
+          <button
+            (click)="viewClass(class.classId); $event.stopPropagation()"
+            class="mt-3 bg-blue-600 text-white font-bold px-4 py-1.5 rounded-full hover:bg-blue-500 text-sm">
+            View
+          </button>
 
-            <app-assets [repoId]="selectedRepositoryId()" (back)="backFromAssets()">
-            </app-assets>
+        </div>
 
-        </section>
+        <ng-container *ngIf="studentClasses().length === 0">
+          <div class="text-center p-8 border border-gray-700 rounded-xl text-gray-400">
+            No classes found.
+          </div>
+        </ng-container>
+      </section>
 
-    </div>
+  }
+  @else{
+  <app-class-teacher />
+  
+  }
+
+  <!-- Repository View -->
+  <section *ngIf="selectedClassId() && !selectedRepositoryId()" class="flex-1 overflow-y-auto p-4">
+    <app-repository
+      [classId]="selectedClassId()"
+      (openAssets)="openRepository($event)"
+      (back)="backToDashboard()">
+    </app-repository>
+  </section>
+
+  <!-- Assets View -->
+  <section *ngIf="selectedRepositoryId()" class="flex-1 overflow-y-auto p-4">
+    <app-assets
+      [repoId]="selectedRepositoryId()"
+      (back)="backFromAssets()">
+    </app-assets>
+  </section>
 
 </div>

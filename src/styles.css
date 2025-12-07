@@ -45,3 +45,21 @@ body {
   --app-font-size: 16px;
   --app-voice-speed: 1;
 }
+
+@keyframes popup {
+  0% { opacity: 0; transform: translateY(20px) scale(0.95); }
+  100% { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.animate-popup {
+  animation: popup .35s ease-out;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn .25s ease-in-out;
+}
