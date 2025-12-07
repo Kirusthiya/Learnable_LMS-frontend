@@ -57,3 +57,13 @@ export type TeacherUserDto = {
   };
   teacher: Teacher;
 };
+
+export type UpdateClassDto = {
+  classId: string;
+  className: string;
+  classJoinName: string;
+  description: string;
+  teacherId: string;
+  status: string;
+};
+
