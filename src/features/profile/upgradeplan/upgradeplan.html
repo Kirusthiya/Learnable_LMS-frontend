@@ -1,35 +1,51 @@
-<div class="min-h-screen bg-gray-900 text-white p-6">
+<div class="min-h-screen bg-background text-textlight p-8 font-body">
 
-  <!-- Back Button -->
-  <a routerLink="/dashboad"
-    class="mb-6 inline-flex items-center text-gray-400 hover:text-white transition group cursor-pointer">
-    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
-      class="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-    </svg>
-    Back to Dashboard
-  </a>
+    <a (click)="goBack()"
+        class="mb-8 inline-flex items-center text-gray-400 hover:text-primary transition group cursor-pointer text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+            stroke="currentColor"
+            class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Back to Dashboard
+    </a>
 
-  <!-- Upgrade Plan Header -->
-  <h1 class="text-3xl font-bold mb-6">Upgrade Your Plan</h1>
+    <div class="max-w-3xl mx-auto mb-10 text-center">
+        <h1 class="text-4xl md:text-5xl font-extrabold mb-3 font-display">Upgrade Your Plan </h1>
 
-  <p class="text-gray-300 mb-6">
-    Unlock premium features for teachers.
-  </p>
+        <p class="text-gray-400 text-lg">
+            Unlock <strong class="text-primary">premium features</strong> and tools designed specifically for educators.
+        </p>
+    </div>
 
-  <!-- Upgrade Button -->
-  <button (click)="openRegisterTeacher()"
-    class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-semibold shadow">
-    Register as Teacher
-  </button>
+    <div class="max-w-md mx-auto p-8 bg-inputbg rounded-3xl shadow-2xl border border-primary/20 text-center">
+        
+        <h2 class="text-2xl font-semibold mb-6 font-display">Ready to Elevate Your Teaching?</h2>
 
-  <!-- Teacher Register Component -->
-  <div *ngIf="showRegisterTeacher()" class="mt-10">
-    <app-register-teacher></app-register-teacher>
+        <button (click)="openRegisterTeacher()"
+            class="bg-primary hover:bg-primary/90 text-background px-8 py-4 rounded-full 
+                   font-bold text-lg shadow-primary/50 shadow-lg transition duration-300 
+                   transform hover:scale-[1.02] active:scale-95 animate-pulse-slow">
+            Register as Teacher
+        </button>
+        <p class="text-xs text-gray-500 mt-4">Takes less than 2 minutes!</p>
+    </div>
 
-    <button (click)="closeRegisterTeacher()" class="mt-4 bg-gray-700 hover:bg-gray-600 px-6 py-2 rounded-xl text-white">
-      Close
-    </button>
-  </div>
+
+    <div *ngIf="showRegisterTeacher()"
+        class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm
+               flex justify-center items-center z-[9999] animate-fadeIn p-4">
+
+        <div class="bg-background rounded-3xl w-full max-w-xl p-8 shadow-2xl shadow-primary/20 relative animate-popup border border-primary/30">
+
+            <button (click)="closeRegisterTeacher()"
+                class="absolute top-4 right-4 text-gray-400 hover:text-primary transition text-2xl font-light">
+                ✕
+            </button>
+
+            <app-register-teacher></app-register-teacher>
+        </div>
+    </div>
 
 </div>
