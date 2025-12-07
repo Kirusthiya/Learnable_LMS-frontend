@@ -2,7 +2,6 @@ import { Injectable, inject, signal, WritableSignal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Asset, ClassDto, GlobalSearch, UserDetailsDto } from '../../types/Notification';
-import { AccountService } from './accountservices';
 
 
 
@@ -52,7 +51,6 @@ export class SearchService {
       });
   }
 
-  // === User Details + enrolled classes ===
 public loadUserDetails(userId: string): void {
   this.userDetails.set(null);
   const url = `${this.baseUrl}User/${userId}`;

@@ -1,0 +1,109 @@
+<div class="flex h-full">
+  <!-- Sidebar: Classes -->
+  <div class="w-64 bg-gray-900 text-white p-4 overflow-y-auto">
+    <h2 class="text-xl font-bold mb-4 flex justify-between items-center">
+      Your Classes
+      <button (click)="openAddModal()" class="bg-blue-600 px-2 py-1 rounded hover:bg-blue-500 text-sm">+ Add</button>
+    </h2>
+
+    <div *ngFor="let cls of teacherClasses()" 
+         (click)="selectClass(cls.classId)" 
+         class="p-3 mb-2 rounded cursor-pointer hover:bg-gray-700 transition"
+         [class.bg-blue-700]="cls.classId === selectedClassId()">
+      <h3 class="font-semibold">{{ cls.className }}</h3>
+      <p class="text-gray-400 text-sm">Join Code: {{ cls.classJoinName }}</p>
+    </div>
+
+    <ng-container *ngIf="teacherClasses().length === 0">
+      <p class="text-gray-500 mt-4">No classes assigned yet.</p>
+    </ng-container>
+  </div>
+
+  <!-- Main Content -->
+  <div class="flex-1 bg-gray-800 text-white p-6 overflow-y-auto">
+    <ng-container>
+      <div *ngIf="selectedClassId(); else noClassSelected">
+        <div *ngIf="searchService.classDetails() as cls" class="space-y-4">
+          <h1 class="text-2xl font-bold">{{ cls.className }}</h1>
+          <p class="text-gray-300">Join Code: {{ cls.classJoinName }}</p>
+          <p class="text-gray-400">{{ cls.description }}</p>
+
+          <!-- Action Buttons -->
+          <div class="flex gap-3 mt-4">
+            <button class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-500" (click)="openAddStudent()">
+              + Add Student
+            </button>
+
+            <button class="px-4 py-2 bg-purple-600 rounded hover:bg-purple-500" (click)="openAddRepoModal()">
+              + Repositories
+            </button>
+          </div>
+
+          <!-- Students -->
+          <div class="mt-6 bg-gray-900 p-4 rounded">
+            <h2 class="font-bold text-xl mb-2">Students</h2>
+            <ul>
+              <li *ngFor="let std of cls.students" class="border-b border-gray-700 py-2">
+                {{ std.fullName }} ({{ std.email }})
+              </li>
+            </ul>
+          </div>
+
+          <!-- Repositories -->
+          <div class="mt-6 bg-gray-900 p-4 rounded">
+            <h2 class="font-bold text-xl mb-2">Repositories</h2>
+            <ul>
+              <li *ngFor="let repo of cls.repositories" class="border-b border-gray-700 py-2 flex justify-between items-center">
+                <div>
+                  <p><strong>Name:</strong> {{ repo.fileName }}</p>
+                  <p><strong>Description:</strong> {{ repo.repoDescription }}</p>
+                  <p><strong>Certification:</strong> {{ repo.repoCertification }}</p>
+                </div>
+                <button (click)="viewRepository(repo)" class="px-3 py-1 bg-blue-600 rounded hover:bg-blue-500 text-sm">
+                  View
+                </button>
+              </li>
+            </ul>
+          </div>
+
+          @if(selectedRepo){
+          <!-- Teacher Assets Component -->
+          <app-assets-teacher  [repository]="selectedRepo" (close)="selectedRepo=null"></app-assets-teacher> 
+          }
+        </div>
+      </div>
+
+      <ng-template #noClassSelected>
+        <p class="pt-16">Select a class to view its details.</p>
+      </ng-template>
+    </ng-container>
+  </div>
+</div>
+
+<!-- Add Class Modal -->
+<div *ngIf="showAddModal" class="fixed inset-0 bg-black/50 flex items-center justify-center">
+  <div class="bg-gray-900 text-white p-6 rounded w-96">
+    <h2 class="text-xl font-bold mb-4">Add New Class</h2>
+    <input [(ngModel)]="newClassName" placeholder="Class Name" class="w-full mb-2 p-2 rounded text-black"/>
+    <input [(ngModel)]="newClassJoinName" placeholder="Join Code" class="w-full mb-2 p-2 rounded text-black"/>
+    <textarea [(ngModel)]="newClassDesc" placeholder="Description" class="w-full mb-2 p-2 rounded text-black"></textarea>
+    <div class="flex justify-end gap-2 mt-4">
+      <button (click)="closeAddModal()" class="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500">Cancel</button>
+      <button (click)="createClass()" class="px-4 py-2 rounded bg-blue-600 hover:bg-blue-500">Create</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Repository Modal -->
+<div *ngIf="showAddRepoModal" class="fixed inset-0 bg-black/50 flex items-center justify-center">
+  <div class="bg-gray-900 text-white p-6 rounded w-96">
+    <h2 class="text-xl font-bold mb-4">Add New Repository</h2>
+    <input [(ngModel)]="newRepoName" placeholder="Repository Name" class="w-full mb-2 p-2 rounded text-black"/>
+    <textarea [(ngModel)]="newRepoDesc" placeholder="Description" class="w-full mb-2 p-2 rounded text-black"></textarea>
+    <input [(ngModel)]="newRepoCert" placeholder="Certification" class="w-full mb-2 p-2 rounded text-black"/>
+    <div class="flex justify-end gap-2 mt-4">
+      <button (click)="closeAddRepoModal()" class="px-4 py-2 rounded bg-gray-600 hover:bg-gray-500">Cancel</button>
+      <button (click)="createRepo()" class="px-4 py-2 rounded bg-purple-600 hover:bg-purple-500">Create</button>
+    </div>
+  </div>
+</div>

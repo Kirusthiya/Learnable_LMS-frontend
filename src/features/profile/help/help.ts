@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Speak } from '../../../core/directives/accessibility/speak';
 import { KeyboardNav } from '../../../core/directives/accessibility/keyboard-nav';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-help',
@@ -10,4 +11,11 @@ import { KeyboardNav } from '../../../core/directives/accessibility/keyboard-nav
 })
 export class Help {
 
+   
+    private router=inject(Router)
+  
+    goBack() {
+      this.router.navigateByUrl('/dashboad');
+  } 
+   
 }

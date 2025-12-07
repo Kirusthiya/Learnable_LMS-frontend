@@ -5,7 +5,7 @@ import { AccountService } from '../services/accountservices';
 export const jwtInterceptor: HttpInterceptorFn = (req, next) => {
   const accountService = inject(AccountService);
   const userResponse = accountService.currentUser(); 
-  const token = userResponse?.user?.token || userResponse?.token; 
+  const token = userResponse?.user?.token || userResponse?.user.token; 
   console.log('Checking for token. Token value:', token ? 'Found' : 'Missing'); 
 
   if (token) {

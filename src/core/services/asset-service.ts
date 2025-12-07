@@ -10,10 +10,9 @@ import { Asset } from '../../types/Notification'; // Asset type definition
 export class AssetService {
 
   private http = inject(HttpClient);
-  // NOTE: Assuming your repo endpoint is a typo in loadRepositoryAssets and should be baseUrl directly
   private baseUrl = environment.apiUrl + 'asset';
 
- asset = signal<Asset | null>(null);        
+ asset = signal<Asset | null>(null); 
   loading = signal<boolean>(false); 
   error = signal<string | null>(null); 
   explainResult = signal<string[] | null>(null); 
@@ -21,8 +20,6 @@ export class AssetService {
   
   public explainPopupVisible = signal<boolean>(false);
   
-
-
   loadAssetWithOcr(id: string) {
     this.loading.set(true);
     this.error.set(null);
@@ -89,18 +86,13 @@ hideExplainPopup() {
   document.body.style.overflow = 'auto';
 }
 
-  // Utility to hide the explanation section
- 
    public loadRepositoryAssets(repoId: string): void {
     this.repositoryAssets.set(null);
-    // Adjusted URL based on typical endpoint pattern, assuming your actual endpoint is correct
-    // If your working URL is `/api/assetRepository/445F...`, keep the original logic.
     const url = `${environment.apiUrl}Repository/${repoId}`;
 
     this.http.get<Asset[]>(url)
       .subscribe({
         next: (assets: any) => {
-          // Based on your original logic, handle different response shapes
           const assetData = (assets && !Array.isArray(assets) && assets.assets) ? assets.assets : (Array.isArray(assets) ? assets : []);
           this.repositoryAssets.set(assetData);
         },
