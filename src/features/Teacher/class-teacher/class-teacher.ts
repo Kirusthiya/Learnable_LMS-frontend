@@ -6,10 +6,11 @@ import { CommonModule } from '@angular/common';
 import { SearchService } from '../../../core/services/search-service';
 import { RepositoryService } from '../../../core/services/repository-service';
 import { AssetsTeacher } from '../assets-teacher/assets-teacher';
+import { Search } from "../../search/search";
 
 @Component({
   selector: 'app-class-teacher',
-  imports: [FormsModule, CommonModule, AssetsTeacher],
+  imports: [FormsModule, CommonModule, AssetsTeacher, Search],
   templateUrl: './class-teacher.html',
   styleUrls: ['./class-teacher.css']
 })
@@ -34,6 +35,14 @@ export class ClassTeacher implements OnInit {
   public newRepoName = '';
   public newRepoDesc = '';
   public newRepoCert = '';
+
+  public showActions = false;     // triple dot dropdown
+  public showEditModal = false;   // update modal
+  public showDeleteConfirm = false; // delete confirm modal
+
+  public editClassName = '';
+  public editClassJoinName = '';
+  public editClassDesc = '';
 
   public currentTeacherId = '';
 
@@ -113,5 +122,75 @@ createRepo() {
   viewRepository(repo: any) {
     this.selectedRepo = repo; // select repo to pass to app-teacherAssets
   }
+
+  toggleActions() {
+  this.showActions = !this.showActions;
+}
+
+openEditModal(cls: any) {
+  this.editClassName = cls.className;
+  this.editClassJoinName = cls.classJoinName;
+  this.editClassDesc = cls.description;
+
+  this.showEditModal = true;
+  this.showActions = false;
+}
+
+saveUpdatedClass() {
+  const classId = this.selectedClassId();
+  if (!classId) return;
+
+  const dto = {
+    classId: classId,
+    className: this.editClassName,
+    classJoinName: this.editClassJoinName,
+    description: this.editClassDesc,
+    teacherId: this.currentTeacherId,
+    status: "Active"
+  };
+
+  this.classService.updateClass(classId, dto, this.currentTeacherId)
+    .subscribe({
+      next: () => {
+        this.showEditModal = false;
+        this.classService.loadClasses(this.currentTeacherId);
+
+        // redirect home (dashboard)
+        window.location.href = "/dashboard";
+      },
+      error: (err) => console.error(err)
+    });
+}
+
+openDeleteConfirm() {
+  this.showDeleteConfirm = true;
+  this.showActions = false;
+}
+
+confirmDeleteClass() {
+  const classId = this.selectedClassId();
+  if (!classId) return;
+
+  this.classService.deleteClass(classId)
+    .subscribe({
+      next: () => {
+        this.showDeleteConfirm = false;
+        this.classService.loadClasses(this.currentTeacherId);
+
+        // redirect to Home
+        window.location.href = "/dashboard";
+      },
+      error: (err) => console.error(err)
+    });
+}
+
+closeEditModal() {
+  this.showEditModal = false;
+}
+
+closeDeleteModal() {
+  this.showDeleteConfirm = false;
+}
+
 
 }

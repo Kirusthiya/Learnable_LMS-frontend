@@ -2,6 +2,7 @@ import { Injectable, inject, signal, WritableSignal, NgZone } from '@angular/cor
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { ClassDto } from '../../types/Notification';
+import { UpdateClassDto } from '../../types/teacher';
 
 @Injectable({
   providedIn: 'root'
@@ -59,5 +60,13 @@ public loadClasses(currentTeacherId: string): void {
           console.error("Create class failed:", err);
         }
       });
+  }
+
+   public updateClass(classId: string, dto: UpdateClassDto, teacherId: string) {
+  return this.http.put(`${this.baseUrl}Class/${classId}`, dto);
+  }
+
+  public deleteClass(classId: string) {
+    return this.http.delete(`${this.baseUrl}Class/${classId}`);
   }
 }
