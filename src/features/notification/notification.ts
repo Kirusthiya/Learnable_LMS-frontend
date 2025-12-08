@@ -21,6 +21,7 @@ export class Notification implements OnInit {
   private router = inject(Router);
   private toastService = inject(ToastService);
 
+
   pendingRequests = signal<any[]>([]);
   sentRequests = signal<any[]>([]);
   
@@ -41,6 +42,7 @@ export class Notification implements OnInit {
   loadReceivedRequests(): void {
     this.requestService.getReceivedRequests().subscribe({
       next: requests => this.pendingRequests.set(requests),
+      
       error: () => this.toastService.error('Failed to load received requests.')
     });
   }
