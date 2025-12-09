@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { ClassDto } from '../../types/Notification';
 import { UpdateClassDto } from '../../types/teacher';
+import { ToastService } from './toast-service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,6 +17,7 @@ export class TeacherClassService {
   public teacherClasses: WritableSignal<ClassDto[]> = signal([]);
   public selectedClassId: WritableSignal<string | null> = signal(null);
   public loading: WritableSignal<boolean> = signal(false);
+  private toast=inject(ToastService);
 
 public loadClasses(currentTeacherId: string): void {
   setTimeout(() => this.loading.set(true));
@@ -55,9 +57,11 @@ public loadClasses(currentTeacherId: string): void {
         next: (res: any) => {
           console.log("Class created:", res);
           this.loadClasses(teacherId);
+          this.toast.success('class create')
         },
         error: (err) => {
           console.error("Create class failed:", err);
+          this.toast.error('class class failed')
         }
       });
   }

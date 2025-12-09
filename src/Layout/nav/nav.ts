@@ -100,22 +100,6 @@ export class Nav implements AfterViewInit, OnDestroy, OnInit {
       this.closeMobileMenu();
     }
 
-    // Close profile dropdown if clicked outside
-    // Since we stop propagation on the toggle button, checking if the click is outside the dropdown logic
-    // We can assume if the click reached here and it was NOT on the toggle button (handled by stopPropagation),
-    // we should close IF the click is also NOT inside the dropdown itself.
-    // However, the dropdown is part of the header.
-    // If I click inside the dropdown, does it propagate? Yes.
-    // So I need to ensure I don't close if clicking inside.
-    // The dropdown is an element with 'absolute right-0 ...'
-    // It's hard to target without a ref.
-    // Simplest fix: Just set profileDropdownOpen to false.
-    // BUT: If I click inside the dropdown, I don't want to close it immediately (unless it's a link).
-    // If I click a link, it navigates and closes anyway (or should).
-    // If I click blank space in dropdown, should it close? Maybe not.
-    // Let's check for containment.
-
-    // We can use the 'closest' method to see if we are inside the dropdown.
     const insideDropdown = target.closest('.absolute.right-0.mt-2'); // Based on nav.html class
     const insideProfileToggle = target.closest('button[appSpeak="Profile"]'); // Based on nav.html
 
@@ -152,4 +136,29 @@ export class Nav implements AfterViewInit, OnDestroy, OnInit {
       this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen
     );
   }
+degradeTeacher() {
+  // Attempt to read the current user's id from the accountService (use any to avoid strict typing mismatches).
+  const userId = (this.accountService as any).currentUser?.id || (this.accountService as any).user?.id;
+  if (!userId) {
+    console.error('degradeTeacher: user id not available');
+    return;
+  }
+
+  this.accountService.deleteTeacher(userId).subscribe({
+    next: (res: any) => {
+      if (res.updatedUser) {
+        this.accountService.refreshCurrentUser(res.updatedUser);
+
+        // Immediately re-render UI
+        this.profileDropdownOpen = false;
+      }
+    },
+    error: (err: any) => {
+      console.error('Degrade failed', err);
+    }
+  });
 }
+
+}
+
+

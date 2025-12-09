@@ -5,57 +5,73 @@ import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-register-teacher',
-  imports: [FormsModule],
-  templateUrl: './register-teacher.html',
-  styleUrl: './register-teacher.css',
+  selector: 'app-register-teacher',
+  imports: [FormsModule],
+  templateUrl: './register-teacher.html',
+  styleUrl: './register-teacher.css',
 })
 export class RegisterTeacher {
+  
+  model = signal<RegisterTeacherCreds>({
+    displayName: '',
+    fullName: '',
+    dateOfBirth: '',
+    contactPhone: '',
+    bio: '',
+    avatarUrl: ''
+  });
 
-  model = signal<RegisterTeacherCreds>({
-    displayName: '',
-    fullName: '',
-    dateOfBirth: '',
-    contactPhone: '',
-    bio: '',
-    avatarUrl: ''
-  });
+  registeredTeacher = signal<TeacherUserDto | null>(null);
+  isLoading = signal(false);
+  error = signal<string | null>(null);
 
-  registeredTeacher = signal<TeacherUserDto | null>(null);
-  isLoading = signal(false);
-  error = signal<string | null>(null);
+  httpResultSignal = signal<(() => TeacherUserDto | null) | null>(null);
 
-  // This will store the readonly HTTP signal from service
-  httpResultSignal = signal<(() => TeacherUserDto | null) | null>(null);
+  constructor(private accountService: AccountService, 
+  private router: Router) {
 
-  constructor(private accountService: AccountService, 
-     private router: Router) {
+effect(() => {
+      const user = this.accountService.currentUser();
+      if (user) {
+        setTimeout(() => {
+    this.model.update(currentModel => ({
+            ...currentModel,
+            fullName: user.user.fullName || currentModel.fullName,
+            displayName: user.user.displayName || currentModel.displayName,
+          }));
+        }, 0);
+      }
+    }, { allowSignalWrites: true }); 
 
-    // ✔ SINGLE EFFECT ALLOWED
-    effect(() => {
-      const httpSig = this.httpResultSignal();
-      if (!httpSig) return; // not submitted yet
+    // FIX 2: Update current user, redirect to /dashboard, and force reload.
+    effect(() => {
+      const httpSig = this.httpResultSignal();
+      if (!httpSig) return; 
 
-      const result = httpSig(); // read HTTP signal
+      const result = httpSig(); 
 
-      if (result) {
-        this.registeredTeacher.set(result);
-        this.isLoading.set(false);
-        alert('Teacher profile created successfully!');
-        this.router.navigate(['/dashboad']);
-      }
-    });
+    if (result) {
+       this.registeredTeacher.set(result);
+       this.isLoading.set(false);
+
+       this.accountService.refreshCurrentUser(result.userResponse as any); 
+
+     alert('Teacher profile created successfully!');
+    this.router.navigate(['/dashboad']).then(() => {
+            window.location.reload(); 
+        });
+     }
+ });
   }
 
-  submit() {
-    this.isLoading.set(true);
-    this.error.set(null);
+   submit() {
+   this.isLoading.set(true);
+   this.error.set(null);
 
-    // ✔ store readonly signal (not call effect here)
-    const readonlySig = this.accountService.registerTeacherSignal({
-      dto: this.model(),
-    });
+  const readonlySig = this.accountService.registerTeacherSignal({
+   dto: this.model(),
+   });
 
-    this.httpResultSignal.set(readonlySig);
-  }
+     this.httpResultSignal.set(readonlySig);
+   }
 }

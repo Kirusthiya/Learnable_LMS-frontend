@@ -5,6 +5,7 @@ import { RequestService } from '../../core/services/request-service';
 import { CommonModule } from '@angular/common';
 import { AccountService } from '../../core/services/accountservices';
 import { FormsModule } from '@angular/forms';
+import { ToastService } from '../../core/services/toast-service';
 
 @Component({
   selector: 'app-details',
@@ -19,6 +20,7 @@ export class Details implements OnInit {
   private accountService = inject(AccountService);
   private route = inject(ActivatedRoute);
   private router=inject(Router)
+  private toast =inject(ToastService)
 
   entityType!: 'Class' | 'User';
   entityId!: string;
@@ -107,12 +109,14 @@ export class Details implements OnInit {
       next: () => {
         this.joinLoading.set(false);
         this.joinMessage.set('Request sent successfully.');
+        this.toast.success('Request sent successfully.')
         this.router.navigate(['/dashboad'])
       },
       error: (err) => {
         console.error('Join request failed', err);
         this.joinLoading.set(false);
         this.joinMessage.set('Failed to send request.');
+        this.toast.error('Failed to send request.')
       }
     });
   }
