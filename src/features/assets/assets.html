@@ -1,176 +1,212 @@
-<div class="assets-container relative min-h-screen p-6 md:p-12  font-body" 
-     appSpeak="Assets screen loaded" 
-     appKeyboardNav 
-     tabindex="0">
+<div class="assets-container relative min-h-screen p-6 md:p-12 font-body" appKeyboardNav>
 
-  <div 
-    [class.blur-sm]="AssetService.explainPopupVisible()" 
-    [class.pointer-events-none]="AssetService.explainPopupVisible()"
-    class="transition-all duration-300">
-
- <div class="asset-list space-y-8 max-w-7xl mx-auto" 
-     *ngIf="!AssetDetailsVisible()" 
-     appSpeak="Repository assets list" 
-     tabindex="0">
-
-  <h2 class="text-4xl font-extrabold text-primary mb-8 border-b border-primary/50 pb-4 font-display text-center" 
-      appSpeak="Repository Assets" 
-      tabindex="0">
-     Repository Assets
-  </h2>
-
-  <div *ngIf="(assets() || []).length > 0" 
-     >
-    <div *ngFor="let asset of (assets() || [])" tabindex="0">
-      <div class="asset-item bg-inputbg p-6 rounded-2xl shadow-xl border border-gray-700 hover:shadow-primary/50 transition duration-300 hover:scale-[1.03] transform h-full flex flex-col justify-between" 
-           appSpeak="Asset {{ asset.title }}">
-        
-        <div>
-          <strong class="text-2xl font-bold text-textlight block mb-2">{{ asset.title }}</strong>
-
-          <p class="text-gray-400 text-sm mb-4 line-clamp-3" appSpeak="Asset description {{ asset.description }}" tabindex="0">
-            {{ asset.description }}
-          </p>
-        </div>
-
-        <div class="actions flex gap-3 mt-4 pt-4 border-t border-gray-700">
-          <button 
-            class="flex-1 px-4 py-2 bg-primary text-background font-semibold rounded-lg hover:bg-primary/90 transition text-sm shadow-md shadow-primary/30"
-            (click)="viewAssetDetails(asset.assetId)"
-            appSpeak="View details for {{asset.title}}" tabindex="0">
-            View Details
-          </button>
-          
-          <button
-            (click)="goBack()"
-            class="flex-1 px-4 py-2 bg-gray-700 text-textlight font-medium rounded-lg hover:bg-gray-600 transition text-sm"
-            appSpeak="Back to Repositories list"
-            tabindex="0">
-              Back
-          </button>
-        </div>
-      </div>
-    </div>
+  <div *ngIf="repositoryService.loading()" 
+       class="flex justify-center items-center h-64" 
+       role="status" 
+       appSpeak="Loading repository details, please wait.">
+    <span class="sr-only">Loading...</span>
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
   </div>
 
-  <p *ngIf="(assets() || []).length === 0" 
-     class="text-center p-12 border-2 border-dashed border-primary/50 rounded-2xl text-gray-500 bg-inputbg text-xl"
-     appSpeak="No assets found for this repository" 
-     tabindex="0">
-    No assets found for this repository.
-  </p>
-</div>
-    <ng-container *ngIf="AssetDetailsVisible() && selectedAsset() as asset">
-      <div class="asset-details-view bg-inputbg p-8 rounded-2xl shadow-2xl text-textlight space-y-6 border border-gray-700 w-full lg:w-3/4 mx-auto">
-        
-        <h2 class="text-3xl font-bold text-primary border-b border-primary/50 pb-3 font-display" 
-            appSpeak="Asset title {{ asset.title }}" 
-            tabindex="0">
-          {{ asset.title }}
+  <div *ngIf="!repositoryService.loading()"
+       [attr.aria-hidden]="assetService.explainPopupVisible() ? 'true' : 'false'"
+       [class.blur-sm]="assetService.explainPopupVisible()"
+       class="transition-all duration-300">
+
+    <div *ngIf="!showDetailView() && !showExams()" class="repo-content space-y-10 max-w-7xl mx-auto">
+
+      <header class="text-center mb-10">
+        <h2 #mainHeading 
+            tabindex="-1"
+            class="text-4xl font-extrabold text-primary mb-2 font-display outline-none">
+            {{ repositoryService.repositoryDetail()?.repoName }}
         </h2>
+        <p class="text-gray-400 max-w-2xl mx-auto">
+            {{ repositoryService.repositoryDetail()?.repoDescription }}
+        </p>
+      </header>
 
-        <div class="space-y-2 p-4 bg-background rounded-lg border border-gray-700">
-          <h3 class="text-xl font-semibold text-primary/80">Description:</h3>
-          <p class="text-textlight/90 leading-relaxed" appSpeak="Asset description {{ asset.description }}" tabindex="0">
-            {{ asset.description }}
-          </p>
-        </div>
-        
-        <div class="space-y-2">
-          <h3 class="text-lg font-semibold text-primary/80">Source URL:</h3>
-          <a [href]="asset.url" target="_blank" class="text-blue-400 hover:text-blue-300 underline text-sm break-all transition" 
-             appSpeak="Open asset link" 
-             tabindex="0">
-            {{ asset.url }}
-          </a>
-        </div>
-
-        <hr class="my-6 border-primary/50">
-
-        <h3 class="text-2xl font-bold text-textlight" appSpeak="OCR chunks" tabindex="0">
-           Text Chunks for AI Analysis ({{ asset.ocrPdfs?.length || 0 }})
+      <section aria-labelledby="exams-heading" *ngIf="repositoryService.repositoryDetail()?.exams?.length">
+        <h3 id="exams-heading" class="text-2xl font-bold text-textlight mb-6 border-l-4 border-blue-500 pl-4">
+           Exams ({{ repositoryService.repositoryDetail()?.exams?.length }})
         </h3>
-
-        <div class="ocr-chunks-list mt-4 space-y-5" *ngIf="asset.ocrPdfs && asset.ocrPdfs.length > 0">
-          <div *ngFor="let chunk of asset.ocrPdfs; let i = index" 
-               class="bg-background p-5 rounded-xl border border-gray-700 shadow-md">
-            
-            <p class="text-sm text-primary/60 font-medium mb-3">Chunk #{{ i + 1 }}</p>
-            
-            <blockquote class="chunk-content text-gray-300 italic text-base leading-relaxed border-l-4 border-primary pl-4" [appSpeak]="chunk.chunk" tabindex="0">
-              "{{ chunk.chunk | slice:0:200 }}..."
-            </blockquote>
+        
+        <ul class="grid gap-6 md:grid-cols-2">
+          <li *ngFor="let exam of repositoryService.repositoryDetail()?.exams">
             
             <button 
-              (click)="requestExplanation(chunk)"
-              class="mt-5 px-5 py-2 bg-primary text-background font-semibold rounded-lg hover:bg-primary/90 transition text-sm shadow-md shadow-primary/30"
-              appSpeak="Request AI explanation"
-              tabindex="0">
-             Request AI Explanation
+              (click)="openExam(exam)"
+              class="w-full text-left bg-inputbg p-6 rounded-2xl border border-gray-700 shadow-lg hover:border-blue-500 hover:shadow-blue-500/20 transition transform hover:scale-[1.02] group"
+              [appSpeak]="'Exam: ' + exam.title + '. Duration: ' + exam.duration + ' minutes. ' + (exam.description || '') + '. Press Enter to start exam.'">
+              
+              <h4 class="text-xl font-bold text-blue-400 group-hover:text-blue-300 transition">
+                {{ exam.title }}
+              </h4>
+              
+              <p class="text-sm text-gray-400 mt-2 line-clamp-2">
+                {{ exam.description }}
+              </p>
+              
+              <div class="mt-4 flex gap-2">
+                 <span class="text-xs bg-blue-900/50 text-blue-200 px-2 py-1 rounded border border-blue-500/30">
+                   Duration: {{ exam.duration }} mins
+                 </span>
+                 <span class="text-xs bg-gray-700 text-gray-300 px-2 py-1 rounded">
+                   Click to Open
+                 </span>
+              </div>
             </button>
-          </div>
-        </div>
-
-        <p *ngIf="!asset.ocrPdfs || asset.ocrPdfs.length === 0" class="text-gray-500 italic pt-3" 
-           appSpeak="No OCR chunks available" 
-           tabindex="0">
-          No structured text chunks available for AI processing.
-        </p>
-
-        <button 
-          (click)="goBackToList()" 
-          class="back-btn flex items-center gap-2 px-6 py-3 bg-gray-700 text-textlight rounded-xl hover:bg-gray-600 transition mt-6 text-base font-medium"
-          appSpeak="Back to list" tabindex="0">
-          <span class="text-xl">←</span> Back to Assets List
-        </button>
-      </div>
-    </ng-container>
-  </div>
-
-  <div *ngIf="AssetService.explainPopupVisible()" 
-      class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-
-    <div class="bg-inputbg p-8 rounded-3xl shadow-2xl border border-primary/50 w-full max-w-3xl max-h-[90vh] flex flex-col">
-
-      <h3 class="text-3xl font-bold text-primary mb-4 border-b border-gray-700 pb-3 font-display" 
-          appSpeak="AI explanation result" 
-          tabindex="0">
-        🤖 AI Explanation Result
-      </h3>
-
-      <div class="overflow-y-auto flex-1 pr-3 space-y-4">
-
-        <div *ngIf="AssetService.loading()" class="text-textlight/70 text-xl animate-pulse" appSpeak="Loading explanation" tabindex="0">
-          <div class="flex items-center space-x-2 p-4 bg-background rounded-lg">
-            <span class="h-4 w-4 bg-primary rounded-full animate-bounce"></span>
-            <span>Generating explanation. Please wait...</span>
-          </div>
-        </div>
-
-        <div *ngIf="AssetService.error()" class="error-msg p-4 bg-red-900/40 border border-red-500 text-red-400 rounded-lg" 
-             appSpeak="Error occurred" 
-             tabindex="0">
-          **Error:** {{ AssetService.error() }}
-        </div>
-
-        <ul *ngIf="(AssetService.explainResult() || []).length > 0" class="space-y-4">
-          <li *ngFor="let line of (AssetService.explainResult() || [])" 
-              class="text-textlight bg-background p-4 rounded-xl border border-gray-700 leading-relaxed text-base shadow-inner" 
-              [appSpeak]="line" 
-              tabindex="0">
-            {{ line }}
           </li>
         </ul>
+      </section>
 
-      </div>
+      <section aria-labelledby="assets-heading">
+        <h3 id="assets-heading" class="text-2xl font-bold text-textlight mb-6 border-l-4 border-primary pl-4">
+           Learning Assets ({{ repositoryService.repositoryDetail()?.assets?.length || 0 }})
+        </h3>
 
-      <div class="text-right mt-6 pt-4 border-t border-gray-700">
-        <button class="px-6 py-3 bg-primary text-background font-semibold rounded-lg hover:bg-primary/90 transition text-base" 
-                (click)="AssetService.hideExplainPopup()" 
-                appSpeak="Close popup" tabindex="0">
-          Close
+        <div *ngIf="(!repositoryService.repositoryDetail()?.assets?.length)" 
+             class="text-center p-8 border border-dashed border-gray-600 rounded-xl text-gray-500">
+           No assets available in this repository.
+        </div>
+
+        <ul class="grid gap-6">
+          <li *ngFor="let asset of repositoryService.repositoryDetail()?.assets">
+            <article class="asset-item bg-inputbg p-6 rounded-2xl shadow-xl border border-gray-700 hover:border-primary/50 transition duration-300 flex flex-col md:flex-row justify-between gap-4">
+              
+              <div class="flex-1">
+                <h4 class="text-2xl font-bold text-textlight mb-2">{{ asset.title }}</h4>
+                <p class="text-gray-400 text-sm line-clamp-3">
+                  {{ asset.description }}
+                </p>
+                <div class="mt-2 text-xs text-primary/70 uppercase tracking-wide font-semibold">
+                  Type: {{ asset.type }}
+                </div>
+              </div>
+
+              <div class="actions flex flex-col sm:flex-row gap-3 self-center w-full md:w-auto">
+                <button 
+                  class="px-6 py-2 bg-primary text-background font-semibold rounded-lg hover:bg-primary/90 transition shadow-md whitespace-nowrap"
+                  (click)="viewAssetDetails(asset)"
+                  attr.aria-label="View details for {{ asset.title }}">
+                  Open Asset
+                </button>
+              </div>
+
+            </article>
+          </li>
+        </ul>
+      </section>
+
+      <div class="mt-12 pt-6 border-t border-gray-800">
+        <button 
+          (click)="goBack()"
+          class="px-6 py-3 bg-gray-700 text-textlight font-medium rounded-lg hover:bg-gray-600 transition flex items-center gap-2">
+          <span>←</span> Back to Repositories
         </button>
       </div>
+    </div>
+
+    <div *ngIf="showExams() && selectedExam()" class="exam-view-wrapper w-full h-full">
+        <app-student-exam 
+            [examId]="selectedExam()?.examId" 
+            (closeExams)="toggleExamsView(false)">
+        </app-student-exam>
+    </div>
+
+    <div *ngIf="showDetailView() && assetService.asset() as detailAsset" 
+         class="asset-details-view w-full max-w-5xl mx-auto" 
+         role="region" 
+         aria-label="Asset Detailed View">
+        
+         <div class="bg-inputbg p-8 rounded-2xl shadow-2xl border border-gray-700 space-y-6">
+            
+            <h2 #detailHeading tabindex="-1" class="text-3xl font-bold text-primary border-b border-primary/50 pb-3 font-display outline-none">
+              {{ detailAsset.title }}
+            </h2>
+
+            <div class="p-4 bg-background rounded-lg border border-gray-700">
+               <span class="text-gray-400 block text-sm mb-1">Source:</span>
+               <a [href]="detailAsset.url" target="_blank" class="text-blue-400 hover:text-blue-300 underline break-all">
+                 {{ detailAsset.url }} <span class="sr-only">(Opens in new tab)</span>
+               </a>
+            </div>
+
+            <hr class="border-gray-700">
+
+            <h3 class="text-2xl font-bold text-textlight">
+               Content Analysis ({{ detailAsset.ocrPdfs?.length || 0 }} Chunks)
+            </h3>
+
+            <div class="space-y-6" *ngIf="detailAsset.ocrPdfs && detailAsset.ocrPdfs.length > 0">
+               <div *ngFor="let chunk of detailAsset.ocrPdfs; let i = index" 
+                    class="bg-background p-5 rounded-xl border border-gray-700">
+                  
+                  <p class="text-xs text-primary/60 font-bold uppercase mb-2">Segment #{{ i + 1 }}</p>
+                  <blockquote class="text-gray-300 italic pl-4 border-l-4 border-gray-600 mb-4">
+                     "{{ chunk.chunk | slice:0:250 }}..."
+                  </blockquote>
+
+                  <button 
+                    (click)="requestExplanation(chunk)"
+                    class="px-4 py-2 bg-primary/20 text-primary border border-primary/50 rounded hover:bg-primary hover:text-background transition text-sm font-medium"
+                    attr.aria-label="Ask AI to explain segment {{ i + 1 }}">
+                    🤖 Explain this segment
+                  </button>
+               </div>
+            </div>
+
+            <p *ngIf="!detailAsset.ocrPdfs?.length" class="text-gray-500 italic">
+               No text content available for analysis.
+            </p>
+
+            <button 
+              (click)="goBackToList()" 
+              class="mt-8 flex items-center gap-2 px-6 py-3 bg-gray-700 text-textlight rounded-xl hover:bg-gray-600 transition">
+              <span aria-hidden="true">←</span> Back to Assets List
+            </button>
+
+         </div>
+    </div>
+
+  </div>
+  
+  <div *ngIf="assetService.explainPopupVisible()" 
+       role="dialog"
+       aria-modal="true"
+       aria-labelledby="modal-title"
+       class="fixed inset-0 bg-black bg-opacity-80 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+
+    <div class="bg-inputbg p-8 rounded-3xl shadow-2xl border border-primary/50 w-full max-w-3xl max-h-[90vh] flex flex-col"
+         appKeyboardNav>
+
+      <h3 id="modal-title" class="text-2xl font-bold text-primary mb-4 pb-2 border-b border-gray-700">
+        AI Explanation
+      </h3>
+
+      <div class="overflow-y-auto flex-1 space-y-4" aria-live="polite">
+         <div *ngIf="assetService.loading()" class="flex items-center gap-3 text-textlight p-4">
+            <span class="animate-spin h-5 w-5 border-2 border-primary rounded-full border-t-transparent"></span>
+            <span>Analyzing text...</span>
+         </div>
+
+         <div *ngIf="assetService.error()" class="p-4 bg-red-900/30 text-red-300 rounded border border-red-500/50">
+            {{ assetService.error() }}
+         </div>
+
+         <ul *ngIf="assetService.explainResult()" class="space-y-3">
+            <li *ngFor="let line of assetService.explainResult()" class="bg-background p-3 rounded border border-gray-700 text-gray-200">
+               {{ line }}
+            </li>
+         </ul>
+      </div>
+
+      <button class="mt-6 w-full py-3 bg-primary text-background font-bold rounded-lg"
+              (click)="assetService.hideExplainPopup()">
+          Close Explanation
+      </button>
 
     </div>
   </div>
+
+</div>

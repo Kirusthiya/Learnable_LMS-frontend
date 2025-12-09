@@ -1,0 +1,169 @@
+/* Container Layout */
+.main-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: #f4f6f9;
+  min-height: 100vh;
+}
+
+/* Header & Tabs */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.app-header h2 {
+  color: #2c3e50;
+  margin: 0;
+}
+
+.tab-group {
+  display: flex;
+  gap: 10px;
+  background: white;
+  padding: 5px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.tab-group button {
+  border: none;
+  background: transparent;
+  padding: 10px 20px;
+  font-size: 14px;
+  cursor: pointer;
+  border-radius: 6px;
+  font-weight: 600;
+  color: #6c757d;
+  transition: all 0.3s ease;
+}
+
+.tab-group button.active {
+  background-color: #3498db;
+  color: white;
+  box-shadow: 0 2px 5px rgba(52, 152, 219, 0.3);
+}
+
+/* Cards */
+.card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  animation: fadeIn 0.4s ease-in-out;
+}
+
+.subtitle {
+  color: #7f8c8d;
+  margin-top: -10px;
+  margin-bottom: 20px;
+  font-size: 14px;
+}
+
+/* Upload Section */
+.upload-box {
+  border: 2px dashed #bdc3c7;
+  border-radius: 10px;
+  padding: 40px;
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: border-color 0.3s;
+  background-color: #fafafa;
+}
+
+.upload-box:hover {
+  border-color: #3498db;
+  background-color: #f0f8ff;
+}
+
+.upload-box .icon {
+  font-size: 32px;
+  margin-bottom: 10px;
+}
+
+/* Status Bar */
+.status-bar {
+  margin: 20px 0;
+  padding: 15px;
+  background: #eef2f7;
+  border-radius: 8px;
+  text-align: center;
+  color: #2c3e50;
+  font-weight: 500;
+}
+
+.loader-line {
+  height: 4px;
+  width: 100%;
+  background: linear-gradient(90deg, #3498db, #8e44ad);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  margin-top: 10px;
+  border-radius: 2px;
+}
+
+@keyframes loading {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Result Viewer (Better Font) */
+.result-viewer {
+  margin-top: 25px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.result-header {
+  background: #f8f9fa;
+  padding: 10px 15px;
+  border-bottom: 1px solid #e0e0e0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.badge {
+  background: #e1ecf4;
+  color: #39739d;
+  font-size: 11px;
+  padding: 2px 8px;
+  border-radius: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+.paper-content {
+  padding: 25px;
+  background: #fff;
+  color: #212529;
+  /* Key change for fonts: */
+  font-family: 'Georgia', 'Times New Roman', serif; /* Or 'Inter', sans-serif if you prefer modern */
+  font-size: 16px;
+  line-height: 1.6;
+  white-space: pre-wrap; /* Keeps format */
+  max-height: 500px;
+  overflow-y: auto;
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 50px;
+  color: #95a5a6;
+}
+
+.btn-secondary {
+  margin-top: 15px;
+  padding: 10px 20px;
+  border: 1px solid #ddd;
+  background: #eee;
+  border-radius: 6px;}
