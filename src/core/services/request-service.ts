@@ -22,10 +22,10 @@ export class RequestService {
     return this.http.put(`${this.baseUrl}RequestNotification/reject`, dto);
   }
  getReceivedRequests() { 
-    return this.http.get<NotificationDto[]>(`${this.baseUrl}RequestNotification/received`);
-  }
- 
-  getSentRequests() {
-    return this.http.get<NotificationDto[]>(`${this.baseUrl}RequestNotification/sent`);
-  }
+   return this.http.get<NotificationDto[]>(`${this.baseUrl}RequestNotification/received`);
+ }
+
+   getSentRequests() {
+     return this.http.get<NotificationDto[]>(`${this.baseUrl}RequestNotification/sent`);
+  }
 }

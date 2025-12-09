@@ -1,4 +1,4 @@
-import { Class } from './user';
+import { Class, UserResponse } from './user';
 
 // -----------------------------------------------------
 // Register Teacher Payload for Angular → Backend
@@ -56,6 +56,7 @@ export type TeacherUserDto = {
     role: string;
   };
   teacher: Teacher;
+  userResponse: UserResponse;
 };
 
 export type UpdateClassDto = {

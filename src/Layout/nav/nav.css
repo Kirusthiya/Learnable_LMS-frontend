@@ -90,7 +90,10 @@ nav {
   display: none !important;
   background: hsl(220, 12%, 18%);
   padding: 20px 30px;
-  position: relative;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
   z-index: 999;
 }
 
@@ -104,6 +107,7 @@ nav {
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -124,7 +128,7 @@ nav {
 }
 
 /* Accessibility dropdown spacing in mobile menu */
-#mobile-menu > div {
+#mobile-menu>div {
   margin-bottom: 15px;
 }
 
@@ -152,4 +156,5 @@ nav {
 .group:hover .group-hover\:block {
   display: block;
 }
+
 

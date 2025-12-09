@@ -1,16 +1,15 @@
-<!-- 404 Compact Card (no scroll, pure white bg) -->
-<section class="w-full h-[80dvh] flex items-center justify-center overflow-hidden">
+<section class="w-full min-h-screen flex items-center justify-center p-6 bg-gray-50" appKeyboardNav [tabIndex]="0">
   <div
-    class="card bg-white shadow-2xl rounded-3xl w-[92%] max-w-xl p-8 flex flex-col items-center gap-5 text-center"
+    class="card bg-white shadow-xl rounded-3xl w-full max-w-lg p-10 flex flex-col items-center gap-6 text-center border border-gray-100"
   >
-    <div class="p-5 rounded-full bg-error/10">
+    <div class="p-6 rounded-full bg-red-50">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
         stroke-width="2"
         stroke="currentColor"
-        class="w-20 h-20 text-error"
+        class="w-16 h-16 text-red-600"
       >
         <path
           stroke-linecap="round"
@@ -20,12 +19,29 @@
       </svg>
     </div>
 
-    <h1 class="text-6xl font-extrabold text-error">404</h1>
-    <h2 class="text-2xl font-semibold text-gray-800">Oops! Page Not Found 😢</h2>
-    <p class="text-base text-gray-600 max-w-md leading-relaxed">
-      The resource you are looking for might be removed or temporarily unavailable.
+    <h1 class="text-7xl font-extrabold text-red-600">404</h1>
+    <h2 class="text-3xl font-bold text-gray-900" appSpeak="page not found" tabindex="0">Page Not Found</h2>
+    
+    <p class="text-lg text-gray-600 max-w-sm leading-normal" appSpeak="the page you were looking for doesn't exits.it might have been moved or deleted">
+      The page you were looking for doesn't exist. It might have been moved or deleted.
     </p>
 
-    <button class="btn btn-primary mt-2" (click)="goBack()">← Go Back</button>
+    <div class="flex flex-col sm:flex-row gap-4 mt-4 w-full justify-center" appSpeak="go back" tabindex="0">
+      <button  tabindex="0"
+        class="bg-gray-100 text-gray-800 hover:bg-gray-200 font-medium py-3 px-6 rounded-xl transition duration-200 border border-gray-200"
+        (click)="goBack()"
+      >
+        ← Go Back
+      </button>
+      
+      <a 
+      appSpeak="go to Homepage"
+        href="/" 
+        class="bg-blue-600 text-white hover:bg-blue-700 font-medium py-3 px-6 rounded-xl transition duration-200 inline-flex items-center justify-center"
+      >
+        Go to Homepage
+      </a>
+    </div>
+
   </div>
 </section>
