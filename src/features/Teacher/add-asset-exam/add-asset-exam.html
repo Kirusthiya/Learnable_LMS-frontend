@@ -1,0 +1,354 @@
+<div class="w-full min-h-screen bg-gray-900 text-white px-8 pb-8">
+  
+  <header class="flex flex-col md:flex-row justify-between items-center mb-8 border-b border-gray-700 py-4">
+    <div>
+      <h2 class="text-2xl font-bold text-green-400">Asset Manager</h2>
+      @if (repository) {
+        <p class="text-sm text-gray-400 mt-1">Repo: <span class="text-blue-400 font-semibold">{{ repository.repoName }}</span></p>
+      }
+    </div>
+    
+    <div class="flex items-center gap-4">
+      @if (!showDetailsForm) {
+        <div class="flex bg-gray-800 rounded-lg p-1 border border-gray-700">
+          <button 
+            class="px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2"
+            [class.bg-green-600]="activeTab === 'pdf'" 
+            [class.text-white]="activeTab === 'pdf'" 
+            [class.text-gray-400]="activeTab !== 'pdf'"
+            (click)="setActiveTab('pdf')">
+            📄 Add PDF
+          </button>
+          <button 
+            class="px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2"
+            [class.bg-purple-600]="activeTab === 'exam'" 
+            [class.text-white]="activeTab === 'exam'" 
+            [class.text-gray-400]="activeTab !== 'exam'"
+            (click)="setActiveTab('exam')">
+            🤖 AI Exam
+          </button>
+        </div>
+      }
+      <button (click)="close.emit()" 
+        class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-2 rounded text-sm font-medium transition border border-gray-600">
+        &larr; Close
+      </button>
+    </div>
+  </header>
+
+  <div class="max-w-6xl mx-auto"> 
+    
+    @if (activeTab === 'pdf') {
+       <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 min-h-[500px] flex flex-col shadow-xl">
+          <h3 class="text-xl font-semibold mb-4 text-green-400 flex items-center gap-2">
+            <span>📄</span> PDF OCR Scanner
+          </h3>
+          
+          @if (isLoading || (progressStatus && extractedChunks.length === 0)) {
+            <div class="mb-6 w-full max-w-lg mx-auto flex flex-col items-center justify-center h-64">
+              <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-green-500 mb-4"></div>
+              <p class="text-sm text-green-400 mb-2 text-center animate-pulse">{{ progressStatus }}</p>
+              @if (isLoading) {
+                <div class="w-64 bg-gray-700 rounded-full h-2">
+                  <div class="bg-green-600 h-2 rounded-full animate-pulse w-full"></div>
+                </div>
+              }
+            </div>
+          }
+  
+          @if (!isLoading && extractedChunks.length === 0) {
+            <div class="flex-grow flex items-center justify-center animate-fadeIn">
+              <label for="fileInput" class="flex flex-col items-center justify-center w-full max-w-2xl h-80 border-2 border-gray-600 border-dashed rounded-xl cursor-pointer bg-gray-700/30 hover:bg-gray-700/50 hover:border-green-500 transition group">
+                <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                  <span class="text-6xl mb-4 group-hover:scale-110 transition duration-300">📤</span>
+                  <p class="text-xl font-semibold text-gray-300 mb-2">Click to Upload PDF</p>
+                  <p class="text-sm text-gray-500 mb-6">Supported Format: .pdf</p>
+                  <div class="bg-green-600 text-white px-6 py-2 rounded-lg font-medium shadow hover:bg-green-500 transition">
+                    Select File
+                  </div>
+                </div>
+                <input type="file" id="fileInput" (change)="onFileSelected($event)" accept="application/pdf" class="hidden">
+              </label>
+            </div>
+          }
+  
+          @if (extractedChunks.length > 0) {
+            <div class="animate-fadeIn h-full flex flex-col">
+              
+              @if (!showDetailsForm) {
+                <div class="flex justify-between items-center mb-6 bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                  <div>
+                    <span class="font-bold text-lg text-white">Extracted Content</span>
+                    <span class="ml-2 text-sm text-gray-400">({{ extractedChunks.length }} chunks)</span>
+                  </div>
+                  
+                  <div class="flex gap-3">
+                    <button (click)="goToFormView()"
+                      class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2 shadow-lg">
+                      💾 Save & Generate
+                    </button>
+  
+                    <button (click)="clearData()" 
+                      class="bg-red-600/20 hover:bg-red-600/40 text-red-400 border border-red-600/50 px-4 py-2 rounded text-sm font-medium transition flex items-center gap-2">
+                      🗑️ Clear
+                    </button>
+                  </div>
+                </div>
+  
+                <div class="grid grid-cols-1 gap-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+                  @for (chunk of extractedChunks; track $index) {
+                    <div class="bg-gray-900 p-4 rounded-lg border border-gray-700 flex items-start hover:border-gray-500 transition">
+                      <span class="text-xs font-mono bg-gray-800 text-gray-400 px-2 py-1 rounded border border-gray-600 mr-4 mt-1">#{{ $index + 1 }}</span>
+                      <p class="text-gray-300 text-sm leading-relaxed flex-grow break-words">{{ chunk }}</p>
+                    </div>
+                  }
+                </div>
+  
+              } @else {
+                
+                <div class="bg-gray-900 p-8 rounded-lg border border-gray-700 max-w-2xl mx-auto w-full shadow-2xl">
+                  <h4 class="text-2xl font-bold text-white mb-6 border-b border-gray-700 pb-4">Finalize Asset Details</h4>
+                  
+                  <form (ngSubmit)="finalSaveAsset()" #assetForm="ngForm">
+                    
+                    <div class="mb-4">
+                      <label class="block text-gray-400 text-sm font-bold mb-2">Asset Title *</label>
+                      <input type="text" [(ngModel)]="assetTitle" name="title" required
+                        class="w-full bg-gray-800 text-white border border-gray-600 rounded p-3 focus:border-green-500 focus:outline-none transition"
+                        placeholder="e.g. Chapter 1 Summary">
+                    </div>
+  
+                    <div class="mb-4">
+                      <label class="block text-gray-400 text-sm font-bold mb-2">Original URL / File Name</label>
+                      <input type="text" [(ngModel)]="assetUrl" name="url" 
+                        class="w-full bg-gray-800 text-white border border-gray-600 rounded p-3 focus:border-green-500 focus:outline-none transition"
+                        placeholder="File name">
+                    </div>
+  
+                    <div class="mb-6">
+                      <label class="block text-gray-400 text-sm font-bold mb-2">Description</label>
+                      <textarea [(ngModel)]="assetDescription" name="description" rows="3"
+                        class="w-full bg-gray-800 text-white border border-gray-600 rounded p-3 focus:border-green-500 focus:outline-none transition"
+                        placeholder="Enter a brief description..."></textarea>
+                    </div>
+  
+                    <div class="flex justify-end gap-3 pt-4 border-t border-gray-700">
+                      <button type="button" (click)="backToList()"
+                        class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded font-medium transition">
+                        Cancel
+                      </button>
+                      
+                      <button type="submit" [disabled]="!assetTitle || !repository?.repoId || isSaving"
+                        class="bg-green-600 hover:bg-green-500 disabled:bg-gray-600 disabled:cursor-not-allowed text-white px-6 py-2 rounded font-medium transition flex items-center gap-2 shadow-lg">
+                        @if(isSaving) { 
+                          <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                          Saving... 
+                        } @else { 
+                          ✅ Save Asset 
+                        }
+                      </button>
+                    </div>
+                    
+                    @if (!repository?.repoId) {
+                      <div class="mt-4 p-2 bg-red-900/30 border border-red-500 rounded text-red-400 text-xs text-center">
+                        ⚠️ Error: Repository ID is missing. Cannot save.
+                      </div>
+                    }
+  
+                  </form>
+                </div>
+  
+              }
+            </div>
+          }
+       </div>
+    }
+  
+    @if (activeTab === 'exam') {
+      <div class="bg-gray-800 p-6 rounded-xl border border-gray-700 min-h-[500px] flex flex-col shadow-xl">
+        <h3 class="text-xl font-bold text-purple-400 mb-4 flex items-center gap-2">
+          <span>🤖</span> AI Exam Generator
+        </h3>
+        
+        <div class="animate-fadeIn max-w-full w-full h-full">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 h-full">
+              
+              <div class="md:col-span-1 space-y-4">
+                  
+                  <div class="bg-gray-900 rounded-lg border border-gray-700 p-3">
+                    <h4 class="text-xs font-bold text-gray-400 mb-2 uppercase tracking-wide">1. Select Sources</h4>
+                    <div class="max-h-[250px] overflow-y-auto custom-scrollbar space-y-2 pr-1">
+                        @for (asset of repository?.assets; track asset.id) {
+                        <div (click)="toggleAssetSelection(asset.id || asset.assetId)"
+                            class="flex items-center p-2 rounded cursor-pointer transition border border-transparent hover:bg-gray-800"
+                            [class.bg-purple-900-20]="selectedAssetIds.has(asset.id || asset.assetId)"
+                            [class.border-purple-500]="selectedAssetIds.has(asset.id || asset.assetId)">
+                            <div class="w-4 h-4 mr-2 border rounded flex items-center justify-center flex-shrink-0"
+                                [class.bg-purple-600]="selectedAssetIds.has(asset.id || asset.assetId)">
+                                @if(selectedAssetIds.has(asset.id || asset.assetId)) { <span class="text-white text-[10px]">✓</span> }
+                            </div>
+                            <span class="text-gray-300 text-xs truncate w-full" [title]="asset.title">{{ asset.title }}</span>
+                        </div>
+                        }
+                        @if(!repository?.assets || repository?.assets.length === 0) {
+                            <p class="text-gray-500 text-xs italic text-center py-4">No assets available.</p>
+                        }
+                    </div>
+                  </div>
+  
+                  <div class="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                    <h4 class="text-xs font-bold text-gray-400 mb-3 uppercase tracking-wide">2. Generate</h4>
+                    
+                    <label class="text-xs text-gray-500 block mb-1">Questions to generate</label>
+                    <input type="number" [(ngModel)]="questionCount" min="1" max="50" 
+                        class="w-full bg-gray-800 text-white p-2 text-sm rounded border border-gray-600 mb-4 focus:border-purple-500 focus:outline-none">
+                    
+                    <button (click)="generateManualExam()" 
+                        [disabled]="selectedAssetIds.size === 0 || isGeneratingQuestions" 
+                        class="w-full bg-purple-600 hover:bg-purple-500 disabled:bg-gray-700 disabled:cursor-not-allowed text-white py-2 px-4 rounded-lg font-bold text-sm transition flex items-center justify-center gap-2 shadow-lg">
+                        @if(isGeneratingQuestions) {
+                            <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                        } @else {
+                            <span>✨</span>
+                        }
+                        Generate
+                    </button>
+                    <p class="text-[10px] text-gray-500 mt-2 text-center">Questions will be appended to the list.</p>
+                  </div>
+              </div>
+  
+              <div class="md:col-span-3 flex flex-col h-full">
+                  
+                 <div class="flex flex-col sm:flex-row justify-between items-center mb-4 bg-gray-900/50 p-2 rounded-lg border border-gray-700 gap-3">
+                    <div class="flex items-center gap-4">
+                        <label class="flex items-center gap-2 cursor-pointer px-3 py-1 rounded hover:bg-gray-800 transition select-none">
+                        <input type="checkbox" [checked]="isAllSelected" (change)="toggleSelectAll()" class="w-4 h-4 text-purple-600 rounded focus:ring-purple-500 bg-gray-800 border-gray-600">
+                        <span class="font-medium text-white text-sm">Select All</span>
+                        <span class="text-gray-400 text-xs">({{ selectedCount }}/{{ generatedQuestions.length }})</span>
+                        </label>
+                    </div>
+                    
+                    <button (click)="toggleManualAddForm()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded text-sm font-medium transition flex items-center gap-2 shadow-sm">
+                        <span>➕</span> Add Manual Question
+                    </button>
+                 </div>
+  
+                 @if (showManualAddForm) {
+                    <div class="bg-gray-800 border border-blue-500/50 rounded-lg p-4 mb-4 shadow-xl animate-fadeIn">
+                      <h4 class="text-sm font-bold text-blue-400 mb-3 flex items-center gap-2">
+                        <span>📝</span> Add New Question
+                      </h4>
+                      
+                      <div class="space-y-3">
+                        <div>
+                          <input [(ngModel)]="newQuestion.question" class="w-full bg-gray-900 border border-gray-600 rounded p-2 text-white text-sm focus:border-blue-500 outline-none placeholder-gray-500" placeholder="Enter question text here...">
+                        </div>
+      
+                        <div class="grid grid-cols-1 gap-2">
+                          @for (ans of newQuestion.answers; track $index; let i = $index) {
+                            <div class="flex items-center gap-2">
+                              <input type="radio" name="manual_correct_answer" [value]="i" [(ngModel)]="newQuestion.correctAnswerIndex" class="w-4 h-4 text-green-500 cursor-pointer flex-shrink-0">
+                              <span class="text-gray-500 font-bold w-4 text-xs">{{ ['A','B','C','D','E'][i] }}</span>
+                              <input [(ngModel)]="newQuestion.answers[i]" class="w-full bg-gray-900 border border-gray-600 rounded p-1.5 text-white text-sm focus:border-blue-500 outline-none placeholder-gray-600" [placeholder]="'Option ' + (i+1)">
+                            </div>
+                          }
+                        </div>
+      
+                        <div class="flex justify-end gap-2 pt-2 border-t border-gray-700/50 mt-2">
+                          <button (click)="toggleManualAddForm()" class="text-gray-400 hover:text-white px-3 py-1 text-sm transition">Cancel</button>
+                          <button (click)="saveManualQuestion()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded text-sm font-bold shadow transition">Add to List</button>
+                        </div>
+                      </div>
+                    </div>
+                  }
+  
+                 @if (generatedQuestions.length === 0 && !isGeneratingQuestions) {
+                    <div class="flex-grow flex flex-col items-center justify-center text-gray-500 border-2 border-dashed border-gray-700 rounded-lg p-8 bg-gray-900/30">
+                        <span class="text-4xl mb-2 grayscale opacity-50">📋</span>
+                        <p>No questions generated yet.</p>
+                        <p class="text-sm">Select assets on the left and click Generate.</p>
+                    </div>
+                 } 
+                 
+                 @if (generatedQuestions.length > 0) {
+                    <div class="space-y-3 flex-grow overflow-y-auto pr-2 custom-scrollbar max-h-[55vh]">
+                        @for (q of generatedQuestions; track $index; let qIndex = $index) {
+                            <div class="bg-gray-900 border border-gray-700 rounded-lg p-4 hover:border-purple-500/50 transition flex gap-3 group relative">
+                                <div class="flex items-start pt-1">
+                                    <input type="checkbox" [(ngModel)]="q.selected" (change)="updateSelectAllState()" 
+                                           class="w-4 h-4 text-purple-600 rounded bg-gray-800 border-gray-600 cursor-pointer">
+                                </div>
+            
+                                <div class="w-full" [class.opacity-50]="!q.selected">
+                                    <div class="flex justify-between items-start mb-2">
+                                        <p class="text-white text-sm font-medium pr-8">
+                                            <span class="text-purple-400 font-bold mr-1">{{ qIndex + 1 }}.</span>
+                                            {{ q.question }}
+                                        </p>
+                                        <button (click)="deleteQuestion(qIndex)" class="text-gray-600 hover:text-red-500 transition absolute top-3 right-3 p-1 rounded hover:bg-gray-800" title="Delete">✕</button>
+                                    </div>
+            
+                                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 pl-4">
+                                        @for (ans of q.answers; track $index; let ansIndex = $index) {
+                                            @if(ans) {
+                                                <div class="px-2 py-1.5 rounded border text-xs flex items-center gap-2 transition"
+                                                    [class.bg-green-900-20]="ansIndex === q.correctAnswerIndex"
+                                                    [class.border-green-500]="ansIndex === q.correctAnswerIndex"
+                                                    [class.text-green-300]="ansIndex === q.correctAnswerIndex"
+                                                    [class.bg-gray-800]="ansIndex !== q.correctAnswerIndex"
+                                                    [class.border-gray-700]="ansIndex !== q.correctAnswerIndex"
+                                                    [class.text-gray-400]="ansIndex !== q.correctAnswerIndex">
+                                                    
+                                                    <span class="font-bold opacity-50 w-3">{{ ['A','B','C','D','E'][ansIndex] }}.</span>
+                                                    <span class="truncate block w-full">{{ ans }}</span>
+                                                    @if (ansIndex === q.correctAnswerIndex) { <span class="ml-auto font-bold">✓</span> }
+                                                </div>
+                                            }
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                 }
+  
+                 @if (generatedQuestions.length > 0) {
+                    <div class="mt-4 pt-4 border-t border-gray-700 bg-gray-800 rounded-b-lg">
+                        <div class="flex flex-col md:flex-row gap-4 items-end md:items-center justify-between">
+                             <div class="w-full md:w-1/2">
+                                <label class="text-xs text-gray-400 block mb-1">Exam Title *</label>
+                                <input type="text" [(ngModel)]="examTitle" placeholder="e.g. Unit 1 Quiz" 
+                                    class="w-full bg-gray-900 text-white border border-gray-600 rounded p-2 text-sm focus:border-green-500 outline-none">
+                             </div>
+  
+                             <div class="flex items-center gap-4">
+                                 <div class="text-right">
+                                    <p class="text-xs text-gray-500">Selected</p>
+                                    <p class="font-bold text-white">{{ selectedCount }} Questions</p>
+                                 </div>
+                                 <button (click)="createFinalExam()" 
+                                    [disabled]="isSavingExam || selectedCount === 0 || !examTitle || !repository?.repoId"
+                                    class="bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-500 hover:to-emerald-500 disabled:from-gray-700 disabled:to-gray-700 disabled:cursor-not-allowed text-white px-6 py-2 rounded-lg font-bold shadow-lg transform transition hover:-translate-y-0.5 flex items-center gap-2">
+                                    @if(isSavingExam) {
+                                        <span class="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full"></span>
+                                        Saving...
+                                    } @else {
+                                        <span>💾</span> Create Exam
+                                    }
+                                 </button>
+                             </div>
+                        </div>
+                        @if (!repository?.repoId) {
+                            <p class="text-red-400 text-xs mt-2 text-right">⚠️ Repo ID missing.</p>
+                        }
+                    </div>
+                 }
+  
+              </div>
+            </div>
+        </div>
+      </div>
+    }
+  
+  </div>
+</div>
