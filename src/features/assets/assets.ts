@@ -1,61 +1,112 @@
-// assets.ts
-import { Component, EventEmitter, Input, OnChanges, Output, inject, signal } from '@angular/core'; 
+import { Component, EventEmitter, Input, OnChanges, Output, inject, signal, ElementRef, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { AssetService } from '../../core/services/asset-service';
-import { Asset } from '../../types/Notification';
 import { FormsModule } from '@angular/forms';
+
+// Services
+import { RepositoryService } from '../../core/services/repository-service';
+import { AssetService } from '../../core/services/asset-service'; 
+
+// Types
+import { Asset, Exam } from '../../types/repo-types';
+
+// Accessibility Directives
 import { Speak } from "../../core/directives/accessibility/speak";
 import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
+
+// Components
+import { StudentExam } from "../student-exam/student-exam";
 
 @Component({
   selector: 'app-assets',
   standalone: true,
-  imports: [CommonModule, FormsModule, Speak, KeyboardNav], 
+  imports: [CommonModule, FormsModule, Speak, KeyboardNav, StudentExam],
   templateUrl: './assets.html',
   styleUrls: ['./assets.css'],
 })
 export class Assets implements OnChanges {
 
   @Input() repoId: string | null = null;
-   @Output() back = new EventEmitter<void>();
-  public AssetService = inject(AssetService);
+  @Output() back = new EventEmitter<void>();
 
-  assets = this.AssetService.repositoryAssets;
-  selectedAsset = this.AssetService.asset;
+  // Injections
+  public repositoryService = inject(RepositoryService);
+  public assetService = inject(AssetService); 
+
+  // Signals for UI Control
+  public showDetailView = signal<boolean>(false);     // For Asset Details (OCR)
+  public showExams = signal<boolean>(false);          // For Student Exam Component
   
-  public AssetDetailsVisible = signal<boolean>(false); 
+  public selectedAsset = signal<Asset | null>(null);
+  public selectedExam = signal<Exam | null>(null);    // Store selected exam
+
+  // ViewChild for Focus Management
+  @ViewChild('mainHeading') mainHeading!: ElementRef;
+  @ViewChild('detailHeading') detailHeading!: ElementRef;
 
   ngOnChanges() {
     if (this.repoId) {
-      this.AssetService.loadRepositoryAssets(this.repoId);
+      this.repositoryService.getRepositoryById(this.repoId);
     } else {
-      this.AssetService.repositoryAssets.set([]);
+      this.repositoryService.repositoryDetail.set(null);
     }
   }
 
-  
-  viewAssetDetails(assetId: string) {
-    this.AssetService.loadAssetWithOcr(assetId);
-    this.AssetDetailsVisible.set(true); // Asset Details View-ஐக் காண்பி
+  // ==========================================
+  //  ASSET LOGIC
+  // ==========================================
+
+  viewAssetDetails(asset: Asset) {
+    this.selectedAsset.set(asset);
+    this.assetService.loadAssetWithOcr(asset.assetId);
+    this.showDetailView.set(true);
+    // Focus management: Move to detail heading
+    setTimeout(() => this.detailHeading?.nativeElement.focus(), 100);
   }
 
   goBackToList() {
-    this.AssetDetailsVisible.set(false); // Asset Details View-ஐ மறை
-    this.AssetService.asset.set(null); // தேர்ந்தெடுக்கப்பட்ட Asset-ஐ அழிக்கவும்
-    this.AssetService.hideExplainPopup(); // Explanation Popup-ஐ மறைக்க
+    this.showDetailView.set(false);
+    this.selectedAsset.set(null);
+    this.assetService.hideExplainPopup();
+    // Focus management: Move back to main heading
+    setTimeout(() => this.mainHeading?.nativeElement.focus(), 100);
   }
 
-
-  requestExplanation(chunk: { chunkId: number; chunk: string }) {
-      if (chunk?.chunk) {
-        this.AssetService.explainText(chunk.chunk);
-      } else {
-        alert("No OCR text available for this chunk.");
-      }
+  requestExplanation(chunk: any) {
+    if (chunk?.chunk) {
+      this.assetService.explainText(chunk.chunk);
+    } else {
+      alert("No OCR text available for this chunk.");
     }
+  }
 
-    goBack(): void {
+  // ==========================================
+  //  EXAM LOGIC
+  // ==========================================
+
+  /**
+   * Opens the Exam View
+   * This is called when user clicks or presses Enter on an Exam card
+   */
+  openExam(exam: Exam) {
+    this.selectedExam.set(exam); // Store the selected exam
+    this.showExams.set(true);    // Show the StudentExam component
+  }
+
+  toggleExamsView(show: boolean): void {
+    this.showExams.set(show);
+    
+    if (!show) {
+      // When closing exam view, clear selection and return focus to main
+      this.selectedExam.set(null);
+      setTimeout(() => this.mainHeading?.nativeElement.focus(), 100);
+    }
+  }
+
+  // ==========================================
+  //  NAVIGATION
+  // ==========================================
+
+  goBack(): void {
     this.back.emit();
   }
-    
 }
