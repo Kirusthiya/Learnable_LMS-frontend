@@ -1,9 +1,10 @@
 import { AfterViewInit, Component, inject, OnDestroy, HostListener, Output, EventEmitter, effect, OnInit } from '@angular/core';
 import { KeyboardNav } from '../../core/directives/accessibility/keyboard-nav';
 import { Speak } from '../../core/directives/accessibility/speak';
-import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { AccountService } from '../../core/services/accountservices';
 import { SettingsService } from '../../core/services/Voice/settings-service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-nav',
@@ -11,7 +12,7 @@ import { SettingsService } from '../../core/services/Voice/settings-service';
   templateUrl: './nav.html',
   styleUrls: ['./nav.css'],
 })
-export class Nav implements AfterViewInit, OnDestroy {
+export class Nav implements AfterViewInit, OnDestroy, OnInit {
   private accessibilityModeService = inject(SettingsService);
   private router = inject(Router);
   protected accountService = inject(AccountService);
@@ -26,7 +27,15 @@ export class Nav implements AfterViewInit, OnDestroy {
   mode: 'blind' | 'deaf' = 'blind';
   private scrollHandler: any;
 
- 
+  ngOnInit() {
+    this.router.events.pipe(
+      filter(event => event instanceof NavigationEnd)
+    ).subscribe(() => {
+      this.closeMobileMenu();
+    });
+  }
+
+
   // Accessibility menu toggle
   toggleMenu() {
     this.showMenu = !this.showMenu;
@@ -62,7 +71,8 @@ export class Nav implements AfterViewInit, OnDestroy {
     this.emitMenuState();
   }
 
- toggleProfileDropdown() {
+  toggleProfileDropdown(event: Event) {
+    event.stopPropagation();
     this.profileDropdownOpen = !this.profileDropdownOpen;
     if (!this.profileDropdownOpen) this.helpDropdownOpen = false;
     this.emitMenuState();
@@ -81,12 +91,21 @@ export class Nav implements AfterViewInit, OnDestroy {
     const header = document.querySelector('header');
     const mobileMenu = document.getElementById('mobile-menu');
 
+    // Close mobile menu
     if (
       this.mobileMenuOpen &&
       !header?.contains(target) &&
       !mobileMenu?.contains(target)
     ) {
       this.closeMobileMenu();
+    }
+
+    const insideDropdown = target.closest('.absolute.right-0.mt-2'); // Based on nav.html class
+    const insideProfileToggle = target.closest('button[appSpeak="Profile"]'); // Based on nav.html
+
+    if (this.profileDropdownOpen && !insideDropdown && !insideProfileToggle) {
+      this.profileDropdownOpen = false;
+      this.emitMenuState();
     }
   }
 
@@ -117,4 +136,29 @@ export class Nav implements AfterViewInit, OnDestroy {
       this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen
     );
   }
+degradeTeacher() {
+  // Attempt to read the current user's id from the accountService (use any to avoid strict typing mismatches).
+  const userId = (this.accountService as any).currentUser?.id || (this.accountService as any).user?.id;
+  if (!userId) {
+    console.error('degradeTeacher: user id not available');
+    return;
+  }
+
+  this.accountService.deleteTeacher(userId).subscribe({
+    next: (res: any) => {
+      if (res.updatedUser) {
+        this.accountService.refreshCurrentUser(res.updatedUser);
+
+        // Immediately re-render UI
+        this.profileDropdownOpen = false;
+      }
+    },
+    error: (err: any) => {
+      console.error('Degrade failed', err);
+    }
+  });
 }
+
+}
+
+

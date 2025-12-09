@@ -1,31 +1,55 @@
 
-export type UserResponse = {
-  user: User,
-  student?: { classes?: Class[] },
-  teacher?: any
-  token: string
-  role: string;
+export interface UserResponse {
+  id:string;
+  user: {
+    userId: string;
+    email: string;
+    username: string;
+    displayName: string;
+    fullName: string;
+    role: string;
+    token: string;
+  };
+
+  teacher?: {
+    profileId: string;
+    userId: string;
+    dateOfBirth: string;
+    contactPhone: string;
+    bio: string;
+    avatarUrl: string | null;
+    lastUpdatedAt: string;
+    displayName: string;
+    fullName: string;
+    username: string;
+    email: string;
+    classes: Class[];
+  };
+
+  student?: {
+    userId: string;
+    email: string;
+    username: string;
+    displayName: string;
+    fullName: string;
+    classes: Class[];
+    token?: string;
+  };
+
+  class?: any;
 }
 
 export type User = {
-  id: string;
+  userId: string;
   fullName: string;
   displayName: string;
   username: string;
   token?: string;
-   role: string;
+  role: string;
   classes?: Class[];
 };
 
-// Update Payload-க்கான ஒரு interface-ஐ உருவாக்குதல்
-export type UpdateUserPayload = {
-  fullName: string;
-  displayName: string;
-  newUsername: string; // Backend-ன் 'UpdateUserCommand'-க்கு ஏற்றவாறு
-}
-
-
-  export type Class = {
+export type Class = {
       classId: string,
       className: string,
       classJoinName: string,
@@ -35,13 +59,24 @@ export type UpdateUserPayload = {
       status: string
       repositories?: Repository[];
   };
+
+export type UpdateUserPayload = {
+  fullName: string;
+  displayName: string;
+  newUsername: string; 
+}
+
+
+  
  
 
 export type Repository={
   repoId: string;
-  repoName: string;
-  description: string;
-  certification: string;
+  classId: string;           // The class this repo belongs to
+  fileName: string;          // Repository file name
+  repoDescription: string;   // Description of the repository
+  repoCertification?: string; // Optional certification info
+  createdAt?: string;  
 }
 
 // Normal login creds
@@ -60,3 +95,9 @@ export type RegisterCreds = {
 };
 
 
+export type RepositoryDto={
+   classId: string,
+  repoName: string,          
+  repoDescription: string ,
+  repoCertification: string 
+};

@@ -1,1 +1,82 @@
-<p>upgradeplan works!</p>
+<div class="min-h-screen bg-background text-textlight p-8 font-body">
+
+    <!-- BACK BUTTON -->
+    <a (click)="goBack()"
+        class="mb-8 inline-flex items-center text-gray-400 hover:text-primary transition group cursor-pointer text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+            stroke="currentColor"
+            class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Back to Dashboard
+    </a>
+
+
+    <!-- STUDENT VIEW -->
+    @if (userRole() === 'Student') {
+        
+        <div class="max-w-3xl mx-auto mb-10 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 font-display">Upgrade Your Plan</h1>
+
+            <p class="text-gray-400 text-lg">
+                Unlock <strong class="text-primary">premium features</strong> and tools designed for educators.
+            </p>
+        </div>
+
+        <div class="max-w-md mx-auto p-8 bg-inputbg rounded-3xl shadow-2xl border border-primary/20 text-center">
+
+            <h2 class="text-2xl font-semibold mb-6 font-display">Ready to Elevate Your Teaching?</h2>
+
+            <button (click)="openRegisterTeacher()"
+                class="bg-primary hover:bg-primary/90 text-background px-8 py-4 rounded-full 
+                       font-bold text-lg shadow-primary/50 shadow-lg transition duration-300 
+                       transform hover:scale-[1.02] active:scale-95 animate-pulse-slow">
+                Register as Teacher
+            </button>
+
+            <p class="text-xs text-gray-500 mt-4">Takes less than 2 minutes!</p>
+        </div>
+
+        <!-- Register Teacher Popup -->
+        <div *ngIf="showRegisterTeacher()"
+            class="fixed inset-0 bg-black bg-opacity-70 backdrop-blur-sm
+                   flex justify-center items-center z-[9999] animate-fadeIn p-4">
+
+            <div class="bg-background rounded-3xl w-full max-w-xl p-8 shadow-2xl shadow-primary/20 relative animate-popup border border-primary/30">
+
+                <button (click)="closeRegisterTeacher()"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-primary transition text-2xl font-light">✕</button>
+
+                <app-register-teacher></app-register-teacher>
+            </div>
+        </div>
+    }
+    
+    <!-- TEACHER VIEW -->
+    @else if (userRole() === 'Teacher') {
+
+        <div class="max-w-3xl mx-auto mb-10 text-center">
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 font-display text-red-500">Downgrade Your Plan</h1>
+            <p class="text-gray-400 text-lg">
+                You currently have access to <strong class="text-primary">all Educator features</strong>.
+            </p>
+        </div>
+
+        <div class="max-w-md mx-auto p-8 bg-inputbg rounded-3xl shadow-2xl border border-red-500/20 text-center">
+            <h2 class="text-2xl font-semibold mb-6 font-display">Want to stop being a Teacher?</h2>
+
+            <button (click)="unsubscribeTeacherRole()"
+                class="bg-red-600 hover:bg-red-700 text-background px-8 py-4 rounded-full 
+                       font-bold text-lg shadow-red-500/50 shadow-lg transition duration-300 
+                       transform hover:scale-[1.02] active:scale-95">
+                Unsubscribe Teacher Role
+            </button>
+
+            <p class="text-xs text-gray-500 mt-4 text-red-400">
+                Warning: This action is permanent and will remove all your teacher-related data.
+            </p>
+        </div>
+    }
+
+</div>

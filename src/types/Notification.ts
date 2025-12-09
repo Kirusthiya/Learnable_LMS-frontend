@@ -1,12 +1,11 @@
-export interface Notification {
-  id: string;
-  title: string;
-  message: string;
-  createdAt: string;  
-  read: boolean;
-  type?: 'info' | 'success' | 'warning' | 'request';
-  meta?: any;
-}
+export type NotificationDto= {
+  id:string;
+  sender: UserDto;
+  receiver: UserDto;
+  class: ClassDto;
+  notificationStatus: 'Pending' | 'Approved' | 'Rejected';
+  type: 'JoinRequest';
+};
 
 
 export type GlobalSearch = {
@@ -14,7 +13,16 @@ export type GlobalSearch = {
     type: 'User' | 'Class'; 
     title: string;
     subTitle: string;
+    
 };
+
+export type UserDto ={
+  userId: string;
+  fullName: string; // பயனர் பெயரைக் காட்ட இதை பயன்படுத்துகிறோம்
+};
+
+
+
 
 export type ClassDto = {
  classId: string;
@@ -38,6 +46,11 @@ export type UserDetailsDto= {
     bio: string;
     profilePictureUrl?: string;
     enrolledClasses?: ClassDto[];
+     classes?: {
+    classId: string;
+    className: string;
+    description?: string;
+  }[];
 }
 
 export type Asset = {

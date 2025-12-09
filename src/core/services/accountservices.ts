@@ -1,84 +1,102 @@
 import { HttpClient } from '@angular/common/http';
-import { inject, Injectable, signal } from '@angular/core';
+import { inject, Injectable, Injector, runInInjectionContext, signal } from '@angular/core';
 import { RegisterCreds, UserResponse } from '../../types/user';
-import { tap } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { environment } from '../../environments/environment';
-
-// Full response type from backend
+import { RegisterTeacherRequest, TeacherUserDto } from '../../types/teacher';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root'
 })
 export class AccountService {
 
-  private http = inject(HttpClient);
-  currentUser = signal<UserResponse | null>(null); // Full response signal
+  private http = inject(HttpClient);
+  currentUser = signal<UserResponse | null>(null);
+  private injector = inject(Injector);
 
-  private baseUrl = environment.apiUrl;
 
+  private baseUrl = environment.apiUrl;
+    
+    // ⭐ NEW: Constructor to load user on service initialization
+    constructor() {
+        this.loadCurrentUser();
+    }
+    
+    // ⭐ NEW: Private method to load user data from localStorage
+    private loadCurrentUser() {
+        const userJson = localStorage.getItem('user');
+        if (userJson) {
+            try {
+                const user: UserResponse = JSON.parse(userJson);
+                this.currentUser.set(user);
+            } catch (e) {
+                console.error('Error parsing stored user data:', e);
+                localStorage.removeItem('user'); // Clear corrupted data
+            }
+        }
+    }
 
-  constructor() {
-  const savedUser = localStorage.getItem('user');
-  if (savedUser) {
-    this.currentUser.set(JSON.parse(savedUser));
-  }
+  // Send OTP
+  sendOtp(email: string) {
+    return this.http.post(`${this.baseUrl}account/send-otp`, { email });
+  }
+
+  // Register
+  register(creds: RegisterCreds) {
+    const body = {
+      user: {
+        username: creds.username,
+        email: creds.email,
+        password: creds.password
+      },
+      otp: creds.otp
+    };
+
+    return this.http.post<UserResponse>(`${this.baseUrl}account/register`, body).pipe(
+      tap((res) => {
+        if (res) this.setCurrentUser(res);
+      })
+    );
+  }
+
+  setCurrentUser(userResponse: UserResponse) {
+    localStorage.setItem('user', JSON.stringify(userResponse));
+     this.currentUser.set(userResponse);
+   }
+
+  // Login
+  login(creds: any) {
+    return this.http.post<UserResponse>(`${this.baseUrl}account/login`, creds).pipe(
+      tap((res) => {
+        if (res) this.setCurrentUser(res);
+      })
+    );
+  }
+
+  // Logout
+  logout() {
+    localStorage.removeItem('user');
+    this.currentUser.set(null);
+  }
+
+  registerTeacherSignal(payload: RegisterTeacherRequest) {
+    return runInInjectionContext(this.injector, () =>
+      toSignal(
+        this.http.post<TeacherUserDto>(`${this.baseUrl}account/register-teacher`, payload),
+        { initialValue: null }
+      )
+    );
+  }
+
+  refreshCurrentUser(updated: UserResponse) {
+  localStorage.setItem('user', JSON.stringify(updated));
+  this.currentUser.set(updated);
 }
 
-  // Send OTP
-  sendOtp(email: string) {
-    return this.http.post(`${this.baseUrl}account/send-otp`, { email });
-  }
-
-  // Register
-  register(creds: RegisterCreds) {
-    const body = {
-      user: {
-        username: creds.username,
-        email: creds.email,
-        password: creds.password
-      },
-      otp: creds.otp
-    };
-
-    return this.http.post<UserResponse>(`${this.baseUrl}account/register`, body).pipe(
-      tap((res) => {
-        if (res) this.setCurrentUser(res);
-      })
-    );
-  }
-
-  // Set current user (full response)
-  setCurrentUser(userResponse: UserResponse) {
-    localStorage.setItem('user', JSON.stringify(userResponse));
-    this.currentUser.set(userResponse);
-  }
-
-  // Login
-  login(creds: any) {
-    return this.http.post<UserResponse>(`${this.baseUrl}account/login`, creds).pipe(
-      tap((res) => {
-        if (res) this.setCurrentUser(res);
-      })
-    );
-  }
-
-  // Logout
-  logout() {
-    localStorage.removeItem('user');
-    this.currentUser.set(null);
-  }
-
-  // Get User ID
-  getUserId(): string | null {
-    const user = localStorage.getItem('user');
-    if (!user) return null;
-
-    try {
-      const parsed: UserResponse = JSON.parse(user);
-      return parsed.user.id || null; // Correct path to userId
-    } catch {
-      return null;
-    }
-  }
+  // Delete teacher by UserId
+  deleteTeacher(userId: string): Observable<{ message: string }> {
+    return this.http.delete<{ message: string }>(`${this.baseUrl}/teacher/${userId}`, {});
+  }
 }
