@@ -7,6 +7,7 @@ import { SearchService } from '../../../core/services/search-service';
 import { RepositoryService } from '../../../core/services/repository-service';
 import { AssetsTeacher } from '../assets-teacher/assets-teacher';
 import { Search } from "../../search/search";
+import { ToastService } from '../../../core/services/toast-service';
 
 @Component({
   selector: 'app-class-teacher',
@@ -20,6 +21,7 @@ export class ClassTeacher implements OnInit {
   private accountService = inject(AccountService);
   public searchService = inject(SearchService);
   private repositoryService = inject(RepositoryService);
+  private toast =inject(ToastService);
 
   public teacherClasses = this.classService.teacherClasses;
   public selectedClassId = this.classService.selectedClassId;
@@ -47,14 +49,23 @@ export class ClassTeacher implements OnInit {
   public currentTeacherId = '';
 
   ngOnInit(): void {
-    const user = this.accountService.currentUser();
-    this.currentTeacherId = user?.teacher?.profileId ?? '';
+  const user = this.accountService.currentUser();
+  this.currentTeacherId = user?.teacher?.profileId ?? '';
 
-    // Load teacher classes
-    if (this.currentTeacherId) {
-      this.classService.loadClasses(this.currentTeacherId);
-    }
+  if (this.currentTeacherId) {
+    this.classService.loadClasses(this.currentTeacherId);
+
+    // Auto-select first class (WAIT for signal to populate)
+    setTimeout(() => {
+      const classes = this.teacherClasses();
+      if (classes.length > 0) {
+        const firstId = classes[0].classId;
+        this.selectClass(firstId);
+      }
+    }, 300);
   }
+}
+
 
   selectClass(classId: string) {
     this.searchService.loadClassDetails(classId);
@@ -154,11 +165,13 @@ saveUpdatedClass() {
       next: () => {
         this.showEditModal = false;
         this.classService.loadClasses(this.currentTeacherId);
+        this.toast.success('update class');
 
         // redirect home (dashboard)
-        window.location.href = "/dashboard";
+        window.location.href = "/dashboad";
       },
       error: (err) => console.error(err)
+      
     });
 }
 
@@ -176,9 +189,11 @@ confirmDeleteClass() {
       next: () => {
         this.showDeleteConfirm = false;
         this.classService.loadClasses(this.currentTeacherId);
+        this.toast.success('Class Delete');
+
 
         // redirect to Home
-        window.location.href = "/dashboard";
+        window.location.href = "/dashboad";
       },
       error: (err) => console.error(err)
     });

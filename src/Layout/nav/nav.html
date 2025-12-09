@@ -1,5 +1,5 @@
 <header appKeyboardNav>
-  <nav class="md:flex gap-5 my-2 uppercase text-white/90 text-sm relative">
+  <nav class="md:flex gap-5 my-2 uppercase text-white/90 text-sm">
 
     <!-- Brand -->
     <a routerLink="/" class="brand aurora-text" appSpeak="Learnable Home" tabindex="0">Learnable</a>
@@ -32,11 +32,18 @@
               {{accountService.currentUser()?.user?.fullName}}
             </div>
 
-            <a routerLink="/dashboad/upgradeplan" class="block px-3 py-2 hover:bg-gray-100" appSpeak="Upgrade Plan"
-              tabindex="0">Upgrade Plan</a>
+         
+          
+             <a routerLink="/dashboad/upgradeplan" class="block px-3 py-2 hover:bg-gray-100" appSpeak="Help Center" tabindex="0">
+                @if (accountService.currentUser()?.user?.role === "Student") {
+                  Upgrade plan
+                } @else {
+                  Switch to Student
+                }
+              </a>
 
             <a routerLink="/dashboad/help" class="block px-3 py-2 hover:bg-gray-100" appSpeak="Help Center"
-              tabindex="0">Help Centern</a>
+              tabindex="0">Help Center</a>
 
             <a routerLink="/dashboad/keyboardshortcut" class="block px-3 py-2 hover:bg-gray-100"
               appSpeak="Keyboard Shortcuts" tabindex="0">Keyboard Shortcuts</a>
@@ -115,8 +122,8 @@
       }
 
       <!-- MOBILE MENU ICON -->
-      <button id="mobile-menu-toggle" class="md:hidden" (click)="toggleMobileMenu()" appSpeak="Mobile Menu Toggle"
-        tabindex="0">
+      <button id="mobile-menu-toggle" class="md:hidden" (click)="toggleMobileMenu(); $event.stopPropagation()"
+        appSpeak="Mobile Menu Toggle" tabindex="0">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
         </svg>
@@ -144,3 +151,5 @@
 
   </nav>
 </header>
+
+
