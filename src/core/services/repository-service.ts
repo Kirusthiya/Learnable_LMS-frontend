@@ -1,8 +1,8 @@
 import { Injectable, inject, NgZone, signal, WritableSignal } from '@angular/core';
-import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
 import { Repository, RepositoryDto } from '../../types/user';
-import { ToastService } from './toast-service';
+import { RepositoryDetail } from '../../types/repo-types';
 
 @Injectable({
   providedIn: 'root'
@@ -11,13 +11,14 @@ export class RepositoryService {
 
   private http = inject(HttpClient);
   private ngZone = inject(NgZone);
-  private toastService = inject(ToastService);
   private baseUrl = environment.apiUrl;
 
   public repositories: WritableSignal<Repository[]> = signal([]);
   public selectedRepo: WritableSignal<Repository | null> = signal(null);
+  public repositoryDetail: WritableSignal<RepositoryDetail | null> = signal(null);
   public loading: WritableSignal<boolean> = signal(false);
 
+  // Load all repositories for a class
   public loadRepositories(classId: string): void {
     this.loading.set(true);
     this.http.get<Repository[]>(`${this.baseUrl}Repository?classId=${classId}`).subscribe({
@@ -30,47 +31,62 @@ export class RepositoryService {
       error: (err) => {
         console.error("Repositories not found:", err);
         this.loading.set(false);
-        this.toastService.error('Failed to load repositories.');
       }
     });
   }
 
+  // Select repository to view details
   public selectRepository(repo: Repository): void {
     this.selectedRepo.set(repo);
-    this.toastService.info(`Viewing repository: ${repo.fileName}`);
   }
 
+  // Add a new repository for a class using RepositoryDto
   public addRepository(dto: RepositoryDto) {
     if (!dto.classId || !dto.repoName) {
-      const errorMessage = 'Class ID and Repository Name are required.';
-      console.error(errorMessage);
-      this.toastService.error(errorMessage);
+      console.error('classId and repoName are required!');
       return;
     }
 
+    console.log('Repository payload:', dto);
+
     this.http.post(`${this.baseUrl}Repository`, { createRepositoryDto: dto }).subscribe({
       next: (res) => {
-        this.toastService.success(`Repository '${dto.repoName}' created successfully!`);
+        console.log('Repository created:', res);
         this.ngZone.run(() => this.loadRepositories(dto.classId));
       },
-      error: (err: HttpErrorResponse) => {
-        const errorMessage = err.error?.message || `Failed to create repository '${dto.repoName}'.`;
+      error: (err) => {
         console.error('Create repository failed:', err);
-        this.toastService.error(errorMessage);
       }
     });
   }
 
+  // Delete a repository
   public deleteRepository(repoId: string, classId: string) {
     this.http.delete(`${this.baseUrl}Repository/${repoId}`).subscribe({
       next: () => {
-        this.toastService.warning('Repository deleted successfully.');
+        console.log("Repository deleted");
         this.loadRepositories(classId);
       },
-      error: (err: HttpErrorResponse) => {
-        const errorMessage = err.error?.message || 'Failed to delete repository.';
+      error: (err) => {
         console.error("Delete repository failed:", err);
-        this.toastService.error(errorMessage);
+      }
+    });
+  }
+
+  // Get repository by ID
+  public getRepositoryById(id: string): void {
+    this.loading.set(true);
+    this.http.get<RepositoryDetail>(`${this.baseUrl}Repository/${id}`).subscribe({
+      next: (res) => {
+        this.ngZone.run(() => {
+          this.repositoryDetail.set(res);
+          this.loading.set(false);
+        });
+      },
+      error: (err) => {
+        console.error("Repository not found:", err);
+        this.repositoryDetail.set(null);
+        this.loading.set(false);
       }
     });
   }
