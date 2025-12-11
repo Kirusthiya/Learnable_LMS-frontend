@@ -3,60 +3,102 @@
 
     <h2 class="text-3xl font-bold mb-6" tabindex="0" appSpeak="Login to Continue">Login to Continue</h2>
 
-    <form (ngSubmit)="login()" class="w-full max-w-sm bg-gray-800 p-6 rounded-xl shadow-lg space-y-4">
+    <form #loginForm="ngForm" (ngSubmit)="login(loginForm)" class="w-full max-w-sm bg-gray-800 p-6 rounded-xl shadow-lg space-y-4">
 
-      <!-- EMAIL -->
-      <div class="flex gap-2 items-center">
-        <input
-          type="email"
-          [(ngModel)]="creds.email"
-          name="email"
-          placeholder="Enter Email"
-          required
-          tabindex="0"
-          appSpeak="Enter your email"
-          appInputSpeak
-          #emailInput
-          class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
-        />
-        <button
-          type="button"
-          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
-          [appVoiceInput]="emailInput"
-          tabindex="0"
-          appSpeak="Start voice input for email"
-        >
-          🎤
-        </button>
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            type="email"
+            [(ngModel)]="creds.email"
+            name="email"
+            placeholder="Enter Email"
+            required
+            email
+            #email="ngModel" 
+            tabindex="0"
+            appSpeak="Enter your email"
+            appInputSpeak
+            #emailInput
+            class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+            [class.border-red-500]="email.touched && email.invalid"
+            [class.border]="email.touched && email.invalid"
+          />
+          <button
+            type="button"
+            class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+            [appVoiceInput]="emailInput"
+            tabindex="0"
+            appSpeak="Start voice input for email"
+          >
+            🎤
+          </button>
+        </div>
+                
+            @if (email.touched && email.invalid) {
+          <span 
+            class="text-red-400 text-xs pl-1"
+            [appSpeak]="email.errors?.['required'] ? 'Email is required' : 'Invalid email format'"
+          >
+            @if (email.errors?.['required']) { ⚠️ Email is required }
+            @else if (email.errors?.['email']) { ⚠️ Invalid email format }
+          </span>
+        }
+
       </div>
 
-      <!-- PASSWORD -->
-      <div class="flex gap-2 items-center">
-        <input
-          type="password"
-          [(ngModel)]="creds.password"
-          name="password"
-          placeholder="Enter Password"
-          required
-          tabindex="0"
-          appSpeak="Enter your password"
-          appInputSpeak
-          #passwordInput
-          class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
-        />
-        <button
-          type="button"
-          class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
-          [appVoiceInput]="passwordInput"
-          tabindex="0"
-          appSpeak="Start voice input for password"
-        >
-          🎤
-        </button>
+      <div class="flex flex-col gap-1">
+        <div class="flex gap-2 items-center">
+          <input
+            type="password"
+            [(ngModel)]="creds.password"
+            name="password"
+            placeholder="Enter Password"
+            required
+            #password="ngModel"
+            tabindex="0"
+            appSpeak="Enter your password"
+            appInputSpeak
+            #passwordInput
+            class="flex-1 p-3 rounded-lg bg-gray-700 text-white outline-none focus:ring-2 focus:ring-cyan-400"
+            [class.border-red-500]="password.touched && password.invalid"
+            [class.border]="password.touched && password.invalid"
+          />
+          <button
+            type="button"
+            class="bg-gray-600 hover:bg-gray-700 text-white px-3 py-2 rounded"
+            [appVoiceInput]="passwordInput"
+            tabindex="0"
+            appSpeak="Start voice input for password"
+          >
+            🎤
+          </button>
+        </div>
+
+        @if (password.touched && password.invalid) {
+          <span class="text-red-400 text-xs pl-1">
+            ⚠️ Password is required
+          </span>
+        }
       </div>
 
-      <!-- LOGIN BUTTON -->
-      <button type="submit" class="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-semibold py-3 rounded-lg transition" tabindex="0" appSpeak="Login">
+      @if (errorMessage()) {
+        <div 
+          class="bg-red-900/50 border border-red-500 text-red-200 p-3 rounded-lg text-sm text-center animate-pulse mt-4"
+          tabindex="0"
+          [appSpeak]="errorMessage()"
+        >
+          {{ errorMessage() }}
+        </div>
+      }
+
+      <button 
+        type="submit" 
+        [disabled]="loginForm.invalid"
+        [class.opacity-50]="loginForm.invalid"
+        class="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-semibold py-3 rounded-lg transition" 
+        tabindex="0" 
+        appSpeak="Login"
+      >
         Login
       </button>
     </form>

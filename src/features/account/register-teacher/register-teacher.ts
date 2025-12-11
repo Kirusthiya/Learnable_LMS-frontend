@@ -3,10 +3,12 @@ import { RegisterTeacherCreds, TeacherUserDto } from '../../../types/teacher';
 import { AccountService } from '../../../core/services/accountservices';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { KeyboardNav } from "../../../core/directives/accessibility/keyboard-nav";
+import { Speak } from "../../../core/directives/accessibility/speak";
 
 @Component({
   selector: 'app-register-teacher',
-  imports: [FormsModule],
+  imports: [FormsModule, KeyboardNav, Speak],
   templateUrl: './register-teacher.html',
   styleUrl: './register-teacher.css',
 })
