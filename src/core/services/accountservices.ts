@@ -99,4 +99,20 @@ export class AccountService {
   deleteTeacher(userId: string): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.baseUrl}/teacher/${userId}`, {});
   }
+
+ getUserById(userId: string): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.baseUrl}User/${userId}`).pipe(
+      tap(fetchedUser => {
+        const currentUser = this.currentUser();
+        
+        const currentId = (currentUser as any)?.userId || (currentUser as any)?.id;
+        const fetchedId = (fetchedUser as any)?.userId || (fetchedUser as any)?.id;
+
+        if (currentId && currentId === fetchedId) {
+             console.log('Refreshing Current User Data via getUserById...');
+             this.setCurrentUser(fetchedUser); 
+        }
+      })
+    );
+  }
 }

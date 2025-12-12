@@ -115,13 +115,16 @@ createRepo() {
   const classId = this.selectedClassId();
   if (!classId) return;
 
-  // Pass a single object matching RepositoryDto
   this.repositoryService.addRepository({
     classId: classId,
     repoName: this.newRepoName,
     repoDescription: this.newRepoDesc,
     repoCertification: this.newRepoCert
   });
+
+  setTimeout(() => {
+    this.searchService.loadClassDetails(classId); 
+  }, 300);
 
   this.closeAddRepoModal();
 }

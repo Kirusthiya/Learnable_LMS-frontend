@@ -1,5 +1,5 @@
 import { Component, EventEmitter, inject, output, Output, signal } from "@angular/core";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, NgForm } from "@angular/forms";
 import { KeyboardNav } from "../../../core/directives/accessibility/keyboard-nav";
 import { Speak } from "../../../core/directives/accessibility/speak";
 import { InputSpeakDirective } from "../../../core/directives/app-input-speak";
@@ -27,6 +27,7 @@ export class Login {
   protected registerMode = signal(false);
    protected creds: any = {};
   
+   errorMessage = signal<string>('');
 
   closeLogin = output<boolean>();
 
@@ -42,25 +43,30 @@ export class Login {
     this.registerMode.set(value);
   }
 
-  login(){
-    // console.log(this.creds);
-    this.accountService.login(this.creds).subscribe({
-      next: result => {
-        // console.log(result);
-        this.router.navigateByUrl('/dashboad');
-        this.toast.success("Login successfully");
-        this.speech.speak('Login successfully')
+   login(form:NgForm){
+  this.accountService.login(this.creds).subscribe({
+    next: result => {
+      this.router.navigateByUrl('/dashboad');
+      this.toast.success("Login successfully");
+      this.speech.speak('Login successfully');
+      this.creds = {};
+      this.errorMessage.set(""); // clear
+    },
+        error: err => {
+        const message =
+          typeof err.error === "string"
+            ? err.error
+            : err.error?.message
+            ? err.error.message
+            : "Login failed. Please try again.";
 
-        this.creds = {};
-      },
-      error: error => {
-        this.toast.error(error.error);
-        console.log(error.message);
+        this.toast.error(message);  // <-- FIXED (string only)
+        this.errorMessage.set(message + " ");
+        console.log(err);
       }
-    })
+
+  });
   }
-
-
 
   // Mic toggle
   toggleMic() {

@@ -1,4 +1,4 @@
-import { Component, inject, OnInit } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core'; // signal import பண்ணுங்க
 import { ActivatedRoute, Router } from '@angular/router';
 import { SearchService } from '../../core/services/search-service';
 import { RequestService } from '../../core/services/request-service';
@@ -19,8 +19,8 @@ export class Details implements OnInit {
   private requestService = inject(RequestService);
   private accountService = inject(AccountService);
   private route = inject(ActivatedRoute);
-  private router=inject(Router)
-  private toast =inject(ToastService)
+  private router = inject(Router);
+  private toast = inject(ToastService);
 
   entityType!: 'Class' | 'User';
   entityId!: string;
@@ -31,43 +31,70 @@ export class Details implements OnInit {
   joinMessage = this.searchService.joinClassMessage;
 
   selectedClassId: string | null = null;
-  currentUserClasses: any[] = [];
+
+  // ⭐ UPDATE 1: Signal ஆக மாற்றியுள்ளேன்
+  currentUserClasses = signal<any[]>([]); 
 
   ngOnInit(): void {
-
     this.entityId = this.route.snapshot.paramMap.get('id')!;
     this.entityType = (this.route.snapshot.queryParamMap.get('type') as 'User' | 'Class') || 'Class';
 
-    const currentUser = this.accountService.currentUser();
+    // 1. Get Current User ID
+    const storedUser = this.accountService.currentUser();
+    const myUserId = storedUser?.user?.userId || storedUser?.id; // ID எடுப்பது
 
-    // FIX: get classes correctly based on role
-    this.currentUserClasses =
-      currentUser?.student?.classes ||
-      currentUser?.teacher?.classes ||
-      [];
+    if (myUserId) {
+      // 2. Call API to get latest data
+      this.accountService.getUserById(myUserId).subscribe({
+        next: (response: any) => {
+          console.log('API Response:', response);
 
+          // ⭐ UPDATE 2: Postman JSON படி 'classes' நேரடியாக இருக்கிறது.
+          // user.teacher.classes என்று தேட வேண்டாம்.
+          if (response.classes) {
+            this.currentUserClasses.set(response.classes);
+          } else {
+             this.currentUserClasses.set([]);
+          }
+        },
+        error: (err) => {
+          console.error('Error fetching user classes:', err);
+        }
+      });
+    }
+
+    // Load page details
     if (this.entityType === 'Class') {
       this.searchService.loadClassDetails(this.entityId);
     } else {
       this.searchService.loadUserDetails(this.entityId);
     }
   }
-
-  handleJoinClass(): void {
+handleJoinClass(): void {
     const currentUser = this.accountService.currentUser();
 
     if (!currentUser) {
-      this.joinMessage.set('User not found.');
+      this.joinMessage.set('User not found. Please login again.');
       return;
     }
 
+   
+    const senderId = currentUser.user.userId || currentUser.id;
+
+    if (!senderId) {
+      console.error('User ID missing in current user object:', currentUser);
+      this.joinMessage.set('Error: User ID not found.');
+      return;
+    }
+
+    // Case 1: Joining a Class directly
     if (this.entityType === 'Class') {
       const classInfo = this.classDetails();
       if (!classInfo) return;
 
       const payload = {
         RequestDto: {
-          SenderId: currentUser.user.userId,
+          SenderId: senderId, // ⭐ Fixed
           ReceiverId: classInfo.teacher.userId,
           ClassId: classInfo.classId,
           NotificationStatus: 'Pending'
@@ -78,22 +105,31 @@ export class Details implements OnInit {
       return;
     }
 
+    // Case 2: User Profile -> Joining a Class
     if (!this.selectedClassId) {
       this.joinMessage.set('Please select a class first.');
       return;
     }
 
-    const selectedClass = this.currentUserClasses.find(c => c.classId === this.selectedClassId);
+    const selectedClass = this.currentUserClasses().find(c => c.classId === this.selectedClassId);
 
     if (!selectedClass) {
       this.joinMessage.set('Invalid class selected.');
       return;
     }
 
+    // ⭐ FIX 2: Receiver ID (User Profile Owner) எடுப்பது
+    const receiverId = this.userDetails()?.userId;
+    
+    if (!receiverId) {
+        this.joinMessage.set('Target user not found.');
+        return;
+    }
+
     const payload = {
       RequestDto: {
-        SenderId: currentUser.user.userId,
-        ReceiverId: this.userDetails()?.userId,
+        SenderId: senderId, // ⭐ Fixed
+        ReceiverId: receiverId,
         ClassId: selectedClass.classId,
         NotificationStatus: 'Pending'
       }
@@ -101,7 +137,7 @@ export class Details implements OnInit {
 
     this.sendRequest(payload);
   }
-
+  
   private sendRequest(payload: any) {
     this.joinLoading.set(true);
 
@@ -109,14 +145,13 @@ export class Details implements OnInit {
       next: () => {
         this.joinLoading.set(false);
         this.joinMessage.set('Request sent successfully.');
-        this.toast.success('Request sent successfully.')
-        this.router.navigate(['/dashboad'])
+        this.toast.success('Request sent successfully.');
+        this.router.navigate(['/dashboad']);
       },
       error: (err) => {
-        console.error('Join request failed', err);
         this.joinLoading.set(false);
         this.joinMessage.set('Failed to send request.');
-        this.toast.error('Failed to send request.')
+        this.toast.error('Failed to send request.');
       }
     });
   }

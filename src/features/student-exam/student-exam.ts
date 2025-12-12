@@ -1,11 +1,12 @@
 import { Component, EventEmitter, Input, Output, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ExamService } from '../../core/services/teacher-exam-service'; // Path may vary based on your project
+import { ExamService } from '../../core/services/teacher-exam-service';
+import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav"; // Path may vary based on your project
 
 @Component({
   selector: 'app-student-exam',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, KeyboardNav],
   templateUrl: './student-exam.html',
   styleUrls: ['./student-exam.css']
 })
