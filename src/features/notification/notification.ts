@@ -54,20 +54,28 @@ export class Notification implements OnInit {
     });
   }
 
-  handleApprove(requestId: string): void {
+handleApprove(requestId: string): void {
     const payload = { RequestDto: { NotificationId: requestId } };
 
     this.requestService.approve(payload).subscribe({
-      next: () => {
-        this.toastService.success('Request Approved! The user has been added.');
-        this.loadReceivedRequests(); 
-      },
-      error: (err) => {
-        const errorDetail = err.error?.message || 'Server error';
-        this.toastService.error(`Approval failed: ${errorDetail}`); 
-      }
+        next: () => {
+            this.toastService.success('Request Approved! The user has been added.');
+            this.loadReceivedRequests(); 
+            const currentUser = this.accountService.currentUser();
+            const myUserId = currentUser?.user?.userId || currentUser?.id;
+
+            if (myUserId) {
+                this.accountService.getUserById(myUserId).subscribe({
+                    next: () => console.log('User data refreshed successfully after approval.'),
+                    error: (err) => console.error('Failed to refresh user data:', err)
+                });
+            }
+        },
+        error: (err) => {
+            console.log(err.error);
+        }
     });
-  }
+}
 
   handleReject(requestId: string): void {
     const payload = { RequestDto: { NotificationId: requestId } };

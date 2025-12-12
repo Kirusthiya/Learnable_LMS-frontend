@@ -1,4 +1,4 @@
-<div class="p-8 rounded-3xl shadow-2xl text-textlight border border-gray-700 font-body bg-gray-900/50 backdrop-blur-sm max-w-5xl mx-auto my-8">
+<div class="p-8 rounded-3xl shadow-2xl text-textlight border border-gray-700 font-body bg-gray-900/50 backdrop-blur-sm max-w-5xl mx-auto my-8" appKeyboardNav>
 
   <div *ngIf="isLoading()" class="flex flex-col items-center justify-center p-16 text-center animate-pulse" 
        appSpeak="Loading Exam, please wait." tabindex="0">
@@ -20,7 +20,7 @@
     
     <header class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-700 pb-6">
       <h2 class="text-3xl font-extrabold text-primary font-display tracking-tight mb-4 md:mb-0"
-          tabindex="0" (focus)="onFocus(examData()?.title)">
+          tabindex="0" (focus)="onFocus(examData()?.title)"> 
         {{ examData()?.title }}
       </h2>
       
