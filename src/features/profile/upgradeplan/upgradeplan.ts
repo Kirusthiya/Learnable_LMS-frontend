@@ -7,10 +7,12 @@ import { RegisterTeacher } from '../../account/register-teacher/register-teacher
 import { AccountService } from '../../../core/services/accountservices';
 import { TeacherService } from '../../../core/services/teacher-service';
 import { ToastService } from '../../../core/services/toast-service';
+import { KeyboardNav } from "../../../core/directives/accessibility/keyboard-nav";
+import { Speak } from "../../../core/directives/accessibility/speak";
 
 @Component({
   selector: 'app-upgradeplan',
-  imports: [RegisterTeacher, CommonModule, FormsModule],
+  imports: [RegisterTeacher, CommonModule, FormsModule, KeyboardNav, Speak],
   templateUrl: './upgradeplan.html',
   styleUrl: './upgradeplan.css',
 })

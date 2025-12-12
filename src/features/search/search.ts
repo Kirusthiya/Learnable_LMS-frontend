@@ -5,10 +5,12 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { AccountService } from '../../core/services/accountservices';
+import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
+import { Speak } from "../../core/directives/accessibility/speak";
 
 @Component({
   selector: 'app-search',
-  imports: [FormsModule, CommonModule],
+  imports: [FormsModule, CommonModule, KeyboardNav, Speak],
   templateUrl: './search.html',
   styleUrls: ['./search.css'],
 })

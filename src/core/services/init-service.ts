@@ -1,8 +1,7 @@
-
+// init-service.ts
 import { inject, Injectable } from '@angular/core';
-import { of } from 'rxjs';
 import { AccountService } from './accountservices';
-import { User, UserResponse } from '../../types/user';
+import { UserResponse } from '../../types/user';
 
 @Injectable({
   providedIn: 'root'
@@ -13,15 +12,23 @@ export class InitService {
 
   init() {
     return new Promise<void>((resolve) => {
-    const userString = localStorage.getItem('user');
-    if (userString) {
-    const userResponse: UserResponse = JSON.parse(userString);
-      this.accountService.setCurrentUser(userResponse);
-    }
-    resolve();
+      console.log('InitService Starting...');
+      const userString = localStorage.getItem('user');
+
+      if (userString) {
+        try {
+          const userResponse: UserResponse = JSON.parse(userString);
+          console.log('InitService: User found in LocalStorage', userResponse);
+          this.accountService.currentUser.set(userResponse); 
+        } catch (error) {
+          console.error('InitService: JSON Parse Error', error);
+          localStorage.removeItem('user'); 
+        }
+      } else {
+        console.warn('InitService: No User found in LocalStorage');
+      }
+      
+      resolve(); 
     });
   }
 }
-
-  
-

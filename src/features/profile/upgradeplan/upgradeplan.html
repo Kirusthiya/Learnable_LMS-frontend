@@ -1,41 +1,35 @@
-<div class="min-h-screen bg-background text-textlight p-8 font-body">
+<div class="min-h-screen bg-background text-textlight p-8 font-body" appKeyboardNav>
 
-    <!-- BACK BUTTON -->
-    <a (click)="goBack()"
-        class="mb-8 inline-flex items-center text-gray-400 hover:text-primary transition group cursor-pointer text-sm">
-        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-            stroke="currentColor"
-            class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform">
-            <path stroke-linecap="round" stroke-linejoin="round"
-                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-        </svg>
-        Back to Dashboard
-    </a>
-
+ 
 
     <!-- STUDENT VIEW -->
     @if (userRole() === 'Student') {
         
         <div class="max-w-3xl mx-auto mb-10 text-center">
-            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 font-display">Upgrade Your Plan</h1>
+            <h1 class="text-4xl md:text-5xl font-extrabold mb-3 font-display" appSpeak="Upgrade Your Plan" tabindex="0"
+            >Upgrade Your Plan</h1>
 
-            <p class="text-gray-400 text-lg">
+            <p class="text-gray-400 text-lg" appSpeak=" Unlock premium feature and tools designed for educators." tabindex="0"
+            >
                 Unlock <strong class="text-primary">premium features</strong> and tools designed for educators.
             </p>
         </div>
 
+    
         <div class="max-w-md mx-auto p-8 bg-inputbg rounded-3xl shadow-2xl border border-primary/20 text-center">
 
-            <h2 class="text-2xl font-semibold mb-6 font-display">Ready to Elevate Your Teaching?</h2>
+            <h2 class="text-2xl font-semibold mb-6 font-display" appSpeak="Ready to Elevate Your Teaching?" tabindex="0"
+            >Ready to Elevate Your Teaching?</h2>
 
-            <button (click)="openRegisterTeacher()"
+            <button (click)="openRegisterTeacher()" appSpeak=" Register as Teacher" tabindex="0"
                 class="bg-primary hover:bg-primary/90 text-background px-8 py-4 rounded-full 
                        font-bold text-lg shadow-primary/50 shadow-lg transition duration-300 
                        transform hover:scale-[1.02] active:scale-95 animate-pulse-slow">
                 Register as Teacher
             </button>
 
-            <p class="text-xs text-gray-500 mt-4">Takes less than 2 minutes!</p>
+            <p class="text-xs text-gray-500 mt-4" appSpeak="Takes less than 2 minutes!" tabindex="0"
+            >Takes less than 2 minutes!</p>
         </div>
 
         <!-- Register Teacher Popup -->
@@ -45,7 +39,7 @@
 
             <div class="bg-background rounded-3xl w-full max-w-xl p-8 shadow-2xl shadow-primary/20 relative animate-popup border border-primary/30">
 
-                <button (click)="closeRegisterTeacher()"
+                <button (click)="closeRegisterTeacher()" appSpeak="Close" tabindex="0"
                     class="absolute top-4 right-4 text-gray-400 hover:text-primary transition text-2xl font-light">✕</button>
 
                 <app-register-teacher></app-register-teacher>
@@ -58,25 +52,44 @@
 
         <div class="max-w-3xl mx-auto mb-10 text-center">
             <h1 class="text-4xl md:text-5xl font-extrabold mb-3 font-display text-red-500">Downgrade Your Plan</h1>
-            <p class="text-gray-400 text-lg">
+            <p class="text-gray-400 text-lg" appSpeak=" You currently have access to all Educator features"
+            tabIndex="0"
+            >
                 You currently have access to <strong class="text-primary">all Educator features</strong>.
             </p>
         </div>
 
+      
         <div class="max-w-md mx-auto p-8 bg-inputbg rounded-3xl shadow-2xl border border-red-500/20 text-center">
-            <h2 class="text-2xl font-semibold mb-6 font-display">Want to stop being a Teacher?</h2>
+            <h2 class="text-2xl font-semibold mb-6 font-display" appSpeak="Want to stop being a Teacher"tabIndex="0"
+            >Want to stop being a Teacher?</h2>
 
-            <button (click)="unsubscribeTeacherRole()"
+            <button (click)="unsubscribeTeacherRole()" appSpeak=" Unsubscribe Teacher " tabindex="0"
                 class="bg-red-600 hover:bg-red-700 text-background px-8 py-4 rounded-full 
                        font-bold text-lg shadow-red-500/50 shadow-lg transition duration-300 
                        transform hover:scale-[1.02] active:scale-95">
-                Unsubscribe Teacher Role
+                Unsubscribe Teacher 
             </button>
 
-            <p class="text-xs text-gray-500 mt-4 text-red-400">
+            <p class="text-xs text-gray-500 mt-4 text-red-400 " appSpeak="  Warning: This action is permanent and will remove all your teacher-related data."
+            tabindex="0"          >
                 Warning: This action is permanent and will remove all your teacher-related data.
             </p>
         </div>
     }
+    
+
+
+       <!-- BACK BUTTON -->
+    <a (click)="goBack()" appSpeak=" Back to Dashboard" tabindex="0"
+        class="mb-8 inline-flex items-center text-gray-400 hover:text-primary transition group cursor-pointer text-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+            stroke="currentColor"
+            class="w-4 h-4 mr-2 group-hover:-translate-x-1 transition-transform">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+        </svg>
+        Back to Dashboard
+    </a>
 
 </div>
