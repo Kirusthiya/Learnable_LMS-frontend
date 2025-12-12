@@ -1,7 +1,8 @@
 import { Component, EventEmitter, Input, Output, OnInit, inject, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ExamService } from '../../core/services/teacher-exam-service';
-import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav"; // Path may vary based on your project
+// KeyboardNav directive இருந்தால் அதை import செய்யவும், இல்லையெனில் நீக்கிவிடலாம்
+import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav"; 
 
 @Component({
   selector: 'app-student-exam',
@@ -47,8 +48,8 @@ export class StudentExam implements OnInit {
   loadExamData(id: string) {
     this.examService.getExamById(id).subscribe({
       next: (data) => {
-        // Exam load ஆனதும் Title-ஐ வாசிக்கலாம்
-        setTimeout(() => this.speak("Exam Loaded. " + data.title), 500);
+        // Exam Title வாசிக்க
+        setTimeout(() => this.speak("Exam Loaded. " + data.title + ". Press Tab to navigate."), 500);
       },
       error: (err) => console.error("Error loading exam:", err)
     });
@@ -59,20 +60,28 @@ export class StudentExam implements OnInit {
     const questions = this.examData()?.questions;
     if (questions && this.currentQuestionIndex() < questions.length - 1) {
       this.currentQuestionIndex.update(i => i + 1);
-      // அடுத்த கேள்வி வந்ததும் அதை தானாக வாசிக்க (Optional)
-      // setTimeout(() => this.speakCurrentQuestion(), 500);
+      this.speak("Next Question");
     }
   }
 
   prevQuestion() {
     if (this.currentQuestionIndex() > 0) {
       this.currentQuestionIndex.update(i => i - 1);
+      this.speak("Previous Question");
     }
   }
 
   // --- Selection Logic ---
   selectAnswer(answerIndex: number) {
     if (this.isSubmitted()) return;
+
+    const currentSelected = this.currentSelectedAnswerIndex();
+
+    // ஏற்கனவே Select ஆகியிருந்தால் மீண்டும் சொல்லத் தேவையில்லை, ஆனால் உறுதிப்படுத்தலாம்
+    if (currentSelected === answerIndex) {
+      this.speak("Answer already selected");
+      return;
+    }
 
     // Tick the answer
     this.selectedAnswers.update(map => {
@@ -82,45 +91,50 @@ export class StudentExam implements OnInit {
     });
     
     // Feedback speech
-    this.speak("Answer Selected");
+    const answerText = this.currentQuestion()?.answers[answerIndex];
+    this.speak(`Option ${answerIndex + 1} Selected.`);
   }
 
   // --- Special Logic: Enter Key on Answer ---
-  // 1. First Enter: Selects the answer.
-  // 2. Second Enter (if already selected): Moves to Next Question.
-  handleAnswerEnter(answerIndex: number) {
-    const currentSelected = this.currentSelectedAnswerIndex();
-
-    if (currentSelected === answerIndex) {
-      // ஏற்கனவே Select ஆகியிருந்தால் -> Next Question
-      this.speak("Moving to next question");
-      this.nextQuestion();
-    } else {
-      // Select ஆகவில்லை என்றால் -> Select பண்ணு
+  // Enter அல்லது Space அழுத்தினால் Select ஆகும்
+  handleKeydown(event: KeyboardEvent, answerIndex: number) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault(); // Page scroll ஆவதை தடுக்க
       this.selectAnswer(answerIndex);
     }
   }
 
   // --- TTS (Text to Speech) ---
   speak(text: string) {
-    window.speechSynthesis.cancel(); // Stop previous sound
+    if (!text) return;
+    window.speechSynthesis.cancel(); // பழைய பேச்சை நிறுத்து
     const utterance = new SpeechSynthesisUtterance(text);
     utterance.lang = 'en-US'; 
-    utterance.rate = 0.9;
+    utterance.rate = 0.9; // படிக்கும் வேகம்
     window.speechSynthesis.speak(utterance);
   }
 
   speakCurrentQuestion() {
     const q = this.currentQuestion();
-    if (q) this.speak(q.question);
+    if (q) this.speak("Question: " + q.question);
   }
 
-  // --- Focus Handler ---
-  // Tab அழுத்தி வரும்போது வாசிப்பதற்காக
+  // --- Focus Handler (Tab Navigation) ---
+  // Tab அழுத்தி Focus வரும்போது வாசிக்க
   onFocus(text: string | undefined) {
     if (text) {
       this.speak(text);
     }
+  }
+
+  // Option-ல் Focus வரும்போது மட்டும் தனியாக வாசிக்க
+  onOptionFocus(index: number, answerText: string) {
+    const isSelected = this.currentSelectedAnswerIndex() === index;
+    let textToRead = `Option ${index + 1}: ${answerText}`;
+    if (isSelected) {
+      textToRead += ". Selected.";
+    }
+    this.speak(textToRead);
   }
 
   // --- Submit ---

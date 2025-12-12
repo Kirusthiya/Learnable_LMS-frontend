@@ -3,7 +3,6 @@ import { AccountService } from '../../core/services/accountservices';
 import { RequestService } from '../../core/services/request-service';
 import { CommonModule } from '@angular/common';
 import { KeyboardNav } from "../../core/directives/accessibility/keyboard-nav";
-import { Speak } from "../../core/directives/accessibility/speak";
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ToastService } from '../../core/services/toast-service';
@@ -11,7 +10,7 @@ import { ToastService } from '../../core/services/toast-service';
 @Component({
   selector: 'app-notification',
   standalone: true,
-  imports: [CommonModule, KeyboardNav, Speak, FormsModule],
+  imports: [CommonModule, KeyboardNav, FormsModule],
   templateUrl: './notification.html',
   styleUrl: './notification.css',
 })
@@ -37,12 +36,14 @@ export class Notification implements OnInit {
 
     this.loadReceivedRequests();
     this.loadSentRequests();
+    
+    // Initial Voice Feedback
+    setTimeout(() => this.speak("Notifications Page Loaded"), 500);
   }
 
   loadReceivedRequests(): void {
     this.requestService.getReceivedRequests().subscribe({
       next: requests => this.pendingRequests.set(requests),
-      
       error: () => this.toastService.error('Failed to load received requests.')
     });
   }
@@ -54,12 +55,14 @@ export class Notification implements OnInit {
     });
   }
 
-handleApprove(requestId: string): void {
+  handleApprove(requestId: string): void {
+    this.speak("Approving Request");
     const payload = { RequestDto: { NotificationId: requestId } };
 
     this.requestService.approve(payload).subscribe({
         next: () => {
             this.toastService.success('Request Approved! The user has been added.');
+            this.speak("Request Approved");
             this.loadReceivedRequests(); 
             const currentUser = this.accountService.currentUser();
             const myUserId = currentUser?.user?.userId || currentUser?.id;
@@ -73,21 +76,25 @@ handleApprove(requestId: string): void {
         },
         error: (err) => {
             console.log(err.error);
+            this.speak("Failed to approve request");
         }
     });
-}
+  }
 
   handleReject(requestId: string): void {
+    this.speak("Rejecting Request");
     const payload = { RequestDto: { NotificationId: requestId } };
 
     this.requestService.reject(payload).subscribe({
       next: () => {
         this.toastService.info('Request Rejected.');
+        this.speak("Request Rejected");
         this.loadReceivedRequests();
       },
       error: (err) => {
         const errorDetail = err.error?.message || 'Server error';
         this.toastService.error(`Rejection failed: ${errorDetail}`);
+        this.speak("Failed to reject request");
       }
     });
   }
@@ -102,6 +109,22 @@ handleApprove(requestId: string): void {
   }
 
   goBack() {
+    this.speak("Going back to dashboard");
     this.router.navigateByUrl('/dashboad');
+  }
+
+  // --- TTS (Text to Speech) Implementation ---
+  speak(text: string) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US'; 
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  }
+
+  onFocus(text: string | undefined) {
+    if (text) {
+      this.speak(text);
+    }
   }
 }

@@ -1,72 +1,79 @@
-<div class="p-8  rounded-3xl shadow-xl text-textlight border border-gray-700 font-body" appKeyboardNav>
+<div class="p-8 rounded-3xl shadow-xl text-textlight border border-gray-700 font-body" appKeyboardNav>
 
   <h2 class="text-4xl font-extrabold text-primary mb-8 border-b border-gray-700 pb-4 font-display"
-      [appSpeak]="classData?.className + ' Repositories'"
-      tabindex="0">
+      tabindex="0"
+      (focus)="onFocus((classData?.className || '') + ' Repositories')">
     {{ classData?.className }} Repositories
   </h2>
 
-  <p *ngIf="!classData"
-    class="text-gray-400 text-lg p-12 text-center"
-    appSpeak="Loading class details. Please wait."
-    tabindex="0">
-    <span class="animate-pulse text-2xl font-medium">Retrieving class details...</span>
-  </p>
+  @if (!classData) {
+    <p class="text-gray-400 text-lg p-12 text-center"
+       tabindex="0"
+       (focus)="onFocus('Loading class details. Please wait.')">
+      <span class="animate-pulse text-2xl font-medium">Retrieving class details...</span>
+    </p>
+  }
 
-  <div *ngIf="classData?.repositories?.length === 0 && classData"
-        class="text-center p-16 border-2 border-dashed border-primary/50 rounded-2xl text-gray-500 bg-inputbg"
-        appSpeak="No repositories found for this class."
-        tabindex="0">
-    <p class="text-2xl font-bold text-primary">No Repositories Found</p>
-    <p class="mt-3 text-base text-textlight/70">The teacher has not uploaded any repository files yet.</p>
-  </div>
+  @if (classData?.repositories?.length === 0 && classData) {
+    <div class="text-center p-16 border-2 border-dashed border-primary/50 rounded-2xl text-gray-500 bg-inputbg"
+         tabindex="0"
+         (focus)="onFocus('No repositories found for this class.')">
+      <p class="text-2xl font-bold text-primary">No Repositories Found</p>
+      <p class="mt-3 text-base text-textlight/70">The teacher has not uploaded any repository files yet.</p>
+    </div>
+  }
 
   <div class="space-y-6">
-    <div *ngFor="let repo of classData?.repositories; let i = index"
-          class="bg-inputbg p-6 rounded-2xl shadow-lg border border-gray-700 hover:shadow-primary/50 transition duration-300 transform hover:scale-[1.01] focus-within:ring-2 focus-within:ring-primary"
-          tabindex="0">
+    @for (repo of classData?.repositories; track repo.repositoryId; let i = $index) {
+      <div class="bg-inputbg p-6 rounded-2xl shadow-lg border border-gray-700 hover:shadow-primary/50 transition duration-300 transform hover:scale-[1.01] focus-within:ring-2 focus-within:ring-primary outline-none"
+           tabindex="0">
 
-      <div class="flex justify-between items-start mb-4">
-        <h3 class="font-bold text-2xl text-textlight"
-            [appSpeak]="'Repository ' + (i + 1) + '. Title: ' + repo.fileName"
-            tabindex="0">
-          {{ repo.fileName }}
-        </h3>
-        <span class="text-sm font-medium text-primary bg-primary/20 px-3 py-1 rounded-full border border-primary/50">
-            Repo #{{ i + 1 }}
-        </span>
-      </div>
-      
-      <div class="text-sm mb-3">
-        <p class="font-semibold text-primary/80 mb-1">Certification:</p>
-        <p class="text-textlight/80" appSpeak="Certification {{repo.repoCertification}}" tabindex="0">
-          {{ repo.repoCertification || 'No certification specified' }}
-        </p>
-      </div>
+        <div class="flex justify-between items-start mb-4">
+          <h3 class="font-bold text-2xl text-textlight"
+              tabindex="0"
+              (focus)="onFocus('Repository ' + (i + 1) + '. Title: ' + repo.fileName)">
+            {{ repo.fileName }}
+          </h3>
+          <span class="text-sm font-medium text-primary bg-primary/20 px-3 py-1 rounded-full border border-primary/50">
+              Repo #{{ i + 1 }}
+          </span>
+        </div>
+        
+        <div class="text-sm mb-3">
+          <p class="font-semibold text-primary/80 mb-1">Certification:</p>
+          <p class="text-textlight/80" 
+             tabindex="0"
+             (focus)="onFocus('Certification ' + (repo.repoCertification || 'No certification specified'))">
+            {{ repo.repoCertification || 'No certification specified' }}
+          </p>
+        </div>
 
-      <div class="text-sm mb-5">
-        <p class="font-semibold text-primary/80 mb-1">Description:</p>
-        <p class="text-textlight/80" appSpeak="Description {{repo.repoDescription}}" tabindex="0">
-          {{ repo.repoDescription || 'No description available' }}
-        </p>
-      </div>
+        <div class="text-sm mb-5">
+          <p class="font-semibold text-primary/80 mb-1">Description:</p>
+          <p class="text-textlight/80" 
+             tabindex="0"
+             (focus)="onFocus('Description ' + (repo.repoDescription || 'No description available'))">
+            {{ repo.repoDescription || 'No description available' }}
+          </p>
+        </div>
 
-      <div class="flex flex-wrap gap-4 items-center pt-4 border-t border-gray-700">
-        <button
-          (click)="openRepository(repo.repositoryId)"
-          class="flex items-center space-x-2 bg-primary text-background px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition text-base shadow-lg shadow-primary/30"
-          appSpeak="Open repository details"
-          tabindex="0">
-          Open Repository
-        </button>
-        <button
-          (click)="goBack()"
-          class="bg-gray-700 text-textlight px-5 py-2 rounded-lg hover:bg-gray-600 transition text-base"
-          appSpeak="Back to class list"
-          tabindex="0">
-          Back to Class List
-        </button>
+        <div class="flex flex-wrap gap-4 items-center pt-4 border-t border-gray-700">
+          <button
+            (click)="openRepository(repo.repositoryId)"
+            class="flex items-center space-x-2 bg-primary text-background px-5 py-2 rounded-lg font-medium hover:bg-primary/90 transition text-base shadow-lg shadow-primary/30 outline-none focus:ring-2 focus:ring-white"
+            tabindex="0"
+            (focus)="onFocus('Open repository details')">
+            Open Repository
+          </button>
+          <button
+            (click)="goBack()"
+            class="bg-gray-700 text-textlight px-5 py-2 rounded-lg hover:bg-gray-600 transition text-base outline-none focus:ring-2 focus:ring-white"
+            tabindex="0"
+            (focus)="onFocus('Back to class list')">
+            Back to Class List
+          </button>
+        </div>
       </div>
-    </div>
+    }
   </div>
 </div>

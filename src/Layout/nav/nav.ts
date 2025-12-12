@@ -8,7 +8,7 @@ import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-nav',
-  imports: [Speak, KeyboardNav, RouterLink, RouterLinkActive],
+  imports: [ KeyboardNav, RouterLink, RouterLinkActive],
   templateUrl: './nav.html',
   styleUrls: ['./nav.css'],
 })
@@ -39,12 +39,14 @@ export class Nav implements AfterViewInit, OnDestroy, OnInit {
   // Accessibility menu toggle
   toggleMenu() {
     this.showMenu = !this.showMenu;
+    if (this.showMenu) this.speak("Accessibility Menu Open");
     this.emitMenuState();
   }
 
   // Set mode
   setMode(newMode: 'blind' | 'deaf') {
     this.accessibilityModeService.mode.set(newMode);
+    this.speak(newMode + " mode activated");
     this.showMenu = false;
     this.mobileMenuOpen = false;
     this.emitMenuState();
@@ -60,6 +62,7 @@ export class Nav implements AfterViewInit, OnDestroy, OnInit {
 
   toggleMobileMenu() {
     this.mobileMenuOpen = !this.mobileMenuOpen;
+    if (this.mobileMenuOpen) this.speak("Mobile Menu Open");
     this.emitMenuState();
   }
 
@@ -74,7 +77,11 @@ export class Nav implements AfterViewInit, OnDestroy, OnInit {
   toggleProfileDropdown(event: Event) {
     event.stopPropagation();
     this.profileDropdownOpen = !this.profileDropdownOpen;
-    if (!this.profileDropdownOpen) this.helpDropdownOpen = false;
+    if (this.profileDropdownOpen) {
+        this.speak("Profile Menu Open");
+    } else {
+        this.helpDropdownOpen = false;
+    }
     this.emitMenuState();
   }
 
@@ -125,6 +132,7 @@ export class Nav implements AfterViewInit, OnDestroy, OnInit {
   }
 
   logout() {
+    this.speak("Logging out");
     this.accountService.logout();
     this.router.navigateByUrl('/');
     this.closeMobileMenu();
@@ -136,29 +144,42 @@ export class Nav implements AfterViewInit, OnDestroy, OnInit {
       this.mobileMenuOpen || this.showMenu || this.profileDropdownOpen || this.helpDropdownOpen
     );
   }
-degradeTeacher() {
-  // Attempt to read the current user's id from the accountService (use any to avoid strict typing mismatches).
-  const userId = (this.accountService as any).currentUser?.id || (this.accountService as any).user?.id;
-  if (!userId) {
-    console.error('degradeTeacher: user id not available');
-    return;
+
+  degradeTeacher() {
+    // Attempt to read the current user's id from the accountService (use any to avoid strict typing mismatches).
+    const userId = (this.accountService as any).currentUser?.id || (this.accountService as any).user?.id;
+    if (!userId) {
+      console.error('degradeTeacher: user id not available');
+      return;
+    }
+
+    this.accountService.deleteTeacher(userId).subscribe({
+      next: (res: any) => {
+        if (res.updatedUser) {
+          this.accountService.refreshCurrentUser(res.updatedUser);
+
+          // Immediately re-render UI
+          this.profileDropdownOpen = false;
+        }
+      },
+      error: (err: any) => {
+        console.error('Degrade failed', err);
+      }
+    });
   }
 
-  this.accountService.deleteTeacher(userId).subscribe({
-    next: (res: any) => {
-      if (res.updatedUser) {
-        this.accountService.refreshCurrentUser(res.updatedUser);
+  // --- TTS (Text to Speech) Implementation ---
+  speak(text: string) {
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US'; 
+    utterance.rate = 0.9;
+    window.speechSynthesis.speak(utterance);
+  }
 
-        // Immediately re-render UI
-        this.profileDropdownOpen = false;
-      }
-    },
-    error: (err: any) => {
-      console.error('Degrade failed', err);
+  onFocus(text: string | undefined) {
+    if (text) {
+      this.speak(text);
     }
-  });
+  }
 }
-
-}
-
-
