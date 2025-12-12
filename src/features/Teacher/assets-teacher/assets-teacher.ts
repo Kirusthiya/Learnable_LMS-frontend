@@ -1,7 +1,6 @@
 import { Component, EventEmitter, Input, Output, OnInit, OnChanges, SimpleChanges, inject, ChangeDetectorRef, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-// 👇 UPDATED IMPORTS based on your file names
 import { RepositoryService } from '../../../core/services/repository-service';
 import { TeacherAssetService } from '../../../core/services/teacher-asset-services'; 
 import { ExamService } from '../../../core/services/teacher-exam-service'; 
@@ -10,11 +9,12 @@ import { RepositoryDetail } from '../../../types/repo-types';
 import { AssetDto } from '../../../types/asset-types';
 import { ExamDto } from '../../../types/exam-types';
 import { AddAssetExam } from "../add-asset-exam/add-asset-exam";
+import { Marks } from "../marks/marks"; 
 
 @Component({
   selector: 'app-assets-teacher',
   standalone: true,
-  imports: [CommonModule, AddAssetExam],
+  imports: [CommonModule, AddAssetExam, Marks],
   templateUrl: './assets-teacher.html',
   styleUrls: ['./assets-teacher.css'],
 })
@@ -33,6 +33,10 @@ export class AssetsTeacher implements OnInit, OnChanges {
   showAddExamAsset = signal(false);
   isActionLoading = signal(false);
 
+  // Signals for Marks View
+  showMarksView = signal(false);
+  selectedExamForMarks = signal<ExamDto | null>(null);
+
   ngOnInit(): void {
     this.loadRepositoryDetails();
   }
@@ -45,7 +49,6 @@ export class AssetsTeacher implements OnInit, OnChanges {
 
   private loadRepositoryDetails(): void {
     if (!this.repository) return;
-    // Check for repoId or repositoryId depending on what object is passed
     const id = this.repository.repositoryId || this.repository.repoId;
     if (id) {
       this.repositoryService.getRepositoryById(id);
@@ -53,6 +56,7 @@ export class AssetsTeacher implements OnInit, OnChanges {
     }
   }
 
+  // --- Add Asset Modal Logic ---
   openAddExamAsset() {
     this.showAddExamAsset.set(true);
   }
@@ -62,13 +66,33 @@ export class AssetsTeacher implements OnInit, OnChanges {
     this.loadRepositoryDetails(); 
   }
 
+  // 👇 UPDATED FUNCTION FOR MARKS LOGIC
+  // '?' means exam is optional. If clicked from header, it takes the first exam.
+  openMarks(exam?: ExamDto) {
+    const examsList = this.repoDetails()?.exams;
+    
+    // If an exam is passed, use it. Otherwise, pick the first one from the list.
+    const targetExam = exam || (examsList && examsList.length > 0 ? examsList[0] : null);
+
+    if (targetExam) {
+      this.selectedExamForMarks.set(targetExam);
+      this.showMarksView.set(true);
+    } else {
+      alert("No exams available to manage marks.");
+    }
+  }
+
+  closeMarks() {
+    this.showMarksView.set(false);
+    this.selectedExamForMarks.set(null);
+  }
+
   // ==========================================
   //  ASSET ACTIONS
   // ==========================================
 
   viewAsset(assetId: string) {
     this.isActionLoading.set(true);
-    
     this.assetService.getAssetById(assetId).subscribe({
       next: (asset: AssetDto) => {
         this.isActionLoading.set(false);
@@ -88,12 +112,11 @@ export class AssetsTeacher implements OnInit, OnChanges {
 
   deleteAsset(assetId: string) {
     if (!confirm('Are you sure you want to delete this asset?')) return;
-
     this.isActionLoading.set(true);
     this.assetService.deleteAsset(assetId).subscribe({
       next: () => {
         this.isActionLoading.set(false);
-        this.loadRepositoryDetails(); // Refresh list
+        this.loadRepositoryDetails(); 
       },
       error: (err: any) => {
         this.isActionLoading.set(false);
@@ -109,7 +132,6 @@ export class AssetsTeacher implements OnInit, OnChanges {
 
   viewExam(examId: string) {
     this.isActionLoading.set(true);
-    
     this.examService.getExamById(examId).subscribe({
       next: (exam: ExamDto) => {
         this.isActionLoading.set(false);
@@ -126,12 +148,11 @@ export class AssetsTeacher implements OnInit, OnChanges {
 
   deleteExam(examId: string) {
     if (!confirm('Are you sure you want to delete this exam?')) return;
-
     this.isActionLoading.set(true);
     this.examService.deleteExam(examId).subscribe({
       next: () => {
         this.isActionLoading.set(false);
-        this.loadRepositoryDetails(); // Refresh list
+        this.loadRepositoryDetails(); 
       },
       error: (err: any) => {
         this.isActionLoading.set(false);

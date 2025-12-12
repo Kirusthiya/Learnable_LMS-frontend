@@ -11,15 +11,15 @@ export interface CreateExamQuestionDto {
 }
 
 export interface CreateExamDto {
-  repoId?: string; 
+  repoId?: string;
   title: string;
   description?: string;
-  startDatetime?: string; 
+  startDatetime?: string;
   endDatetime?: string;
   duration?: number;
-  
-  // 👇 UPDATE: Changed 'questions' to 'Question' to match C# Backend
-  Question: CreateExamQuestionDto[]; 
+
+  // Changed 'questions' to 'Question' to match C# Backend
+  Question: CreateExamQuestionDto[];
 }
 
 // Wrapper for Command
@@ -45,7 +45,9 @@ export interface UpdateExamDto {
   startDatetime?: string;
   endDatetime?: string;
   duration?: number;
-  questions: UpdateExamQuestionDto[]; 
+
+  // 👇 UPDATE: Synced with CreateDto to match C# Backend
+  Question: UpdateExamQuestionDto[];
 }
 
 // Wrapper for Command
@@ -64,9 +66,9 @@ export interface GetQuestionQuery {
 
 // Response DTO
 export interface ExamQuestionDto {
-  questionId?: string; 
-  examId?: string;    
-  question: string;    
+  questionId?: string;
+  examId?: string;
+  question: string;
   answers: string[];
   correctAnswerIndex: number;
 }
@@ -77,5 +79,8 @@ export interface ExamDto {
   title: string;
   description?: string;
   repoId?: string;
+  
+  // Note: Backend might return 'questions' or 'Question'. 
+  // Kept as 'questions' for standard view, but check your API response.
   questions?: ExamQuestionDto[];
 }
